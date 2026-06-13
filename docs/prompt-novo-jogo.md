@@ -1,6 +1,8 @@
-# Prompt de início — novo game engine (games-app)
+# Prompt de início — nova engine (games-app)
 
-Cole este prompt no início do chat que vai criar um novo jogo.
+Cole este prompt no início do chat que vai criar uma nova engine de jogos.
+
+> **Conceito:** o projeto é construído em **engines** — uma engine é um conjunto de telas/estado/lógica que vários jogos compartilham (ex.: engine "Impostor/Assimetria" cobre Insider, Chameleon, Spyfall...). Trocar conteúdo + regras de pontuação = novo jogo sem reescrever o app. Ordem das engines: ver `docs/ordem-de-construcao.md`.
 
 ---
 
@@ -20,7 +22,7 @@ Este é o **games-app**, projeto pessoal do Gabs — app PWA de jogos de festa, 
 
 ## Arquitetura de módulos
 
-Cada jogo é um módulo isolado em `src/games/<nome>/`. O contrato com o shell é simples:
+Cada engine (e os jogos dela) vive isolada em `src/games/<engine-ou-jogo>/`. Uma engine pode conter vários jogos sob a mesma pasta, compartilhando telas e estado. O contrato com o shell é simples:
 
 ```tsx
 // src/games/<nome>/<Nome>App.tsx — único ponto de entrada público
@@ -46,9 +48,9 @@ Este projeto tem **dois chats rodando em paralelo**:
 | Chat | Responsabilidade |
 |---|---|
 | Chat de visual polish | `src/App.tsx`, `src/shell/`, telas do Taboo, `src/index.css`, `index.html`, ícones PWA |
-| **Este chat (novo jogo)** | `src/games/<novo-jogo>/` — exclusivamente |
+| **Este chat (nova engine)** | `src/games/<engine>/` — exclusivamente |
 
-**Não mexa em `src/App.tsx` nem em `src/shell/`** enquanto o visual polish não fechar. Seu jogo deve ficar 100% contido em `src/games/<nome>/`. A integração na home (adicionar botão em App.tsx) será feita depois que o visual polish terminar — apenas sinaliza quando seu módulo estiver pronto.
+**Não mexa em `src/App.tsx` nem em `src/shell/`** enquanto o visual polish não fechar. Sua engine deve ficar 100% contida em `src/games/<nome>/`. A integração na home (adicionar botão em App.tsx) será feita depois que o visual polish terminar — apenas sinaliza quando seu módulo estiver pronto.
 
 ## Convenções de código
 
