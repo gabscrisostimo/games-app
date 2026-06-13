@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   buildRound, promptsForPlayer, createSession, playAgain, submitAnswers, castVote, matchupResults,
+  nextRound, ranking,
 } from './logic';
 import type { PromptDeck, QuiplashConfig, Player } from './types';
 
@@ -224,5 +225,34 @@ describe('castVote + pontuação', () => {
     };
     const [res] = matchupResults(round);
     expect(res.tallies.every((t) => t.points === 0 && !t.quiplash)).toBe(true);
+  });
+});
+
+describe('nextRound', () => {
+  it('avança pra próxima rodada (answering) sem repetir prompts', () => {
+    const voted = voteAll(answerAll(createSession(cfg(), deck, rng0)));
+    const next = nextRound(voted, deck, rng0);
+    expect(next.round.index).toBe(1);
+    expect(next.round.phase).toBe('answering');
+    const used = next.usedPromptIds;
+    const ids = next.round.matchups.map((m) => m.promptId);
+    // os novos prompts estão dentro de used e não colidem com a rodada 0
+    expect(used).toEqual(expect.arrayContaining(ids));
+  });
+
+  it('na última rodada vai pra final-result', () => {
+    let s = voteAll(answerAll(createSession(cfg({ rounds: 2 }), deck, rng0))); // rodada 0
+    s = nextRound(s, deck, rng0);            // rodada 1 (última, last lash)
+    s = voteAll(answerAll(s as ReturnType<typeof createSession>));
+    s = nextRound(s, deck, rng0);            // fim
+    expect(s.round.phase).toBe('final-result');
+  });
+});
+
+describe('ranking', () => {
+  it('ordena jogadores por pontos desc', () => {
+    const s = createSession(cfg(), deck, rng0);
+    const withScores = { ...s, scores: { a: 10, b: 30, c: 20, d: 0 } };
+    expect(ranking(withScores).map((r) => r.player.id)).toEqual(['b', 'c', 'a', 'd']);
   });
 });

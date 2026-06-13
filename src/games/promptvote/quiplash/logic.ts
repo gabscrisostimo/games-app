@@ -181,3 +181,20 @@ export function castVote(state: SessionState, authorId: string): SessionState {
   }
   return { ...state, round };
 }
+
+export function nextRound(
+  state: SessionState, deck: PromptDeck, rng: () => number = Math.random,
+): SessionState {
+  const nextIndex = state.round.index + 1;
+  if (nextIndex >= state.config.rounds) {
+    return { ...state, round: { ...state.round, phase: 'final-result' } };
+  }
+  const { round, used } = buildRound(state.config, nextIndex, deck, state.usedPromptIds, rng);
+  return { ...state, usedPromptIds: used, round };
+}
+
+export function ranking(state: SessionState): { player: Player; score: number }[] {
+  return state.config.players
+    .map((player) => ({ player, score: state.scores[player.id] ?? 0 }))
+    .sort((x, y) => y.score - x.score);
+}
