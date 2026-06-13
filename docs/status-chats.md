@@ -17,20 +17,31 @@ Os chats compartilham o mesmo diretório de repositório, então cada um trabalh
 
 **Nota de coordenação:** `docs/status-chats.md` é editado pelos 3 chats. Para evitar divergência, cada chat mexe **só na sua seção**; na hora de integrar os branches, este arquivo pode precisar de um merge manual trivial. Sugestão: o Gabs mantém a versão canônica no `main`.
 
-## Chat A — Visual polish (em andamento)
+## Chat A — Visual polish ✅ MERGEADO NO MAIN (branch: feat/visual-polish)
 
-**O que já está feito (commitado no `main`):**
+**Implementação 100% completa. 37 testes passando. Mergeado no `main` e publicado em produção (commit de merge `88bf223`).**
+
+**O que foi feito (commitado em `feat/visual-polish`):**
 - Spec: `docs/superpowers/specs/2026-06-13-visual-polish-design.md`
 - Plano: `docs/superpowers/plans/2026-06-13-visual-polish.md`
-- Direção visual definida: **Fusão** (fundo azul-meia-noite `#0c1220`, fonte Inter, acentos pastel)
-- Mockups do brainstorming: `.superpowers/brainstorm/` (gitignored, local)
-
-**O que vai implementar (ainda não mexido no código):**
-- Tokens de design `@theme` em `src/index.css` (cores + fonte + animações)
-- Restyle de: `src/App.tsx`, `src/shell/ActionButton.tsx`, `src/shell/Scoreboard.tsx`, todas as 5 telas do Taboo, `src/games/taboo/TabooApp.tsx`, `src/games/taboo/TabooSession.tsx`
-- `index.html` (fonte Inter), `vite.config.ts` (cores do manifest)
+- Tokens de design `@theme` em `src/index.css` (12 cores + animações + Inter)
+- Restyle completo: `src/App.tsx`, `src/shell/ActionButton.tsx`, `src/shell/Scoreboard.tsx`
+- Restyle Taboo: todas as 5 telas + `TabooApp.tsx` + `TabooSession.tsx` (transição de fase)
+- `index.html` (fonte Inter), `vite.config.ts` (cores `#0c1220` + exclude worktrees do Vitest)
 - Ícones PWA reais: `scripts/generate-icons.mjs` + `public/pwa-192.png` / `public/pwa-512.png`
-- Novos testes em `src/games/taboo/screens/InTurnScreen.test.tsx`
+- TDD: `src/games/taboo/screens/InTurnScreen.test.tsx` (4 novos testes: flash, urgência)
+- Fix: worktrees excluídos do Vitest para evitar contaminação entre chats
+
+**Ponto de integração preparado (App.tsx):** o card de cada jogo futuro deve ser adicionado aqui quando Chat B/C sinalizarem que o módulo está pronto. Contrato: `<XyzApp onHome={() => void} />`.
+
+**Guia de estilo p/ as engines:** `docs/visual-tokens.md` — referência canônica de tokens (cor, fonte, container, botões, animações) que toda engine deve seguir em vez de cores cruas.
+
+### Plano de integração Insider (Chat B) ↔ visual polish
+1. **Tokens já estão no `main`** (`src/index.css`). Chat B precisa **mergear/rebasear o `main`** na branch `feat/impostor-engine` antes de reestilizar — senão as classes de token não existem no `index.css` da branch dele.
+2. **Reestilização das 7 telas do Insider = Chat B** (dono de `src/games/impostor/**`), usando `docs/visual-tokens.md`. Chat A **não** edita `impostor/**` (respeita a fronteira). Decisão registrada: telas internas ficam com o dono da engine; Chat A só faz o wiring.
+3. **Wiring na home = Chat A:** registro `View 'insider'` em `src/App.tsx` (mesmo padrão de `View 'taboo'`) apontando pra `<InsiderApp onHome={...} />`. Passo de integração **após** o Insider mergear no `main`.
+
+**Dívida conhecida (Scoreboard):** `src/shell/Scoreboard.tsx` importa `TeamState` de `games/taboo/types` → **não é game-agnostic**. `ActionButton` e `useCountdown` são. Engine que quiser placar precisa primeiro generalizar/mover o tipo pro shell. Não bloqueia o Insider (ele usa só ActionButton + useCountdown).
 
 **Arquivos que o Chat A é dono — NÃO TOCAR no outro chat:**
 `src/App.tsx`, `src/shell/**`, `src/index.css`, `index.html`, `vite.config.ts`, `public/**`, `src/games/taboo/**`
@@ -73,3 +84,8 @@ Os chats compartilham o mesmo diretório de repositório, então cada um trabalh
 2. `src/App.tsx` e `src/shell/` têm dono único = Chat A enquanto o visual polish não fechar (outros chats só **importam** do shell, nunca editam).
 3. Antes de editar qualquer arquivo fora da sua pasta, checar este doc.
 4. `src/games/taboo/logic.ts|types.ts|reducer.ts|persistence.ts` e `src/data/` são estáveis — ninguém toca sem motivo forte.
+
+## Pendências pós-merge (não esquecer)
+
+- **Untrackar `.claude/settings.local.json`** (mover pra `.gitignore`). É arquivo de permissões **por-máquina**; nasceu versionado por acidente e gera conflito de merge recorrente em todos os chats. **Fazer só DEPOIS que B e C mergearem** suas engines no `main` — assim não há branch divergindo no arquivo e o untrack sai limpo (`git rm --cached .claude/settings.local.json` + commit; o arquivo permanece no disco de cada worktree). Se feito antes, cada chat pega um conflito "modify/delete" trivial no merge. (Anotado por Chat A, 2026-06-13.)
+- **Integração na home (`App.tsx`)**: adicionar o card de cada engine nova quando B/C sinalizarem "pronto". É território do Chat A; coordenar na hora.

@@ -1,4 +1,3 @@
-// src/App.tsx
 import { useState } from 'react';
 import { TabooApp } from './games/taboo/TabooApp';
 
@@ -8,16 +7,20 @@ export function App() {
   const [view, setView] = useState<View>('home');
 
   return (
-    <main className="min-h-dvh bg-slate-900 text-white">
+    <main className="min-h-dvh bg-bg text-ink">
       {view === 'home' ? (
-        <div className="mx-auto flex max-w-md flex-col gap-4 p-6">
-          <h1 className="text-3xl font-bold">Games App</h1>
-          <p className="text-slate-400">Escolha um jogo:</p>
+        <div className="mx-auto flex max-w-md flex-col gap-6 p-6 animate-screen-in">
+          <header className="mt-6">
+            <h1 className="text-4xl font-extrabold tracking-tight text-ink">Games App</h1>
+            <p className="mt-1 text-muted">Party games pra jogar com os amigos</p>
+          </header>
+
           <button
-            className="rounded-2xl bg-amber-500 py-6 text-2xl font-bold text-slate-900 active:bg-amber-600"
+            className="rounded-2xl border border-line bg-surface p-5 text-left transition active:brightness-95"
             onClick={() => setView('taboo')}
           >
-            Taboo
+            <div className="text-2xl font-bold text-ink">Taboo</div>
+            <div className="mt-1 text-sm text-muted">2 times · dar pistas sem falar as palavras proibidas</div>
           </button>
         </div>
       ) : (

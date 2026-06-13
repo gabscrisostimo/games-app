@@ -14,8 +14,8 @@ export default defineConfig({
         name: 'Games App',
         short_name: 'Games',
         description: 'Party games de texto pra jogar com os amigos',
-        theme_color: '#111827',
-        background_color: '#111827',
+        theme_color: '#0c1220',
+        background_color: '#0c1220',
         display: 'standalone',
         orientation: 'portrait',
         icons: [
@@ -29,5 +29,6 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: './src/test/setup.ts',
+    exclude: ['**/node_modules/**', '**/.claude/worktrees/**'],
   },
 });
