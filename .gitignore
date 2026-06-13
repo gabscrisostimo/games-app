@@ -38,3 +38,6 @@ vite.config.d.ts
 
 # git worktrees dos chats
 .claude/worktrees/
+
+# partykit local dev cache (multiplayer)
+.partykit/
