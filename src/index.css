@@ -21,3 +21,32 @@ body {
   background-color: var(--color-bg);
   color: var(--color-ink);
 }
+
+@theme {
+  --animate-card-in: card-in 250ms ease-out;
+  --animate-screen-in: screen-in 200ms ease-out;
+  --animate-urgent: urgent 1s ease-in-out infinite;
+}
+
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes screen-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes urgent {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.12); opacity: 0.85; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
