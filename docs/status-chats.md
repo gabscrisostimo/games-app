@@ -52,6 +52,7 @@ Os chats compartilham o mesmo diretório de repositório, então cada um trabalh
 - Reusa **read-only** do shell: `ActionButton`, `useCountdown` (importa, não edita)
 - **Próximo passo para Chat A:** após fechar o visual polish, integrar `<InsiderApp onHome={...} />` em `src/App.tsx`
 - **NÃO TOCA** em `src/App.tsx` nem `src/shell/` — integração na home fica com Chat A
+- Estilos Tailwind centralizados em `src/games/impostor/insider/ui.ts` — adotar os design tokens do Chat A é edição de arquivo único.
 
 ## Chat C — Engine Julgamento/Cartas (em andamento)
 
