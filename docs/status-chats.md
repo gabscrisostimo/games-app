@@ -9,6 +9,14 @@ Documento de sincronização entre sessões paralelas do Claude. Atualizado ao f
 - Produção: `https://games-app-bice.vercel.app` (Vercel, deploy automático no push)
 - Stack: Vite + React + TypeScript + Tailwind v4 + Vitest + vite-plugin-pwa
 
+## Isolamento por worktree (importante)
+Os chats compartilham o mesmo diretório de repositório, então cada um trabalha em seu **git worktree** próprio (pasta + branch isolados, mesmo `.git`). Isso evita que trocar de branch num chat puxe o tapete do outro.
+- Chat A → branch `feat/visual-polish`
+- Chat B → branch `feat/impostor-engine`
+- Chat C → branch `feat/judging-engine` (worktree em `.claude/worktrees/feat+judging-engine`, base = `main` local `29983fb`)
+
+**Nota de coordenação:** `docs/status-chats.md` é editado pelos 3 chats. Para evitar divergência, cada chat mexe **só na sua seção**; na hora de integrar os branches, este arquivo pode precisar de um merge manual trivial. Sugestão: o Gabs mantém a versão canônica no `main`.
+
 ## Chat A — Visual polish (em andamento)
 
 **O que já está feito (commitado no `main`):**
@@ -27,16 +35,35 @@ Documento de sincronização entre sessões paralelas do Claude. Atualizado ao f
 **Arquivos que o Chat A é dono — NÃO TOCAR no outro chat:**
 `src/App.tsx`, `src/shell/**`, `src/index.css`, `index.html`, `vite.config.ts`, `public/**`, `src/games/taboo/**`
 
-## Chat B — Nova engine (em andamento)
+## Chat B — Engine Impostor/Assimetria (em andamento)
 
 - Roadmap de engines: `docs/ordem-de-construcao.md`
-- Próxima engine: **Impostor/Assimetria** (Insider → Chameleon → Spyfall → Deception)
-- Deve ficar 100% contido em `src/games/<engine>/`
-- Contrato de integração: expor `<XyzApp onHome={() => void} />`
-- **NÃO TOCAR** em `src/App.tsx` nem `src/shell/` até o Chat A fechar (a integração na home fica pra depois)
+- Engine: **Impostor/Assimetria** (Insider → Chameleon → Spyfall → Deception)
+- **Território reivindicado: `src/games/impostor/**`** (pasta aninhada por engine)
+- Primeiro jogo: **Insider** → `src/games/impostor/insider/`
+  - Spec aprovado: `docs/superpowers/specs/2026-06-13-insider-game-design.md`
+  - Plano TDD: pendente (próximo passo: writing-plans)
+  - Implementação: ainda não começou
+- Reusa **read-only** do shell: `ActionButton`, `useCountdown` (importa, não edita)
+- Contrato de integração: expor `<InsiderApp onHome={() => void} />`
+- **NÃO TOCA** em `src/App.tsx` nem `src/shell/` até o Chat A fechar (integração na home depois)
+
+## Chat C — Engine Julgamento/Cartas (em andamento)
+
+- Roadmap de engines: `docs/ordem-de-construcao.md` (Engine 2)
+- Engine: **Julgamento / Mão de Cartas** (Snake Oil → Cards Against Humanity → Funemployed → ...)
+- **Território reivindicado: `src/games/judging/**`** + decks em `src/data/judging/**`
+- Primeiro jogo: **Snake Oil** → `src/games/judging/snakeoil/`
+  - Spec: `docs/superpowers/specs/2026-06-13-snakeoil-game-design.md` (em escrita)
+  - Plano TDD: pendente (próximo passo: writing-plans)
+  - Implementação: ainda não começou
+  - Modelo: pass-and-play, mão privada (passa o celular), cliente com carta de persona, fim configurável (rotações/pontos)
+- Reusa **read-only** do shell: `ActionButton`, `useCountdown` (importa, não edita)
+- Contrato de integração: expor `<SnakeOilApp onHome={() => void} />`
+- **NÃO TOCA** em `src/games/impostor/**` (Chat B), nos arquivos do Chat A, nem em `src/games/taboo/**`
 
 ## Regras de ouro (evitar conflito)
-1. Cada chat fica na sua pasta. Fronteira: `src/games/taboo/**` + shell/home = Chat A; `src/games/<nova-engine>/**` = Chat B.
-2. `src/App.tsx` e `src/shell/` têm dono único = Chat A enquanto o visual polish não fechar.
+1. Cada chat fica na sua pasta. Fronteiras: `src/games/taboo/**` + shell/home = Chat A; `src/games/impostor/**` = Chat B; `src/games/judging/**` (+ `src/data/judging/**`) = Chat C.
+2. `src/App.tsx` e `src/shell/` têm dono único = Chat A enquanto o visual polish não fechar (outros chats só **importam** do shell, nunca editam).
 3. Antes de editar qualquer arquivo fora da sua pasta, checar este doc.
 4. `src/games/taboo/logic.ts|types.ts|reducer.ts|persistence.ts` e `src/data/` são estáveis — ninguém toca sem motivo forte.
