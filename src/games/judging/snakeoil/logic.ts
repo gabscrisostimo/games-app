@@ -1,4 +1,5 @@
 // src/games/judging/snakeoil/logic.ts
+import type { GameState, MatchConfig, Player, PersonaDeck, RoundState, WordDeck } from './types';
 
 export function shuffle<T>(items: readonly T[], rng: () => number = Math.random): T[] {
   const arr = [...items];
@@ -43,4 +44,60 @@ export function drawPersona(
   if (d.length === 0) return { personaId: null, draw: d, discard: disc };
   const [personaId, ...rest] = d;
   return { personaId, draw: rest, discard: disc };
+}
+
+function buildRound(
+  players: Player[],
+  customerIndex: number,
+  personaId: string | null,
+): RoundState {
+  const order = players.map((_, i) => i).filter((i) => i !== customerIndex);
+  return { customerIndex, personaId, order, selIndex: 0, picks: {}, winnerIndex: null };
+}
+
+export function createGame(
+  config: MatchConfig,
+  wordDeck: WordDeck,
+  personaDeck: PersonaDeck,
+  rng: () => number = Math.random,
+): GameState {
+  const players: Player[] = config.playerNames.map((name, i) => ({
+    id: `p${i}`,
+    name,
+    score: 0,
+    hand: [],
+  }));
+
+  let wordDraw = shuffle(wordDeck.cards.map((c) => c.id), rng);
+  let wordDiscard: string[] = [];
+  for (const p of players) {
+    const res = drawWords(wordDraw, wordDiscard, config.handSize, rng);
+    p.hand = res.cards;
+    wordDraw = res.draw;
+    wordDiscard = res.discard;
+  }
+
+  let personaDraw = shuffle(personaDeck.cards.map((c) => c.id), rng);
+  const personaDiscard: string[] = [];
+  const pres = drawPersona(personaDraw, personaDiscard, rng);
+  personaDraw = pres.draw;
+
+  const round = buildRound(players, 0, pres.personaId);
+
+  return {
+    config,
+    players,
+    wordDraw,
+    wordDiscard,
+    personaDraw,
+    personaDiscard: pres.discard,
+    roundsPlayed: 0,
+    round,
+    phase: 'pre-round',
+  };
+}
+
+export function startRound(state: GameState): GameState {
+  if (state.phase !== 'pre-round' || !state.round) return state;
+  return { ...state, phase: 'selecting' };
 }
