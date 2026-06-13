@@ -9,18 +9,24 @@ export function TurnSummaryScreen({ state, onNext }: { state: GameState; onNext:
   const willEnd = isGameOver({ ...state, turnsTaken: state.turnsTaken + 1 });
 
   return (
-    <div className="mx-auto flex max-w-md flex-col gap-6 p-6">
+    <div className="mx-auto flex max-w-md flex-col gap-6 p-6 animate-screen-in">
       <Scoreboard teams={state.teams} />
-      <div className="rounded-2xl bg-slate-800 p-4 text-center text-slate-200">
-        <p className="text-lg font-semibold text-white">Fim do turno</p>
-        <div className="mt-3 flex justify-around">
-          <div><div className="text-2xl font-bold text-emerald-400">{count('correct')}</div>acertos</div>
-          <div><div className="text-2xl font-bold text-rose-400">{count('taboo')}</div>proibidas</div>
-          <div><div className="text-2xl font-bold text-slate-400">{count('skip')}</div>pulos</div>
+      <div className="rounded-2xl border border-line bg-surface p-4 text-center">
+        <p className="text-lg font-semibold text-ink">Fim do turno</p>
+        <div className="mt-4 flex justify-around">
+          <div className="text-muted">
+            <div className="text-3xl font-bold text-good-text">{count('correct')}</div>acertos
+          </div>
+          <div className="text-muted">
+            <div className="text-3xl font-bold text-bad-text">{count('taboo')}</div>proibidas
+          </div>
+          <div className="text-muted">
+            <div className="text-3xl font-bold text-ink">{count('skip')}</div>pulos
+          </div>
         </div>
       </div>
       <button
-        className="rounded-2xl bg-amber-500 py-5 text-xl font-bold text-slate-900 active:bg-amber-600"
+        className="rounded-2xl bg-accent py-5 text-xl font-bold text-bg transition active:brightness-90"
         onClick={onNext}
       >
         {willEnd ? 'Ver resultado' : 'Próximo time'}
