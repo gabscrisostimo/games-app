@@ -35,3 +35,6 @@ coverage/
 *.tsbuildinfo
 vite.config.js
 vite.config.d.ts
+
+# git worktrees dos chats
+.claude/worktrees/
