@@ -1,0 +1,6 @@
+{
+  "$schema": "https://www.partykit.io/schema.json",
+  "name": "games-app-net",
+  "main": "src/net/server/index.ts",
+  "compatibilityDate": "2025-06-01"
+}
