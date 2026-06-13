@@ -16,6 +16,9 @@ describe('shuffle', () => {
     shuffle(orig, rng0);
     expect(orig).toEqual([1, 2, 3]);
   });
+  it('produz uma permutação determinística com rng fixo', () => {
+    expect(shuffle([1, 2, 3, 4], rng0)).toEqual([2, 3, 4, 1]);
+  });
 });
 
 describe('drawWords', () => {
@@ -35,6 +38,13 @@ describe('drawWords', () => {
   it('para quando não há cartas suficientes em lugar nenhum', () => {
     const r = drawWords(['a'], [], 5, rng0);
     expect(r.cards).toEqual(['a']);
+  });
+  it('para quando não há cartas suficientes após reembaralhar o discard', () => {
+    const r = drawWords(['a', 'b'], ['c'], 6, rng0);
+    expect(r.cards.length).toBe(3);
+    expect([...r.cards].sort()).toEqual(['a', 'b', 'c']);
+    expect(r.draw).toEqual([]);
+    expect(r.discard).toEqual([]);
   });
 });
 
@@ -150,6 +160,10 @@ describe('toJudging / judge', () => {
   }
   it('toJudging vai de pitching para judging', () => {
     expect(toJudging(pitching()).phase).toBe('judging');
+  });
+  it('toJudging é no-op fora de pitching', () => {
+    const g = createGame(config, wordDeck, personaDeck, () => 0); // pre-round
+    expect(toJudging(g)).toBe(g);
   });
   it('judge dá +1 ao vencedor e vai para round-summary', () => {
     const g = toJudging(pitching());

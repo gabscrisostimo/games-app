@@ -61,21 +61,14 @@ export function createGame(
   personaDeck: PersonaDeck,
   rng: () => number = Math.random,
 ): GameState {
-  const players: Player[] = config.playerNames.map((name, i) => ({
-    id: `p${i}`,
-    name,
-    score: 0,
-    hand: [],
-  }));
-
   let wordDraw = shuffle(wordDeck.cards.map((c) => c.id), rng);
   let wordDiscard: string[] = [];
-  for (const p of players) {
+  const players: Player[] = config.playerNames.map((name, i) => {
     const res = drawWords(wordDraw, wordDiscard, config.handSize, rng);
-    p.hand = res.cards;
     wordDraw = res.draw;
     wordDiscard = res.discard;
-  }
+    return { id: `p${i}`, name, score: 0, hand: res.cards };
+  });
 
   let personaDraw = shuffle(personaDeck.cards.map((c) => c.id), rng);
   const personaDiscard: string[] = [];
@@ -186,8 +179,10 @@ export function getRanking(state: GameState): Player[] {
 export function selectCards(state: GameState, picks: string[]): GameState {
   if (state.phase !== 'selecting' || !state.round) return state;
   const r = state.round;
+  // Mãos são disjuntas (cada carta é comprada uma única vez do deck), então não há
+  // risco de dois pitchers escolherem a mesma carta — só validamos a mão do pitcher atual.
+  if (r.selIndex >= r.order.length) return state;
   const pitcherIndex = r.order[r.selIndex];
-  if (pitcherIndex === undefined) return state;
   if (picks.length !== state.config.cardsPerPitch) return state;
   if (new Set(picks).size !== picks.length) return state;
   const hand = state.players[pitcherIndex].hand;
