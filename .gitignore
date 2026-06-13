@@ -27,3 +27,8 @@ pnpm-debug.log*
 
 # test / coverage
 coverage/
+
+# tsc composite emit artifacts
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
