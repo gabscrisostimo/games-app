@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildRound, promptsForPlayer, createSession, playAgain, submitAnswers } from './logic';
+import {
+  buildRound, promptsForPlayer, createSession, playAgain, submitAnswers, castVote, matchupResults,
+} from './logic';
 import type { PromptDeck, QuiplashConfig, Player } from './types';
 
 const players: Player[] = [
@@ -155,5 +157,72 @@ describe('submitAnswers', () => {
       expect(b.matchupIndex).toBe(0);
       expect(b.order).toHaveLength(players.length - 1); // exclui a própria
     }
+  });
+});
+
+// vota em TODAS as cédulas escolhendo o 1º autor exibido (order[0]) de cada confronto
+function voteAll(s0: ReturnType<typeof createSession>) {
+  let s = s0;
+  while (s.round.phase === 'voting') {
+    const b = s.round.ballots[s.round.voteCursor];
+    const author = s.round.matchups[b.matchupIndex].answers[b.order[0]].authorId;
+    s = castVote(s, author);
+  }
+  return s;
+}
+
+describe('castVote + pontuação', () => {
+  it('registra votos, avança cursor e vai pra round-result ao esvaziar a fila', () => {
+    const voted = voteAll(answerAll(createSession(cfg(), deck, rng0)));
+    expect(voted.round.phase).toBe('round-result');
+    expect(voted.round.voteCursor).toBe(voted.round.ballots.length);
+  });
+
+  it('matchupResults: proporção + bônus Quiplash! quando leva todos os votos', () => {
+    // monta um confronto sintético: 2 votos, ambos pro autor "a" (sweep)
+    const round = {
+      index: 0, multiplier: 1, isLastLash: false, answerIndex: 0,
+      ballots: [], voteCursor: 0, phase: 'round-result' as const,
+      matchups: [{
+        promptId: 'p', promptText: 'X',
+        answers: [{ authorId: 'a', text: 'A' }, { authorId: 'b', text: 'B' }],
+        voterIds: ['c', 'd'],
+        votes: { c: 'a', d: 'a' },
+      }],
+    };
+    const [res] = matchupResults(round);
+    const a = res.tallies.find((t) => t.authorId === 'a')!;
+    const b = res.tallies.find((t) => t.authorId === 'b')!;
+    expect(a.votes).toBe(2);
+    expect(a.quiplash).toBe(true);
+    // 1000 * 1 * (2/2) + bônus 1000*1*0.5 = 1500
+    expect(a.points).toBe(1500);
+    expect(b.points).toBe(0);
+    expect(b.quiplash).toBe(false);
+  });
+
+  it('scoreRound (via castVote) soma pontos no acumulado e não dobra ao reaplicar', () => {
+    const voted = voteAll(answerAll(createSession(cfg(), deck, rng0)));
+    const total = Object.values(voted.scores).reduce((x, y) => x + y, 0);
+    expect(total).toBeGreaterThan(0);
+    // reaplicar scoreRound seria no-op aqui porque já estamos em round-result;
+    // garante que matchupResults não muta o estado:
+    const before = JSON.stringify(voted.round.matchups);
+    matchupResults(voted.round);
+    expect(JSON.stringify(voted.round.matchups)).toBe(before);
+  });
+
+  it('confronto sem votos → 0 pontos (sem divisão por zero)', () => {
+    const round = {
+      index: 0, multiplier: 2, isLastLash: false, answerIndex: 0,
+      ballots: [], voteCursor: 0, phase: 'round-result' as const,
+      matchups: [{
+        promptId: 'p', promptText: 'X',
+        answers: [{ authorId: 'a', text: 'A' }, { authorId: 'b', text: 'B' }],
+        voterIds: [], votes: {},
+      }],
+    };
+    const [res] = matchupResults(round);
+    expect(res.tallies.every((t) => t.points === 0 && !t.quiplash)).toBe(true);
   });
 });

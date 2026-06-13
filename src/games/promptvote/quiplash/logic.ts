@@ -1,5 +1,6 @@
 import type {
-  Ballot, Matchup, Player, PromptCard, PromptDeck, QuiplashConfig, RoundState, SessionState,
+  Ballot, Matchup, MatchupResult, Player, PromptCard, PromptDeck,
+  QuiplashConfig, RoundState, SessionState,
 } from './types';
 
 export const MAX_PER_MATCHUP = 1000;
@@ -138,6 +139,45 @@ export function submitAnswers(
   if (answerIndex >= state.config.players.length) {
     const ballots = buildBallots(round, state.config.players, rng);
     round = { ...round, ballots, voteCursor: 0, phase: 'voting' };
+  }
+  return { ...state, round };
+}
+
+export function matchupResults(round: RoundState): MatchupResult[] {
+  return round.matchups.map((m) => {
+    const total = Object.keys(m.votes).length;
+    const tallies = m.answers.map((a) => {
+      const votes = Object.values(m.votes).filter((id) => id === a.authorId).length;
+      let points = total > 0 ? Math.round(MAX_PER_MATCHUP * round.multiplier * votes / total) : 0;
+      const quiplash = total > 0 && m.answers.length >= 2 && votes === total;
+      if (quiplash) points += Math.round(MAX_PER_MATCHUP * round.multiplier * QUIPLASH_BONUS_FRAC);
+      return { authorId: a.authorId, text: a.text, votes, points, quiplash };
+    });
+    return { promptText: m.promptText, tallies };
+  });
+}
+
+/** Pura: soma os pontos da rodada em scores. Composta dentro de castVote. */
+export function scoreRound(state: SessionState): SessionState {
+  const scores = { ...state.scores };
+  for (const r of matchupResults(state.round)) {
+    for (const t of r.tallies) scores[t.authorId] = (scores[t.authorId] ?? 0) + t.points;
+  }
+  return { ...state, scores };
+}
+
+export function castVote(state: SessionState, authorId: string): SessionState {
+  if (state.round.phase !== 'voting') return state;
+  const { ballots, voteCursor, matchups } = state.round;
+  const ballot = ballots[voteCursor];
+  const newMatchups = matchups.map((m, i) =>
+    i === ballot.matchupIndex
+      ? { ...m, votes: { ...m.votes, [ballot.voterId]: authorId } }
+      : m);
+  const nextCursor = voteCursor + 1;
+  const round: RoundState = { ...state.round, matchups: newMatchups, voteCursor: nextCursor };
+  if (nextCursor >= ballots.length) {
+    return scoreRound({ ...state, round: { ...round, phase: 'round-result' } });
   }
   return { ...state, round };
 }
