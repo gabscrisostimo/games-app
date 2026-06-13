@@ -16,17 +16,26 @@ function shuffle<T>(arr: T[], rng: () => number): T[] {
   return a;
 }
 
-/** Sorteia `count` prompts evitando os já usados; reseta a memória se esgotar (borda). */
+/**
+ * Sorteia `count` prompts evitando os já usados em rodadas anteriores (`used`).
+ * Se a memória cross-rodada esgotar (borda: deck menor que o necessário), reseta só
+ * ela — nunca repete um prompt já sorteado NESTA mesma chamada (`picked`).
+ */
 function pickPrompts(
   deck: PromptDeck, count: number, used: string[], rng: () => number,
 ): { cards: PromptCard[]; used: string[] } {
   const cards: PromptCard[] = [];
+  const picked = new Set<string>(); // ids escolhidos nesta rodada — jamais repetir na mesma rodada
   let remaining = [...used];
   for (let k = 0; k < count; k++) {
-    let pool = deck.cards.filter((c) => !remaining.includes(c.id));
-    if (pool.length === 0) { remaining = []; pool = [...deck.cards]; }
+    let pool = deck.cards.filter((c) => !remaining.includes(c.id) && !picked.has(c.id));
+    if (pool.length === 0) {
+      remaining = [];
+      pool = deck.cards.filter((c) => !picked.has(c.id));
+    }
     const card = pool[Math.floor(rng() * pool.length)];
     cards.push(card);
+    picked.add(card.id);
     remaining.push(card.id);
   }
   return { cards, used: remaining };

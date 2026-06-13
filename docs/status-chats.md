@@ -94,7 +94,7 @@ Os chats compartilham o mesmo diretório de repositório, então cada um trabalh
     - Arquivo: `src/games/promptvote/quiplash/QuiplashApp.tsx`
     - Inclui banner de retomada de sessão (resume) via `localStorage`
   - Camadas implementadas: `types.ts`, `logic.ts` (pura, `rng` injetável), `reducer.ts`, `persistence.ts`, `playerStore.ts`, `ui.ts`, 5 screens (Config/Answering/Voting/RoundResult/FinalResult), `QuiplashSession.tsx`, `QuiplashApp.tsx`; deck PT-BR `src/data/promptvote/quiplash-padrao.json` (56 prompts) + loader `src/data/promptvote/index.ts`
-  - Suite: **115 testes passando (24 arquivos)** — 31 novos do Quiplash (8 arquivos). `tsc --noEmit` sem erros, build de produção OK.
+  - Suite: **116 testes passando (24 arquivos)** — 32 novos do Quiplash (8 arquivos). `tsc --noEmit` sem erros, build de produção OK.
 - Reusa **read-only** do shell: `ActionButton` (importa, não edita)
 - **Próximo passo para Chat A:** integrar `<QuiplashApp onHome={...} />` em `src/App.tsx` (registrar `View 'quiplash'`, mesmo padrão de `taboo`/`insider`). Estilos centralizados em `src/games/promptvote/quiplash/ui.ts` (design tokens do Chat A).
 - **Nota p/ Chat Backend:** Quiplash é a âncora de validação do netcode — `logic.ts`/`reducer.ts` são puros e consumíveis por contrato (todas as funções de `logic.ts` recebem `rng` injetável; o reducer injeta o deck).

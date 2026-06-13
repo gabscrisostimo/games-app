@@ -64,6 +64,23 @@ describe('buildRound — duelo (anel)', () => {
     const ids2 = r2.round.matchups.map((m) => m.promptId);
     expect(ids2.some((id) => ids.includes(id))).toBe(false);
   });
+
+  it('não repete prompt na mesma rodada quando o deck esgota a memória cross-rodada', () => {
+    const smallDeck: PromptDeck = {
+      id: 's', name: 'Small',
+      cards: Array.from({ length: 5 }, (_, i) => ({ id: `s${i}`, text: `S${i}` })),
+    };
+    // 4 jogadores (duelo → 4 prompts), mas 3 ids já usados → só 2 frescos: força o reset no meio.
+    const used = ['s0', 's1', 's2'];
+    // rng: na 3ª chamada (pós-reset) aponta pra um índice que, no código bugado,
+    // re-sortearia um prompt já escolhido nesta rodada (s3).
+    const seq = [0, 0, 0.7, 0];
+    let i = 0;
+    const rng = () => seq[i++];
+    const { round } = buildRound(cfg(), 0, smallDeck, used, rng);
+    const ids = round.matchups.map((m) => m.promptId);
+    expect(new Set(ids).size).toBe(ids.length); // nenhum prompt repetido na rodada
+  });
 });
 
 describe('buildRound — grupo', () => {
@@ -206,8 +223,9 @@ describe('castVote + pontuação', () => {
     const voted = voteAll(answerAll(createSession(cfg(), deck, rng0)));
     const total = Object.values(voted.scores).reduce((x, y) => x + y, 0);
     expect(total).toBeGreaterThan(0);
-    // reaplicar scoreRound seria no-op aqui porque já estamos em round-result;
-    // garante que matchupResults não muta o estado:
+    // scoreRound não tem guard de fase — a proteção contra dobrar pontos é castVote
+    // retornar cedo quando phase !== 'voting'. Aqui só garantimos que matchupResults
+    // (leitura pura) não muta o estado:
     const before = JSON.stringify(voted.round.matchups);
     matchupResults(voted.round);
     expect(JSON.stringify(voted.round.matchups)).toBe(before);
