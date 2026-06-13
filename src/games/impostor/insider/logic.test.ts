@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { nextMaster, createSession, selectMaster, roleOf } from './logic';
-import type { InsiderConfig, MasterMode, Player } from './types';
+import { nextMaster, createSession, selectMaster, roleOf, dealRoles } from './logic';
+import type { InsiderConfig, MasterMode, Player, WordDeck } from './types';
 
 const players: Player[] = [
   { id: 'a', name: 'Ana' },
@@ -88,5 +88,38 @@ describe('roleOf', () => {
     expect(roleOf(withInsider, 'a')).toBe('master');
     expect(roleOf(withInsider, 'b')).toBe('insider');
     expect(roleOf(withInsider, 'c')).toBe('commoner');
+  });
+});
+
+const deck: WordDeck = {
+  id: 'd1',
+  name: 'Teste',
+  cards: [
+    { id: 'w1', word: 'GIRAFA' },
+    { id: 'w2', word: 'PRAIA' },
+    { id: 'w3', word: 'VIOLÃO' },
+  ],
+};
+
+describe('dealRoles', () => {
+  it('sorteia palavra e insider (não-Mestre) e vai pra role-reveal', () => {
+    const s = createSession(baseConfig('rotate'), rng0); // masterId 'a', master-announce
+    const s2 = dealRoles(s, deck, rng0);
+    expect(s2.round.phase).toBe('role-reveal');
+    expect(s2.round.word).toBe('GIRAFA'); // rng0 → carta 0
+    expect(s2.round.insiderId).toBe('b'); // primeiro não-Mestre
+    expect(s2.round.revealIndex).toBe(0);
+  });
+
+  it('o Insider nunca é o Mestre, mesmo com rng no extremo', () => {
+    const s = createSession(baseConfig('rotate'), rng0); // masterId 'a'
+    const s2 = dealRoles(s, deck, () => 0.999);
+    expect(s2.round.insiderId).not.toBe(s2.round.masterId);
+    expect(['b', 'c', 'd', 'e']).toContain(s2.round.insiderId);
+  });
+
+  it('é no-op fora da fase master-announce', () => {
+    const s = createSession(baseConfig('choose'), rng0); // master-select
+    expect(dealRoles(s, deck, rng0)).toBe(s);
   });
 });

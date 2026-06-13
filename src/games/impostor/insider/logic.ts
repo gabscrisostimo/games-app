@@ -1,4 +1,4 @@
-import type { InsiderConfig, Player, Role, SessionState } from './types';
+import type { InsiderConfig, Player, Role, SessionState, WordDeck } from './types';
 
 export function nextMaster(
   rotation: string[],
@@ -57,4 +57,19 @@ export function roleOf(state: SessionState, playerId: string): Role {
   if (playerId === state.round.masterId) return 'master';
   if (playerId === state.round.insiderId) return 'insider';
   return 'commoner';
+}
+
+export function dealRoles(
+  state: SessionState,
+  deck: WordDeck,
+  rng: () => number = Math.random,
+): SessionState {
+  if (state.round.phase !== 'master-announce') return state;
+  const candidates = state.config.players.filter((p) => p.id !== state.round.masterId);
+  const insiderId = candidates[Math.floor(rng() * candidates.length)].id;
+  const word = deck.cards[Math.floor(rng() * deck.cards.length)].word;
+  return {
+    ...state,
+    round: { ...state.round, word, insiderId, revealIndex: 0, phase: 'role-reveal' },
+  };
 }
