@@ -73,7 +73,7 @@ gh repo create games-app --public --source=. --remote=origin --push
 ```
 
 Isso faz tudo de uma vez:
-- Cria `github.com/gabrielcrisostimo/games-app`
+- Cria `github.com/gabscrisostimo/games-app`
 - Configura `origin` no git local
 - Faz push de todos os 19 commits
 

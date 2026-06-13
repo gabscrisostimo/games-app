@@ -10,7 +10,7 @@ Este é o **games-app**, projeto pessoal do Gabs — app PWA de jogos de festa, 
 
 ## Contexto do projeto
 
-**Repo:** `github.com/gabrielcrisostimo/games-app` — clone em `/home/gabs/personal/games-app`
+**Repo:** `github.com/gabscrisostimo/games-app` — clone em `/home/gabs/personal/games-app`
 **Produção:** `https://games-app-bice.vercel.app` (Vercel, deploy automático no push)
 **Stack:** Vite + React + TypeScript + Tailwind v4 + Vitest + vite-plugin-pwa
 
