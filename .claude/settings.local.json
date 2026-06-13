@@ -17,7 +17,18 @@
       "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(f'id: {d[\\\\\"id\\\\\"]}, name: {d[\\\\\"name\\\\\"]}, cards: {len\\(d[\\\\\"cards\\\\\"]\\)}'\\)\")",
       "Bash(awk '{print $1}')",
       "Bash(ip addr *)",
-      "Bash(awk '{print $2}')"
+      "Bash(awk '{print $2}')",
+      "Bash(cp docs/superpowers/specs/2026-06-13-insider-game-design.md /tmp/insider-spec.md)",
+      "Bash(cp docs/superpowers/plans/2026-06-13-insider.md /tmp/insider-plan.md)",
+      "Read(//tmp/**)",
+      "Bash(cp /tmp/insider-spec.md docs/superpowers/specs/2026-06-13-insider-game-design.md)",
+      "Bash(cp /tmp/insider-plan.md docs/superpowers/plans/2026-06-13-insider.md)",
+      "Bash(mkdir -p /home/gabs/personal/games-app/.claude/worktrees/feat+trivia-engine/src/games/trivia/witswagers/screens /home/gabs/personal/games-app/.claude/worktrees/feat+trivia-engine/src/data/trivia)",
+      "Bash(touch /home/gabs/personal/games-app/.claude/worktrees/feat+trivia-engine/src/games/trivia/witswagers/screens/.gitkeep /home/gabs/personal/games-app/.claude/worktrees/feat+trivia-engine/src/data/trivia/.gitkeep)",
+      "Bash(mkdir -p /home/gabs/personal/games-app/.claude/worktrees/feat+wordplay-engine/src/games/wordplay/stop/screens /home/gabs/personal/games-app/.claude/worktrees/feat+wordplay-engine/src/data/wordplay)",
+      "Bash(touch /home/gabs/personal/games-app/.claude/worktrees/feat+wordplay-engine/src/games/wordplay/stop/screens/.gitkeep /home/gabs/personal/games-app/.claude/worktrees/feat+wordplay-engine/src/data/wordplay/.gitkeep)",
+      "Bash(mkdir -p /home/gabs/personal/games-app/.claude/worktrees/feat+drawing-engine/src/games/drawing/fakeartist/screens)",
+      "Bash(touch /home/gabs/personal/games-app/.claude/worktrees/feat+drawing-engine/src/games/drawing/fakeartist/screens/.gitkeep)"
     ]
   }
 }
