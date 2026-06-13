@@ -197,3 +197,20 @@ describe('fim de turno e de jogo', () => {
     expect(isGameOver({ ...s, turnsTaken: 0 })).toBe(false); // jogo não começou
   });
 });
+
+describe('phase guards', () => {
+  it('applyAction é no-op fora de in-turn', () => {
+    const s = endTurn(inTurn()); // phase = 'turn-summary', turn still not null
+    const before = s;
+    const after = applyAction(s, 'correct', () => 0);
+    expect(after).toBe(before); // same reference = no-op
+    expect(after.teams[0].score).toBe(0);
+  });
+
+  it('startTurn é no-op fora de pre-turn', () => {
+    const s = inTurn(); // already in-turn
+    const before = s;
+    const after = startTurn(s, 9_999_999, () => 0);
+    expect(after).toBe(before);
+  });
+});

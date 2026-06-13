@@ -57,6 +57,7 @@ export function startTurn(
   now: number,
   rng: () => number = Math.random,
 ): GameState {
+  if (state.phase !== 'pre-turn') return state;
   const { cardId, drawPile, discardPile } = drawNext(state.drawPile, state.discardPile, rng);
   const turn: TurnState = {
     endsAt: now + state.config.turnSeconds * 1000,
@@ -85,6 +86,7 @@ export function applyAction(
   outcome: Outcome,
   rng: () => number = Math.random,
 ): GameState {
+  if (state.phase !== 'in-turn') return state;
   if (!state.turn || state.turn.currentCardId === null) return state;
   if (outcome === 'skip' && !canSkip(state)) return state;
 
