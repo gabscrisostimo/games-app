@@ -17,7 +17,11 @@
       "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(f'id: {d[\\\\\"id\\\\\"]}, name: {d[\\\\\"name\\\\\"]}, cards: {len\\(d[\\\\\"cards\\\\\"]\\)}'\\)\")",
       "Bash(awk '{print $1}')",
       "Bash(ip addr *)",
-      "Bash(awk '{print $2}')"
+      "Bash(awk '{print $2}')",
+      "Bash(bash scripts/start-server.sh --project-dir /home/gabs/personal/games-app)",
+      "Bash(bash *)",
+      "Bash(xargs cat)",
+      "Bash(npm test *)"
     ]
   }
 }
