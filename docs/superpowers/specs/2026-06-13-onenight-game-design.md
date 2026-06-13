@@ -35,6 +35,13 @@ modelo do Taboo/Insider. Multi-device é fase futura, fora de escopo.
 8. **Voto:** regra canônica de "ninguém morre" (precisa de 2+ votos pra morrer) incluída.
 9. **Discussão:** cronômetro configurável (presets 3/5/8 min), com "votar agora" pra pular.
 10. **Player count:** 3–10 (cartas em jogo 6–13).
+11. **Ações noturnas opcionais** onde canônico (Vidente, Ladrão, Encrenqueiro, Lobo-solo podem
+    optar por **não agir** — fingir/blefar é parte do jogo); **Bêbado é obrigatório** (sempre troca
+    com o centro, só escolhe qual carta). Papéis de informação só olham.
+12. **Tanner bloqueia o time-lobo:** se o Tanner morre e nenhum lobo morre, **só o Tanner vence**
+    (regra oficial — a morte do Tanner "rouba" a vitória dos lobos).
+13. **Bag recomendado padrão:** mínimo canônico (2 Lobos + Vidente + Ladrão + Encrenqueiro +
+    Aldeões até fechar N+3); host adiciona os avançados se quiser.
 
 ---
 
@@ -100,6 +107,9 @@ o que viu (que é a informação correta).
   - `{ kind:'drunk', actor, center }`
   - `{ kind:'lone-wolf', actor, center }`
   - (Lobos em grupo, Capanga, Maçom, Aldeão, Caçador, Tanner, Insônia não geram `NightAction`.)
+  - **Opcional:** Vidente, Ladrão, Encrenqueiro e Lobo-solo podem optar por **não agir** →
+    nenhuma `NightAction` é gravada (no `resolveNight` = nenhuma troca; `NightView = null`). O
+    **Bêbado é obrigatório** (sempre gera a troca com o centro).
 - **`NightView`** (o que cada jogador aprendeu — derivado do deal original, exceto Insônia):
   parceiros vistos / carta(s) vista(s) / "você agora é X" (Ladrão) / `null` (sem info). Insônia é
   preenchida no amanhecer com `finalRoles[i]`.
@@ -168,25 +178,25 @@ andamento.
 - **Caçador:** se um morto tem papel FINAL Caçador, o alvo do voto dele também morre. Resolvido em
   ponto-fixo (cadeia Caçador→Caçador), sem loop infinito.
 
-**Vencedores** (sobre papéis FINAIS e o conjunto de mortes `D`):
+**Vencedores** (sobre papéis FINAIS e o conjunto de mortes `D`). A linha do **Tanner** é
+independente (soma com qualquer outra); o resultado do *time* sai das demais linhas:
 
 | Situação | Quem vence |
 |---|---|
+| Qualquer **Tanner** (final) morre | esse **Tanner** vence — e **bloqueia a vitória do time-lobo** (ver abaixo) |
 | Algum **Lobo** (final) morre | **Aldeia** vence |
-| Nenhum lobo morre **e há lobo em jogo** | **Time Lobo** (lobos + Capanga) vence |
+| Nenhum lobo morre, **há lobo em jogo** e **nenhum Tanner morreu** | **Time Lobo** (lobos + Capanga) vence |
+| Nenhum lobo morre, há lobo em jogo, **mas um Tanner morreu** | só o(s) **Tanner**; Aldeia e Lobos perdem |
 | **Sem lobos em jogo** (todos no centro) **e ninguém morre** | **Aldeia** vence |
 | Sem lobos em jogo **e alguém morre** | Aldeia perde; **Capanga** vence se morreu um não-Capanga; se só o Capanga morreu → Capanga perde |
-| Qualquer **Tanner** (final) morre | esse **Tanner** vence (independente — soma com o resto) |
 
 - O time Aldeia = todos os papéis de `team: village` (Aldeão, Vidente, Ladrão, Encrenqueiro, Maçom,
   Insônia, Bêbado, Caçador). Quando "Aldeia vence", todos eles ganham +1.
-- Tanner é seu próprio "time": só vence se morrer; não impede os outros (ex.: lobo morre + tanner
-  morre → Aldeia vence E aquele Tanner vence).
-
-> 🚩 **Variantes conhecidas de regra** (a confirmar / podem virar config futura): a interação
-> exata Tanner × Time-Lobo (se "só o Tanner morre e há lobo vivo", o time-lobo vence porque nenhum
-> lobo morreu — encodado acima), e a regra do Capanga quando não há lobos em jogo. Encodei a versão
-> canônica mais difundida; sinalizado aqui pra revisão.
+- **Tanner** é seu próprio "time": só vence se morrer. Sua morte **impede o time-lobo de vencer**
+  (regra oficial): Tanner morre + nenhum lobo morre → só o Tanner ganha. Mas Tanner morre + um lobo
+  também morre → Aldeia vence E o Tanner vence (a morte do lobo dá a vitória à Aldeia normalmente).
+- Regras travadas no brainstorming (não são mais variantes em aberto): Tanner-bloqueia-lobos,
+  Capanga-sem-lobos, no-kill com 2+ votos.
 
 ---
 
@@ -205,11 +215,13 @@ Lógica pura primeiro (sem React), rng injetável:
 - `dealRoles` — tamanho `N+3`, conteúdo = bag, determinístico com rng fake.
 - `resolveNight` — **casos de ordem**: Ladrão+Encrenqueiro (o Ladrão termina diferente do que viu);
   lobo-solo (espia centro, sem alterar); Bêbado (troca com centro às cegas); Insônia (carta final
-  reflete trocas); múltiplas trocas encadeadas.
+  reflete trocas); múltiplas trocas encadeadas; **ação pulada** (Vidente/Ladrão/Encrenqueiro que
+  optam por não agir → nenhuma troca, view nula).
 - `NightView` — cada `ActionKind` produz a info correta a partir do deal original.
 - Voto/morte — `maxVotes < 2` → ninguém morre; empate no topo; cadeia do Caçador.
-- **Matriz de vitória** — uma asserção por linha da tabela (incl. Tanner morto, Capanga sem lobos,
-  sem-lobos-ninguém-morre).
+- **Matriz de vitória** — uma asserção por linha da tabela: lobo morto→Aldeia; sem lobo morto+lobo
+  em jogo→Lobos; **Tanner morto bloqueia os lobos** (só Tanner); Tanner+lobo mortos→Aldeia+Tanner;
+  Capanga sem lobos em jogo; sem-lobos-ninguém-morre→Aldeia.
 - Reducer — cada action transiciona a fase corretamente.
 - Telas-chave (RTL) — contador do bag bloqueia start; gravação de ação no night pass; voto não
   permite votar em si; ResultScreen mostra o vencedor certo.
