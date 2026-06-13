@@ -155,4 +155,20 @@ describe('promptvoteDemo — deadline/onTimeout', () => {
     expect(s.phase).toBe('voting');
     expect(s.options).toHaveLength(1); // só quem respondeu vira option
   });
+
+  it('onTimeout em answering SEM nenhuma resposta vai direto pro reveal (não trava em voting vazio)', () => {
+    let s = G2.createInitial({
+      config: { promptSeconds: 75, voteSeconds: 60 },
+      players: [
+        { id: 'a', nickname: 'Ana' },
+        { id: 'b', nickname: 'Bia' },
+        { id: 'c', nickname: 'Cau' },
+      ],
+      now: 1000,
+      rng: mulberry32(8),
+    });
+    s = G2.onTimeout!(s, { now: 99999, rng: mulberry32(8) });
+    expect(s.phase).toBe('reveal');
+    expect(s.options).toHaveLength(0);
+  });
 });

@@ -28,4 +28,12 @@ describe('reduceClientState', () => {
     const s = reduceClientState(initialClientState, { t: 'error', message: 'Ação inválida.' });
     expect(s.error).toBe('Ação inválida.');
   });
+
+  it('limpa erro ao receber um room snapshot novo (erro de lobby não fica preso)', () => {
+    let s = reduceClientState(initialClientState, { t: 'error', message: 'Só o host pode começar.' });
+    expect(s.error).toBe('Só o host pode começar.');
+    s = reduceClientState(s, { t: 'room', room });
+    expect(s.error).toBeNull();
+    expect(s.room).toEqual(room);
+  });
 });

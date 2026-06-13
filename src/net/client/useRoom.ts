@@ -20,7 +20,7 @@ export const initialClientState: ClientState = {
 export function reduceClientState(state: ClientState, msg: ServerMsg): ClientState {
   switch (msg.t) {
     case 'room':
-      return { ...state, room: msg.room };
+      return { ...state, room: msg.room, error: null };
     case 'projection':
       return { ...state, projection: msg.projection, error: null };
     case 'error':

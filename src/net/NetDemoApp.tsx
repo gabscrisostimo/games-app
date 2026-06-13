@@ -20,7 +20,9 @@ function Connected({ code, nickname }: { code: string; nickname: string }) {
     return <p className="p-6 text-center text-muted">Conectando à sala {code}…</p>;
   }
 
-  const banner = state.error ? (
+  const banner = !state.connected ? (
+    <p className="bg-bad-soft p-2 text-center text-bad-text">Reconectando…</p>
+  ) : state.error ? (
     <p className="bg-bad-soft p-2 text-center text-bad-text">{state.error}</p>
   ) : null;
 

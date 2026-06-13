@@ -99,8 +99,11 @@ describe('roomEngine — action routing + secrecy', () => {
 
   it('timeout avança a fase e re-projeta pra todos', () => {
     let s = startGame();
+    // alguns respondem antes do timer estourar (senão não há o que votar)
+    s = reduceRoom(s, { kind: 'action', playerId: 'a', action: { type: 'SUBMIT_ANSWER', text: 'ra' } }, deps(2100)).state;
+    s = reduceRoom(s, { kind: 'action', playerId: 'b', action: { type: 'SUBMIT_ANSWER', text: 'rb' } }, deps(2200)).state;
     const r = reduceRoom(s, { kind: 'timeout' }, deps(999999));
-    // demo: answering -> voting
+    // demo: answering -> voting (com as respostas que chegaram)
     expect((r.state.game as DemoState).phase).toBe('voting');
     for (const id of ['a', 'b', 'c']) {
       expect(r.outbound.some((o) => o.to === id && o.msg.t === 'projection')).toBe(true);

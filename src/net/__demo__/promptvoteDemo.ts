@@ -71,7 +71,11 @@ function toVoting(s: DemoState, now: number, rng: () => number): DemoState {
     authorId: e.authorId,
     text: e.text,
   }));
-  return { ...s, phase: 'voting', options, endsAt: now + s.config.voteSeconds * 1000 };
+  const voting: DemoState = { ...s, phase: 'voting', options, endsAt: now + s.config.voteSeconds * 1000 };
+  // timeout do answering sem nenhuma resposta → não há o que votar; encerra direto
+  // (evita ficar preso numa fase de voto vazia até o deadline de voto expirar)
+  if (entries.length === 0) return toReveal(voting);
+  return voting;
 }
 
 function toReveal(s: DemoState): DemoState {
