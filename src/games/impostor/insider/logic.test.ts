@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import {
   nextMaster, createSession, selectMaster, roleOf, dealRoles,
-  advanceReveal, startGuessing,
+  advanceReveal, startGuessing, markGuessed, timeUp, accuse,
 } from './logic';
-import type { InsiderConfig, MasterMode, Player, WordDeck } from './types';
+import type { Accusation, InsiderConfig, MasterMode, Player, WordDeck } from './types';
 
 const players: Player[] = [
   { id: 'a', name: 'Ana' },
@@ -155,5 +155,49 @@ describe('startGuessing', () => {
   it('é no-op fora de guessing', () => {
     const dealt = dealRoles(createSession(baseConfig('rotate'), rng0), deck, rng0); // role-reveal
     expect(startGuessing(dealt, 1000)).toBe(dealt);
+  });
+});
+
+function guessingState() {
+  const dealt = dealRoles(createSession(baseConfig('rotate'), rng0), deck, rng0); // master 'a', insider 'b'
+  let s = dealt;
+  for (let i = 0; i < 5; i++) s = advanceReveal(s); // → guessing
+  return startGuessing(s, 1000);
+}
+
+describe('markGuessed', () => {
+  it('vai de guessing para insider-hunt', () => {
+    const s = markGuessed(guessingState());
+    expect(s.round.phase).toBe('insider-hunt');
+  });
+});
+
+describe('timeUp', () => {
+  it('encerra como not-guessed e pula a caça', () => {
+    const s = timeUp(guessingState());
+    expect(s.round.phase).toBe('result');
+    expect(s.round.outcome).toBe('not-guessed');
+    expect(s.round.accusation).toBeNull();
+  });
+});
+
+describe('accuse', () => {
+  it('acertar o Insider → insider-caught', () => {
+    const hunt = markGuessed(guessingState()); // insider 'b'
+    const s = accuse(hunt, { kind: 'player', id: 'b' });
+    expect(s.round.outcome).toBe('insider-caught');
+    expect(s.round.phase).toBe('result');
+  });
+  it('acusar outro jogador → insider-escaped', () => {
+    const hunt = markGuessed(guessingState());
+    expect(accuse(hunt, { kind: 'player', id: 'c' }).round.outcome).toBe('insider-escaped');
+  });
+  it('acusar o Mestre → insider-escaped', () => {
+    const hunt = markGuessed(guessingState());
+    expect(accuse(hunt, { kind: 'player', id: 'a' }).round.outcome).toBe('insider-escaped');
+  });
+  it('"Ninguém" → insider-escaped', () => {
+    const hunt = markGuessed(guessingState());
+    expect(accuse(hunt, { kind: 'nobody' }).round.outcome).toBe('insider-escaped');
   });
 });

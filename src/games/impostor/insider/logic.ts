@@ -1,4 +1,4 @@
-import type { InsiderConfig, Player, Role, SessionState, WordDeck } from './types';
+import type { Accusation, InsiderConfig, Outcome, Player, Role, SessionState, WordDeck } from './types';
 
 export function nextMaster(
   rotation: string[],
@@ -92,4 +92,21 @@ export function startGuessing(state: SessionState, now: number): SessionState {
     ...state,
     round: { ...state.round, endsAt: now + state.config.guessSeconds * 1000 },
   };
+}
+
+export function markGuessed(state: SessionState): SessionState {
+  if (state.round.phase !== 'guessing') return state;
+  return { ...state, round: { ...state.round, phase: 'insider-hunt' } };
+}
+
+export function timeUp(state: SessionState): SessionState {
+  if (state.round.phase !== 'guessing') return state;
+  return { ...state, round: { ...state.round, phase: 'result', outcome: 'not-guessed' } };
+}
+
+export function accuse(state: SessionState, accusation: Accusation): SessionState {
+  if (state.round.phase !== 'insider-hunt') return state;
+  const caught = accusation.kind === 'player' && accusation.id === state.round.insiderId;
+  const outcome: Outcome = caught ? 'insider-caught' : 'insider-escaped';
+  return { ...state, round: { ...state.round, accusation, outcome, phase: 'result' } };
 }
