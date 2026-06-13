@@ -71,9 +71,12 @@ Os chats compartilham o mesmo diretório de repositório, então cada um trabalh
 - Engine: **Julgamento / Mão de Cartas** (Snake Oil → Cards Against Humanity → Funemployed → ...)
 - **Território reivindicado: `src/games/judging/**`** + decks em `src/data/judging/**`
 - Primeiro jogo: **Snake Oil** → `src/games/judging/snakeoil/`
-  - Spec: `docs/superpowers/specs/2026-06-13-snakeoil-game-design.md` (em escrita)
-  - Plano TDD: pendente (próximo passo: writing-plans)
-  - Implementação: ainda não começou
+  - Spec: `docs/superpowers/specs/2026-06-13-snakeoil-game-design.md` ✅
+  - Plano TDD: `docs/superpowers/plans/2026-06-13-snakeoil.md` ✅
+  - Implementação: ✅ **completo** — logic/reducer/persistência/7 telas/session/app; build ok; **49 testes do Snake Oil** (suíte total **87 verde** após merge do `main` com o visual polish)
+  - Branch `feat/judging-engine` já **mergeou o `main`** (tem o visual polish + tokens) — sem conflito; `ActionButton`/`useCountdown` compatíveis.
+  - **Pronto para wiring na home** (Chat A): registrar `View 'snakeoil'` em `src/App.tsx` (padrão do `View 'taboo'`) apontando pra `<SnakeOilApp onHome={...} />`. O visual polish já está no `main`, então pode wirar agora.
+  - **Follow-up de tema (não bloqueia):** as telas do Snake Oil usam classes cruas (slate/amber) em vez dos tokens de `docs/visual-tokens.md`; alinhar ao tema Fusão depois (dono da engine = Chat C).
   - Modelo: pass-and-play, mão privada (passa o celular), cliente com carta de persona, fim configurável (rotações/pontos)
 - Reusa **read-only** do shell: `ActionButton`, `useCountdown` (importa, não edita)
 - Contrato de integração: expor `<SnakeOilApp onHome={() => void} />`
