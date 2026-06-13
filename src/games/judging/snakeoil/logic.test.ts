@@ -1,6 +1,6 @@
 // src/games/judging/snakeoil/logic.test.ts
 import { describe, it, expect } from 'vitest';
-import { shuffle, drawWords, drawPersona, createGame, startRound } from './logic';
+import { shuffle, drawWords, drawPersona, createGame, startRound, selectCards } from './logic';
 import type { MatchConfig, WordDeck, PersonaDeck } from './types';
 
 // rng determinístico: sempre 0 → Math.floor(0 * (i+1)) = 0
@@ -103,5 +103,40 @@ describe('startRound', () => {
   it('é no-op fora de pre-round', () => {
     const g = { ...createGame(config, wordDeck, personaDeck, () => 0), phase: 'judging' as const };
     expect(startRound(g)).toBe(g);
+  });
+});
+
+describe('selectCards', () => {
+  function selecting() {
+    const g = startRound(createGame(config, wordDeck, personaDeck, () => 0));
+    return g; // phase 'selecting', order [1,2], selIndex 0
+  }
+  it('grava picks do pitcher atual e avança selIndex', () => {
+    const g = selecting();
+    const pitcher = g.round!.order[0]; // índice 1
+    const picks = g.players[pitcher].hand.slice(0, 2);
+    const g2 = selectCards(g, picks);
+    expect(g2.round!.picks[pitcher]).toEqual(picks);
+    expect(g2.round!.selIndex).toBe(1);
+    expect(g2.phase).toBe('selecting');
+  });
+  it('vai para pitching depois do último pitcher', () => {
+    let g = selecting();
+    g = selectCards(g, g.players[g.round!.order[0]].hand.slice(0, 2));
+    g = selectCards(g, g.players[g.round!.order[1]].hand.slice(0, 2));
+    expect(g.phase).toBe('pitching');
+    expect(g.round!.selIndex).toBe(2);
+  });
+  it('rejeita contagem errada de cartas (no-op)', () => {
+    const g = selecting();
+    expect(selectCards(g, [g.players[g.round!.order[0]].hand[0]])).toBe(g);
+  });
+  it('rejeita cartas fora da mão do pitcher (no-op)', () => {
+    const g = selecting();
+    expect(selectCards(g, ['x', 'y'])).toBe(g);
+  });
+  it('é no-op fora de selecting', () => {
+    const g = createGame(config, wordDeck, personaDeck, () => 0); // pre-round
+    expect(selectCards(g, [])).toBe(g);
   });
 });

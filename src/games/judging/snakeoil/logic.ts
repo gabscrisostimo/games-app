@@ -101,3 +101,22 @@ export function startRound(state: GameState): GameState {
   if (state.phase !== 'pre-round' || !state.round) return state;
   return { ...state, phase: 'selecting' };
 }
+
+export function selectCards(state: GameState, picks: string[]): GameState {
+  if (state.phase !== 'selecting' || !state.round) return state;
+  const r = state.round;
+  const pitcherIndex = r.order[r.selIndex];
+  if (pitcherIndex === undefined) return state;
+  if (picks.length !== state.config.cardsPerPitch) return state;
+  if (new Set(picks).size !== picks.length) return state;
+  const hand = state.players[pitcherIndex].hand;
+  if (!picks.every((id) => hand.includes(id))) return state;
+
+  const nextSel = r.selIndex + 1;
+  const done = nextSel >= r.order.length;
+  return {
+    ...state,
+    round: { ...r, picks: { ...r.picks, [pitcherIndex]: picks }, selIndex: nextSel },
+    phase: done ? 'pitching' : 'selecting',
+  };
+}
