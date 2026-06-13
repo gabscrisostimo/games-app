@@ -46,7 +46,7 @@ Os chats compartilham o mesmo diretório de repositório, então cada um trabalh
 **Arquivos que o Chat A é dono — NÃO TOCAR no outro chat:**
 `src/App.tsx`, `src/shell/**`, `src/index.css`, `index.html`, `vite.config.ts`, `public/**`, `src/games/taboo/**`
 
-## Chat B — Engine Impostor/Assimetria (CONCLUÍDO)
+## Chat B — Engine Impostor/Assimetria ✅ MERGEADO NO MAIN
 
 - Roadmap de engines: `docs/ordem-de-construcao.md`
 - Engine: **Impostor/Assimetria** (Insider → Chameleon → Spyfall → Deception)
@@ -65,15 +65,18 @@ Os chats compartilham o mesmo diretório de repositório, então cada um trabalh
 - **NÃO TOCA** em `src/App.tsx` nem `src/shell/` — integração na home fica com Chat A
 - Estilos Tailwind centralizados em `src/games/impostor/insider/ui.ts` — adotar os design tokens do Chat A é edição de arquivo único.
 
-## Chat C — Engine Julgamento/Cartas (em andamento)
+## Chat C — Engine Julgamento/Cartas ✅ MERGEADO NO MAIN
 
 - Roadmap de engines: `docs/ordem-de-construcao.md` (Engine 2)
 - Engine: **Julgamento / Mão de Cartas** (Snake Oil → Cards Against Humanity → Funemployed → ...)
 - **Território reivindicado: `src/games/judging/**`** + decks em `src/data/judging/**`
 - Primeiro jogo: **Snake Oil** → `src/games/judging/snakeoil/`
-  - Spec: `docs/superpowers/specs/2026-06-13-snakeoil-game-design.md` (em escrita)
-  - Plano TDD: pendente (próximo passo: writing-plans)
-  - Implementação: ainda não começou
+  - Spec: `docs/superpowers/specs/2026-06-13-snakeoil-game-design.md` ✅
+  - Plano TDD: `docs/superpowers/plans/2026-06-13-snakeoil.md` ✅
+  - Implementação: ✅ **completo** — logic/reducer/persistência/7 telas/session/app; build ok; **49 testes do Snake Oil** (suíte total **87 verde** após merge do `main` com o visual polish)
+  - Branch `feat/judging-engine` já **mergeou o `main`** (tem o visual polish + tokens) — sem conflito; `ActionButton`/`useCountdown` compatíveis.
+  - **Pronto para wiring na home** (Chat A): registrar `View 'snakeoil'` em `src/App.tsx` (padrão do `View 'taboo'`) apontando pra `<SnakeOilApp onHome={...} />`. O visual polish já está no `main`, então pode wirar agora.
+  - **Follow-up de tema (não bloqueia):** as telas do Snake Oil usam classes cruas (slate/amber) em vez dos tokens de `docs/visual-tokens.md`; alinhar ao tema Fusão depois (dono da engine = Chat C).
   - Modelo: pass-and-play, mão privada (passa o celular), cliente com carta de persona, fim configurável (rotações/pontos)
 - Reusa **read-only** do shell: `ActionButton`, `useCountdown` (importa, não edita)
 - Contrato de integração: expor `<SnakeOilApp onHome={() => void} />`
@@ -130,5 +133,15 @@ Os chats compartilham o mesmo diretório de repositório, então cada um trabalh
 
 ## Pendências pós-merge (não esquecer)
 
-- **Untrackar `.claude/settings.local.json`** (mover pra `.gitignore`). É arquivo de permissões **por-máquina**; nasceu versionado por acidente e gera conflito de merge recorrente em todos os chats. **Fazer só DEPOIS que B e C mergearem** suas engines no `main` — assim não há branch divergindo no arquivo e o untrack sai limpo (`git rm --cached .claude/settings.local.json` + commit; o arquivo permanece no disco de cada worktree). Se feito antes, cada chat pega um conflito "modify/delete" trivial no merge. (Anotado por Chat A, 2026-06-13.)
-- **Integração na home (`App.tsx`)**: adicionar o card de cada engine nova quando B/C sinalizarem "pronto". É território do Chat A; coordenar na hora.
+> Atualizado 2026-06-13 após merges de B (Insider) e C (Snake Oil) + wiring na home.
+
+### ✅ Concluídas
+- **Untrackar `.claude/settings.local.json`** — feito (`git rm --cached` + já coberto por `*.local` no `.gitignore`, commit `573cb8d`).
+- **Wiring na home** — Insider e Snake Oil adicionados em `src/App.tsx` (commit `573cb8d`).
+
+### Pendentes (opcionais / sem urgência)
+
+- **Branch órfão `origin/feat/visual-polish` no GitHub** — ainda existe remotamente. Limpar quando conveniente: `git push origin --delete feat/visual-polish`.
+- **Scoreboard não é game-agnostic** — `src/shell/Scoreboard.tsx` importa `TeamState` de `games/taboo/types`. Engine que precisar de placar deve primeiro generalizar o tipo para o shell. Não bloqueia nenhum jogo atual. Tarefa do Chat A quando surgir a demanda.
+- **Telas do Snake Oil usam classes cruas** (slate/amber) em vez dos tokens Fusão de `docs/visual-tokens.md`. Realinhar ao tema depois — território do Chat C.
+- **Wiring de engines futuras** — cada nova engine que mergear no `main` deve ser adicionada como card em `src/App.tsx`. Hoje o dono é quem fizer o merge (Chat A fechou, qualquer chat pode fazer o wiring da própria engine).
