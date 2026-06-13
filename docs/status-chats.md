@@ -62,8 +62,32 @@ Os chats compartilham o mesmo diretório de repositório, então cada um trabalh
 - Contrato de integração: expor `<SnakeOilApp onHome={() => void} />`
 - **NÃO TOCA** em `src/games/impostor/**` (Chat B), nos arquivos do Chat A, nem em `src/games/taboo/**`
 
+## Chat D — Engine Prompt→Voto (andaime pronto, implementação pendente)
+
+- Roadmap de engines: `docs/ordem-de-construcao.md` (Engine 3)
+- Engine: **Prompt → Resposta → Voto** (Quiplash → Fibbage → Herd Mentality → ...)
+- Worktree: `.claude/worktrees/feat+promptvote-engine` / branch `feat/promptvote-engine` (base: `main`)
+- **Território reivindicado: `src/games/promptvote/**`** + decks em `src/data/promptvote/**`
+- Primeiro jogo: **Quiplash** → `src/games/promptvote/quiplash/`
+  - Andaime criado: pastas com `.gitkeep`, sem lógica ainda
+  - Contrato de integração: `<QuiplashApp onHome={() => void} />`
+  - Implementação: **pendente** (próximo passo: spec + writing-plans)
+- **NÃO TOCA** em: Chat A (shell/home/taboo), Chat B (`impostor/**`), Chat C (`judging/**`)
+
+## Chat ? — Engine Papéis Ocultos + Noite (andaime pronto, implementação pendente)
+
+- Roadmap de engines: `docs/ordem-de-construcao.md` (Engine 4)
+- Engine: **Papéis Ocultos + Noite** (One Night Werewolf → Secret Hitler → Mascarade → BotC)
+- Worktree: `.claude/worktrees/feat+hidden-roles-engine` / branch `feat/hidden-roles-engine` (base: `main`)
+- **Território reivindicado: `src/games/hiddenroles/**`**
+- Primeiro jogo: **One Night Werewolf** → `src/games/hiddenroles/onenight/`
+  - Andaime criado: pastas com `.gitkeep`, sem lógica ainda
+  - Contrato de integração: `<OneNightApp onHome={() => void} />`
+  - Implementação: **pendente** (próximo passo: spec + writing-plans)
+- **NÃO TOCA** em: Chat A (shell/home/taboo), Chat B (`impostor/**`), Chat C (`judging/**`)
+
 ## Regras de ouro (evitar conflito)
-1. Cada chat fica na sua pasta. Fronteiras: `src/games/taboo/**` + shell/home = Chat A; `src/games/impostor/**` = Chat B; `src/games/judging/**` (+ `src/data/judging/**`) = Chat C.
+1. Cada chat fica na sua pasta. Fronteiras: `src/games/taboo/**` + shell/home = Chat A; `src/games/impostor/**` = Chat B; `src/games/judging/**` (+ `src/data/judging/**`) = Chat C; `src/games/promptvote/**` (+ `src/data/promptvote/**`) = Engine 3; `src/games/hiddenroles/**` = Engine 4.
 2. `src/App.tsx` e `src/shell/` têm dono único = Chat A enquanto o visual polish não fechar (outros chats só **importam** do shell, nunca editam).
 3. Antes de editar qualquer arquivo fora da sua pasta, checar este doc.
 4. `src/games/taboo/logic.ts|types.ts|reducer.ts|persistence.ts` e `src/data/` são estáveis — ninguém toca sem motivo forte.
