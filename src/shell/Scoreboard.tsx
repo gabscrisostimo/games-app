@@ -4,8 +4,8 @@ export function Scoreboard({
   teams,
   currentTeam,
 }: {
-  teams: [TeamState, TeamState];
-  currentTeam?: 0 | 1;
+  teams: TeamState[];
+  currentTeam?: number;
 }) {
   return (
     <div className="flex gap-2">

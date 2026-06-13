@@ -18,10 +18,7 @@ export function createGame(
     deck.cards.map((c) => c.id),
     rng,
   );
-  const teams: [TeamState, TeamState] = [
-    { name: config.teamNames[0], score: 0 },
-    { name: config.teamNames[1], score: 0 },
-  ];
+  const teams: TeamState[] = config.teamNames.map((name) => ({ name, score: 0 }));
   return {
     config,
     teams,
@@ -95,7 +92,7 @@ export function applyAction(
 
   const teams = state.teams.map((t, i) =>
     i === state.currentTeam ? { ...t, score: t.score + delta } : t,
-  ) as [GameState['teams'][0], GameState['teams'][1]];
+  ) as TeamState[];
 
   const discardWithPlayed = [...state.discardPile, playedCardId];
   const { cardId, drawPile, discardPile } = drawNext(state.drawPile, discardWithPlayed, rng);
@@ -116,11 +113,12 @@ export function endTurn(state: GameState): GameState {
 }
 
 export function isGameOver(state: GameState): boolean {
-  if (state.turnsTaken === 0 || state.turnsTaken % 2 !== 0) return false;
+  const teamCount = state.teams.length;
+  if (state.turnsTaken === 0 || state.turnsTaken % teamCount !== 0) return false;
   if (state.config.endMode === 'rounds') {
-    return state.turnsTaken >= state.config.endValue * 2;
+    return state.turnsTaken >= state.config.endValue * teamCount;
   }
-  return Math.max(state.teams[0].score, state.teams[1].score) >= state.config.endValue;
+  return Math.max(...state.teams.map((t) => t.score)) >= state.config.endValue;
 }
 
 export function nextTurn(state: GameState): GameState {
@@ -131,14 +129,13 @@ export function nextTurn(state: GameState): GameState {
   }
   return {
     ...advanced,
-    currentTeam: advanced.currentTeam === 0 ? 1 : 0,
+    currentTeam: (advanced.currentTeam + 1) % advanced.teams.length,
     phase: 'pre-turn',
   };
 }
 
-export function getWinner(state: GameState): 0 | 1 | 'tie' {
-  const [a, b] = state.teams;
-  if (a.score > b.score) return 0;
-  if (b.score > a.score) return 1;
-  return 'tie';
+export function getWinner(state: GameState): number | 'tie' {
+  const max = Math.max(...state.teams.map((t) => t.score));
+  const winners = state.teams.reduce<number[]>((acc, t, i) => (t.score === max ? [...acc, i] : acc), []);
+  return winners.length > 1 ? 'tie' : winners[0];
 }

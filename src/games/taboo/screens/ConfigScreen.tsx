@@ -10,8 +10,17 @@ export function ConfigScreen({ onStart }: { onStart: (game: GameState) => void }
   const [skipCostsPoint, setSkipCostsPoint] = useState(false);
   const [endMode, setEndMode] = useState<EndMode>('rounds');
   const [endValue, setEndValue] = useState(5);
-  const [teamA, setTeamA] = useState('Time A');
-  const [teamB, setTeamB] = useState('Time B');
+  const [teams, setTeams] = useState(['Time A', 'Time B']);
+
+  function setTeamName(i: number, val: string) {
+    setTeams((prev) => prev.map((n, idx) => (idx === i ? val : n)));
+  }
+  function addTeam() {
+    setTeams((prev) => [...prev, `Time ${String.fromCharCode(65 + prev.length)}`]);
+  }
+  function removeTeam() {
+    setTeams((prev) => prev.slice(0, -1));
+  }
 
   function start() {
     const config: MatchConfig = {
@@ -21,7 +30,7 @@ export function ConfigScreen({ onStart }: { onStart: (game: GameState) => void }
       skipCostsPoint,
       endMode,
       endValue,
-      teamNames: [teamA.trim() || 'Time A', teamB.trim() || 'Time B'],
+      teamNames: teams.map((n, i) => n.trim() || `Time ${String.fromCharCode(65 + i)}`),
     };
     const deck = getDeck(deckId)!;
     onStart(createGame(config, deck));
@@ -103,9 +112,38 @@ export function ConfigScreen({ onStart }: { onStart: (game: GameState) => void }
         />
       </label>
 
-      <div className="flex gap-2">
-        <input className={`${field} flex-1`} value={teamA} onChange={(e) => setTeamA(e.target.value)} />
-        <input className={`${field} flex-1`} value={teamB} onChange={(e) => setTeamB(e.target.value)} />
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium text-muted">Times ({teams.length})</span>
+          <div className="flex gap-2">
+            {teams.length > 2 && (
+              <button
+                type="button"
+                className="rounded-lg border border-line bg-surface px-3 py-1 text-sm text-ink active:brightness-90"
+                onClick={removeTeam}
+              >
+                − Remover
+              </button>
+            )}
+            {teams.length < 5 && (
+              <button
+                type="button"
+                className="rounded-lg border border-line bg-surface px-3 py-1 text-sm text-ink active:brightness-90"
+                onClick={addTeam}
+              >
+                + Adicionar
+              </button>
+            )}
+          </div>
+        </div>
+        {teams.map((name, i) => (
+          <input
+            key={i}
+            className={field}
+            value={name}
+            onChange={(e) => setTeamName(i, e.target.value)}
+          />
+        ))}
       </div>
 
       <button
