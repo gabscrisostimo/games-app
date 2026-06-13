@@ -1,11 +1,11 @@
 // src/games/taboo/screens/TurnSummaryScreen.tsx
 import { Scoreboard } from '../../../shell/Scoreboard';
 import { isGameOver } from '../logic';
-import type { GameState } from '../types';
+import type { GameState, Outcome } from '../types';
 
 export function TurnSummaryScreen({ state, onNext }: { state: GameState; onNext: () => void }) {
   const results = state.turn?.results ?? [];
-  const count = (o: string) => results.filter((r) => r.outcome === o).length;
+  const count = (o: Outcome) => results.filter((r) => r.outcome === o).length;
   const willEnd = isGameOver({ ...state, turnsTaken: state.turnsTaken + 1 });
 
   return (

@@ -1,6 +1,6 @@
 // src/shell/useCountdown.test.ts
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { useCountdown } from './useCountdown';
 
 describe('useCountdown', () => {
@@ -17,7 +17,7 @@ describe('useCountdown', () => {
     const now = Date.now();
     const onExpire = vi.fn();
     renderHook(() => useCountdown(now + 1_000, onExpire));
-    vi.advanceTimersByTime(1_200);
+    act(() => { vi.advanceTimersByTime(1_200); });
     expect(onExpire).toHaveBeenCalled();
   });
 });
