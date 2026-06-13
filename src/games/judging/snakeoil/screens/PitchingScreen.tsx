@@ -5,9 +5,11 @@ import { useCountdown } from '../../../../shell/useCountdown';
 import { getWordDeck, WORD_DECKS } from '../../../../data/judging';
 import type { GameState } from '../types';
 
+const NOOP = () => {};
+
 function PitchTimer({ seconds }: { seconds: number }) {
   const [endsAt, setEndsAt] = useState<number | null>(null);
-  const remaining = useCountdown(endsAt, () => {});
+  const remaining = useCountdown(endsAt, NOOP);
   if (endsAt === null) {
     return (
       <button
