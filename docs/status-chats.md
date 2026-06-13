@@ -54,9 +54,10 @@ Os chats compartilham o mesmo diretório de repositório, então cada um trabalh
 - Engine: **Julgamento / Mão de Cartas** (Snake Oil → Cards Against Humanity → Funemployed → ...)
 - **Território reivindicado: `src/games/judging/**`** + decks em `src/data/judging/**`
 - Primeiro jogo: **Snake Oil** → `src/games/judging/snakeoil/`
-  - Spec: `docs/superpowers/specs/2026-06-13-snakeoil-game-design.md` (em escrita)
-  - Plano TDD: pendente (próximo passo: writing-plans)
-  - Implementação: ainda não começou
+  - Spec: `docs/superpowers/specs/2026-06-13-snakeoil-game-design.md` ✅
+  - Plano TDD: `docs/superpowers/plans/2026-06-13-snakeoil.md` ✅
+  - Implementação: ✅ **completo** — logic/reducer/persistência/7 telas/session/app; build ok; **82 testes verdes** (49 novos do Snake Oil + 33 baseline)
+  - **Pronto para integração na home** (Chat A): montar `<SnakeOilApp onHome={...} />` em `src/App.tsx` após o visual polish
   - Modelo: pass-and-play, mão privada (passa o celular), cliente com carta de persona, fim configurável (rotações/pontos)
 - Reusa **read-only** do shell: `ActionButton`, `useCountdown` (importa, não edita)
 - Contrato de integração: expor `<SnakeOilApp onHome={() => void} />`
