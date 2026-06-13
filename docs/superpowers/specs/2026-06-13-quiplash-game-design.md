@@ -23,10 +23,11 @@ Decisões de produto (do brainstorming, 2026-06-13):
   - **Duelo** (Quiplash clássico): cada prompt vai pra 2 jogadores; votam os não-autores.
   - **Grupo**: todos respondem o mesmo prompt; vota todo mundo (menos na própria).
 - **Pontuação fiel**: % de votos × multiplicador da rodada + bônus "Quiplash!".
-- **Rodadas configuráveis** (default 3); multiplicador = número da rodada; **última rodada = Last
-  Lash** (sempre formato grupo, prompt único). No default de 3, reproduz o clássico exatamente.
+- **Rodadas configuráveis (2–5, default 3)**; multiplicador = número da rodada; **última rodada =
+  Last Lash** (sempre formato grupo, prompt único). No default de 3, reproduz o clássico exatamente.
 - **Duelo: 2 respostas por jogador por rodada** (distribuição "anel" clássica).
-- Jogadores **nomeados e persistidos** (localStorage), reusados entre partidas. Mín. 3, recomendado ≤ 8.
+- Jogadores **nomeados e persistidos** (localStorage), reusados entre partidas. **Mín. 3, máx. 12**
+  (config avisa "fica longo no pass-and-play" acima de 8, sem bloquear).
 - **Sem timer** na v1 (pass-and-play é relax: passa, escreve, passa).
 - **Votação em lote**: o celular passa **uma vez por votante** (vota em todos os confrontos
   elegíveis de uma vez), mantendo o nº de handoffs em ~N por fase, não N².
@@ -139,9 +140,9 @@ type PromptCard = { id: string; text: string };
 type PromptDeck = { id: string; name: string; cards: PromptCard[] };
 
 type QuiplashConfig = {
-  players: Player[];        // >= 3
+  players: Player[];        // 3..12
   mode: Mode;
-  rounds: number;           // default 3
+  rounds: number;           // 2..5, default 3
   deckId: string;
 };
 
@@ -240,7 +241,8 @@ type SessionState = {
 - **Bônus Quiplash!** só quando o autor leva **todos** os votos e havia adversário com 0 (não no
   caso degenerado de confronto com 1 resposta só).
 - **N ímpar no Duelo** → o anel funciona igual (cada prompt entre vizinhos); todos respondem 2.
-- **< 3 jogadores** → "Começar" bloqueado na config (Duelo precisa de ≥1 votante por confronto).
+- **< 3 jogadores** → "Começar" bloqueado na config (Duelo precisa de ≥1 votante por confronto);
+  **> 12** também bloqueado; **> 8** mostra aviso (sem bloquear).
 - **Respostas vazias** → a tela exige texto não-vazio nos campos antes de "Esconder e passar"
   (validação de UI; `logic` aceita o que vier, mas a tela impede vazio).
 - **Deck acabar** (poucos prompts pra muitas rodadas/jogadores) → `buildRound` reembaralha o deck
