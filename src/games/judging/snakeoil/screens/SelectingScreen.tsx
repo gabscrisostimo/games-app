@@ -4,10 +4,6 @@ import { ActionButton } from '../../../../shell/ActionButton';
 import { getWordDeck, WORD_DECKS } from '../../../../data/judging';
 import type { GameState, WordDeck } from '../types';
 
-function makeWordOf(deck: ReturnType<typeof getWordDeck>) {
-  return (id: string) => deck?.cards.find((c) => c.id === id)?.word ?? id;
-}
-
 export function SelectingScreen({
   state,
   onConfirm,
@@ -24,8 +20,8 @@ export function SelectingScreen({
   const [revealed, setRevealed] = useState(false);
   const [picks, setPicks] = useState<string[]>([]);
 
-  const deck = wordDeck ?? getWordDeck(WORD_DECKS[0].id);
-  const wordOf = makeWordOf(deck);
+  const deck = wordDeck ?? getWordDeck(WORD_DECKS[0].id)!;
+  const wordOf = (id: string) => deck.cards.find((c) => c.id === id)?.word ?? id;
 
   const limit = state.config.cardsPerPitch;
 
