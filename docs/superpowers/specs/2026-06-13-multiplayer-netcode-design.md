@@ -128,8 +128,8 @@ tap → send({ type: 'SUBMIT_ANSWER', text })     // cliente NÃO manda now/rng
 
 ## 7. Modelo de sala / lobby / identidade
 
-- **Criar sala** → server gera código curto (ex.: 4 chars A–Z) → cliente vira
-  host.
+- **Criar sala** → server gera código de **4 letras maiúsculas** (excluo I e O
+  por ambiguidade ao ditar) → cliente vira host.
 - **Entrar** → código + apelido. O `playerId` (em `localStorage`) é a identidade
   estável; o apelido é cosmético por sala.
 - **Host** é só uma flag de papel (quem aperta "Começar"), **não** a autoridade.
@@ -165,6 +165,10 @@ Fases:
 2. **voting** — todos veem o par de respostas de um prompt e votam; **não dá pra
    votar na própria**.
 3. **reveal** — placar.
+
+**Config/progressão:** 3–8 jogadores. Cada fase (answering/voting) avança assim
+que **todos** enviam/votam; um **timer de folga (75s) carimbado pela autoridade**
+força o avanço se alguém travar — e de quebra exercita o relógio autoritativo.
 
 O que isso prova: (a) **projeção secreta** server-side; (b) **atribuição e timer
 autoritativos** (RNG/relógio na autoridade). São exatamente os dois eixos que o
