@@ -33,7 +33,7 @@ export function ConfigScreen({ onStart }: { onStart: (s: SessionState) => void }
   const canStart = players.length >= 4;
 
   return (
-    <div className={ui.screenGap4}>
+    <div className={`${ui.screenGap4} animate-screen-in`}>
       <h1 className={ui.title}>Insider</h1>
 
       <div className={ui.section}>

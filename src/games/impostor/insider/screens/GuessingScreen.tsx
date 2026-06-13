@@ -33,9 +33,11 @@ export function GuessingScreen({
     );
   }
 
+  const urgent = remaining <= 10;
+
   return (
     <div className={ui.screenFull}>
-      <span className={ui.timer}>{remaining}s</span>
+      <span className={`${ui.timer} ${urgent ? ui.timerUrgent : ui.timerCalm}`}>{remaining}s</span>
 
       <div className={ui.buttonCol}>
         <ActionButton variant="positive" onClick={onGuessed}>

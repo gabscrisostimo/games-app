@@ -19,7 +19,7 @@ export function RoleRevealScreen({
     return (
       <div className={ui.screenCenteredGap6}>
         <p className={ui.lead300}>Passe o celular para</p>
-        <p className={ui.hero}>{player.name}</p>
+        <p key={player.id} className={`${ui.hero} animate-card-in`}>{player.name}</p>
         <ActionButton variant="neutral" onClick={() => setRevealed(true)}>
           Toque para ver seu papel
         </ActionButton>
@@ -36,7 +36,7 @@ export function RoleRevealScreen({
 
   return (
     <div className={ui.screenCenteredGap6}>
-      <p className={ui.title}>{text}</p>
+      <p className={`${ui.title} animate-card-in`}>{text}</p>
       <ActionButton
         variant="positive"
         onClick={() => {
