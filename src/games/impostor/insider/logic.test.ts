@@ -3,7 +3,7 @@ import {
   nextMaster, createSession, selectMaster, roleOf, dealRoles,
   advanceReveal, startGuessing, markGuessed, timeUp, accuse, playAgain,
 } from './logic';
-import type { Accusation, InsiderConfig, MasterMode, Player, WordDeck } from './types';
+import type { InsiderConfig, MasterMode, Player, WordDeck } from './types';
 
 const players: Player[] = [
   { id: 'a', name: 'Ana' },
