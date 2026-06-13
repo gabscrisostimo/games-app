@@ -1,4 +1,4 @@
-import type { Player } from './types';
+import type { InsiderConfig, Player, Role, SessionState } from './types';
 
 export function nextMaster(
   rotation: string[],
@@ -13,4 +13,48 @@ export function nextMaster(
   }
   const masterId = eligible[Math.floor(rng() * eligible.length)].id;
   return { masterId, rotation: [...current, masterId] };
+}
+
+function freshRound() {
+  return {
+    word: '',
+    insiderId: '',
+    revealIndex: 0,
+    endsAt: null as number | null,
+    accusation: null,
+    outcome: null,
+  };
+}
+
+export function createSession(
+  config: InsiderConfig,
+  rng: () => number = Math.random,
+): SessionState {
+  if (config.masterMode === 'rotate') {
+    const { masterId, rotation } = nextMaster([], config.players, rng);
+    return {
+      config,
+      masterRotation: rotation,
+      round: { ...freshRound(), masterId, phase: 'master-announce' },
+    };
+  }
+  return {
+    config,
+    masterRotation: [],
+    round: { ...freshRound(), masterId: '', phase: 'master-select' },
+  };
+}
+
+export function selectMaster(state: SessionState, playerId: string): SessionState {
+  if (state.round.phase !== 'master-select') return state;
+  return {
+    ...state,
+    round: { ...state.round, masterId: playerId, phase: 'master-announce' },
+  };
+}
+
+export function roleOf(state: SessionState, playerId: string): Role {
+  if (playerId === state.round.masterId) return 'master';
+  if (playerId === state.round.insiderId) return 'insider';
+  return 'commoner';
 }

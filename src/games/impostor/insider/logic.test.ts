@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { nextMaster } from './logic';
-import type { Player } from './types';
+import { nextMaster, createSession, selectMaster, roleOf } from './logic';
+import type { InsiderConfig, MasterMode, Player } from './types';
 
 const players: Player[] = [
   { id: 'a', name: 'Ana' },
@@ -37,5 +37,56 @@ describe('nextMaster', () => {
     const last = () => 0.999;
     const r = nextMaster([], players, last);
     expect(r.masterId).toBe('e'); // floor(0.999 * 5) = 4
+  });
+});
+
+const baseConfig = (masterMode: MasterMode): InsiderConfig => ({
+  deckId: 'd1',
+  guessSeconds: 300,
+  players,
+  masterMode,
+});
+
+describe('createSession', () => {
+  it('rotate: escolhe Mestre e vai pra master-announce, sem palavra/insider', () => {
+    const s = createSession(baseConfig('rotate'), rng0);
+    expect(s.round.phase).toBe('master-announce');
+    expect(s.round.masterId).toBe('a');
+    expect(s.masterRotation).toEqual(['a']);
+    expect(s.round.word).toBe('');
+    expect(s.round.insiderId).toBe('');
+    expect(s.round.endsAt).toBeNull();
+    expect(s.round.outcome).toBeNull();
+  });
+
+  it('choose: vai pra master-select sem Mestre definido', () => {
+    const s = createSession(baseConfig('choose'), rng0);
+    expect(s.round.phase).toBe('master-select');
+    expect(s.round.masterId).toBe('');
+    expect(s.masterRotation).toEqual([]);
+  });
+});
+
+describe('selectMaster', () => {
+  it('fixa o Mestre e vai pra master-announce', () => {
+    const s = createSession(baseConfig('choose'), rng0);
+    const s2 = selectMaster(s, 'c');
+    expect(s2.round.masterId).toBe('c');
+    expect(s2.round.phase).toBe('master-announce');
+  });
+
+  it('é no-op fora da fase master-select', () => {
+    const s = createSession(baseConfig('rotate'), rng0); // master-announce
+    expect(selectMaster(s, 'c')).toBe(s);
+  });
+});
+
+describe('roleOf', () => {
+  it('deriva master/insider/commoner', () => {
+    const s = createSession(baseConfig('rotate'), rng0); // masterId 'a'
+    const withInsider = { ...s, round: { ...s.round, insiderId: 'b' } };
+    expect(roleOf(withInsider, 'a')).toBe('master');
+    expect(roleOf(withInsider, 'b')).toBe('insider');
+    expect(roleOf(withInsider, 'c')).toBe('commoner');
   });
 });
