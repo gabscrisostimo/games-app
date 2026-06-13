@@ -1,0 +1,30 @@
+{
+  "id": "padrao",
+  "name": "Padrão",
+  "cards": [
+    { "id": "p01", "target": "FRIO", "taboo": ["QUENTE", "CALOR", "GELADO", "TEMPERATURA"] },
+    { "id": "p02", "target": "PRAIA", "taboo": ["MAR", "AREIA", "SOL", "ONDA", "BIQUÍNI"] },
+    { "id": "p03", "target": "CACHORRO", "taboo": ["LATIR", "AU AU", "PET", "OSSO", "GATO"] },
+    { "id": "p04", "target": "PIZZA", "taboo": ["QUEIJO", "MASSA", "ITÁLIA", "FATIA", "FORNO"] },
+    { "id": "p05", "target": "FUTEBOL", "taboo": ["BOLA", "GOL", "TIME", "CAMPO", "CHUTE"] },
+    { "id": "p06", "target": "GUITARRA", "taboo": ["CORDA", "ROCK", "TOCAR", "MÚSICA", "BANDA"] },
+    { "id": "p07", "target": "MÉDICO", "taboo": ["HOSPITAL", "DOENTE", "SAÚDE", "CONSULTA", "JALECO"] },
+    { "id": "p08", "target": "CHUVA", "taboo": ["ÁGUA", "GUARDA-CHUVA", "MOLHADO", "NUVEM", "TEMPO"] },
+    { "id": "p09", "target": "AVIÃO", "taboo": ["VOAR", "CÉU", "PILOTO", "AEROPORTO", "ASA"] },
+    { "id": "p10", "target": "CAFÉ", "taboo": ["MANHÃ", "QUENTE", "XÍCARA", "PRETO", "BEBIDA"] },
+    { "id": "p11", "target": "LIVRO", "taboo": ["LER", "PÁGINA", "HISTÓRIA", "AUTOR", "BIBLIOTECA"] },
+    { "id": "p12", "target": "NATAL", "taboo": ["PAPAI NOEL", "PRESENTE", "ÁRVORE", "DEZEMBRO", "CEIA"] },
+    { "id": "p13", "target": "CELULAR", "taboo": ["TELEFONE", "APP", "TELA", "LIGAR", "WHATSAPP"] },
+    { "id": "p14", "target": "ELEFANTE", "taboo": ["TROMBA", "GRANDE", "ANIMAL", "ÁFRICA", "ORELHA"] },
+    { "id": "p15", "target": "SORVETE", "taboo": ["GELADO", "CASQUINHA", "SABOR", "DOCE", "VERÃO"] },
+    { "id": "p16", "target": "PROFESSOR", "taboo": ["ESCOLA", "ALUNO", "AULA", "ENSINAR", "QUADRO"] },
+    { "id": "p17", "target": "BICICLETA", "taboo": ["PEDAL", "RODA", "ANDAR", "GUIDÃO", "CORRENTE"] },
+    { "id": "p18", "target": "CINEMA", "taboo": ["FILME", "PIPOCA", "TELA", "INGRESSO", "SESSÃO"] },
+    { "id": "p19", "target": "DENTISTA", "taboo": ["DENTE", "BOCA", "CÁRIE", "ESCOVA", "SORRISO"] },
+    { "id": "p20", "target": "RELÓGIO", "taboo": ["HORA", "TEMPO", "PONTEIRO", "PULSO", "MINUTO"] },
+    { "id": "p21", "target": "BANANA", "taboo": ["FRUTA", "MACACO", "AMARELO", "CASCA", "POTÁSSIO"] },
+    { "id": "p22", "target": "GELADEIRA", "taboo": ["FRIO", "COZINHA", "COMIDA", "GELO", "PORTA"] },
+    { "id": "p23", "target": "CARNAVAL", "taboo": ["FANTASIA", "SAMBA", "FOLIA", "BLOCO", "FEVEREIRO"] },
+    { "id": "p24", "target": "TESOURA", "taboo": ["CORTAR", "PAPEL", "LÂMINA", "CABELO", "AFIADA"] }
+  ]
+}
