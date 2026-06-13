@@ -27,16 +27,24 @@ export function TabooSession({
   const onExpire = useCallback(() => dispatch({ type: 'END_TURN' }), []);
   const onAction = useCallback((outcome: Outcome) => dispatch({ type: 'ACTION', outcome }), []);
 
-  switch (state.phase) {
-    case 'pre-turn':
-      return <PreTurnScreen state={state} onStart={() => dispatch({ type: 'START_TURN', now: Date.now() })} />;
-    case 'in-turn':
-      return <InTurnScreen state={state} onAction={onAction} onExpire={onExpire} />;
-    case 'turn-summary':
-      return <TurnSummaryScreen state={state} onNext={() => dispatch({ type: 'NEXT_TURN' })} />;
-    case 'game-over':
-      return <GameOverScreen state={state} onPlayAgain={onPlayAgain} onHome={onHome} />;
-    default:
-      return null;
+  function renderScreen() {
+    switch (state.phase) {
+      case 'pre-turn':
+        return <PreTurnScreen state={state} onStart={() => dispatch({ type: 'START_TURN', now: Date.now() })} />;
+      case 'in-turn':
+        return <InTurnScreen state={state} onAction={onAction} onExpire={onExpire} />;
+      case 'turn-summary':
+        return <TurnSummaryScreen state={state} onNext={() => dispatch({ type: 'NEXT_TURN' })} />;
+      case 'game-over':
+        return <GameOverScreen state={state} onPlayAgain={onPlayAgain} onHome={onHome} />;
+      default:
+        return null;
+    }
   }
+
+  return (
+    <div key={state.phase} className="min-h-dvh bg-bg text-ink animate-screen-in">
+      {renderScreen()}
+    </div>
+  );
 }

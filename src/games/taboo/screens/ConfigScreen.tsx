@@ -1,4 +1,3 @@
-// src/games/taboo/screens/ConfigScreen.tsx
 import { useState } from 'react';
 import { DECKS, getDeck } from '../../../data/decks';
 import { createGame } from '../logic';
@@ -28,13 +27,14 @@ export function ConfigScreen({ onStart }: { onStart: (game: GameState) => void }
     onStart(createGame(config, deck));
   }
 
-  const field = 'rounded-lg bg-slate-800 px-3 py-2 text-white';
+  const field = 'rounded-lg border border-line bg-surface px-3 py-2 text-ink';
+  const labelText = 'flex flex-col gap-1 text-sm font-medium text-muted';
 
   return (
-    <div className="mx-auto flex max-w-md flex-col gap-4 p-4">
-      <h1 className="text-2xl font-bold text-white">Configurar partida</h1>
+    <div className="mx-auto flex max-w-md flex-col gap-4 p-4 animate-screen-in">
+      <h1 className="text-2xl font-bold text-ink">Configurar partida</h1>
 
-      <label className="flex flex-col gap-1 text-slate-200">
+      <label className={labelText}>
         Deck
         <select className={field} value={deckId} onChange={(e) => setDeckId(e.target.value)}>
           {DECKS.map((d) => (
@@ -43,7 +43,7 @@ export function ConfigScreen({ onStart }: { onStart: (game: GameState) => void }
         </select>
       </label>
 
-      <label className="flex flex-col gap-1 text-slate-200">
+      <label className={labelText}>
         Duração do turno
         <select
           className={field}
@@ -56,7 +56,7 @@ export function ConfigScreen({ onStart }: { onStart: (game: GameState) => void }
         </select>
       </label>
 
-      <label className="flex flex-col gap-1 text-slate-200">
+      <label className={labelText}>
         Limite de pulos
         <select
           className={field}
@@ -70,16 +70,17 @@ export function ConfigScreen({ onStart }: { onStart: (game: GameState) => void }
         </select>
       </label>
 
-      <label className="flex items-center gap-2 text-slate-200">
+      <label className="flex items-center gap-2 text-ink">
         <input
           type="checkbox"
           checked={skipCostsPoint}
           onChange={(e) => setSkipCostsPoint(e.target.checked)}
+          className="accent-accent"
         />
         Pular tira 1 ponto
       </label>
 
-      <label className="flex flex-col gap-1 text-slate-200">
+      <label className={labelText}>
         Fim de jogo
         <select
           className={field}
@@ -91,7 +92,7 @@ export function ConfigScreen({ onStart }: { onStart: (game: GameState) => void }
         </select>
       </label>
 
-      <label className="flex flex-col gap-1 text-slate-200">
+      <label className={labelText}>
         {endMode === 'rounds' ? 'Rodadas por time' : 'Meta de pontos'}
         <input
           className={field}
@@ -108,7 +109,7 @@ export function ConfigScreen({ onStart }: { onStart: (game: GameState) => void }
       </div>
 
       <button
-        className="mt-2 rounded-2xl bg-amber-500 py-4 text-xl font-bold text-slate-900 active:bg-amber-600"
+        className="mt-2 rounded-2xl bg-accent py-4 text-xl font-bold text-bg transition active:brightness-90"
         onClick={start}
       >
         Começar
