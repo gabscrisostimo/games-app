@@ -1,6 +1,6 @@
 // src/games/judging/snakeoil/logic.test.ts
 import { describe, it, expect } from 'vitest';
-import { shuffle, drawWords, drawPersona, createGame, startRound, selectCards } from './logic';
+import { shuffle, drawWords, drawPersona, createGame, startRound, selectCards, toJudging, judge } from './logic';
 import type { MatchConfig, WordDeck, PersonaDeck } from './types';
 
 // rng determinístico: sempre 0 → Math.floor(0 * (i+1)) = 0
@@ -138,5 +138,47 @@ describe('selectCards', () => {
   it('é no-op fora de selecting', () => {
     const g = createGame(config, wordDeck, personaDeck, () => 0); // pre-round
     expect(selectCards(g, [])).toBe(g);
+  });
+});
+
+describe('toJudging / judge', () => {
+  function pitching() {
+    let g = startRound(createGame(config, wordDeck, personaDeck, () => 0));
+    g = selectCards(g, g.players[g.round!.order[0]].hand.slice(0, 2));
+    g = selectCards(g, g.players[g.round!.order[1]].hand.slice(0, 2));
+    return g; // phase 'pitching'
+  }
+  it('toJudging vai de pitching para judging', () => {
+    expect(toJudging(pitching()).phase).toBe('judging');
+  });
+  it('judge dá +1 ao vencedor e vai para round-summary', () => {
+    const g = toJudging(pitching());
+    const winner = g.round!.order[0];
+    const g2 = judge(g, winner);
+    expect(g2.players[winner].score).toBe(1);
+    expect(g2.round!.winnerIndex).toBe(winner);
+    expect(g2.phase).toBe('round-summary');
+  });
+  it('move cartas usadas e persona para os discards', () => {
+    const g = toJudging(pitching());
+    const used = Object.values(g.round!.picks).flat();
+    const g2 = judge(g, g.round!.order[0]);
+    used.forEach((id) => expect(g2.wordDiscard).toContain(id));
+    expect(g2.personaDiscard).toContain(g.round!.personaId);
+  });
+  it('remove as cartas usadas das mãos dos pitchers', () => {
+    const g = toJudging(pitching());
+    const pitcher = g.round!.order[0];
+    const usedByPitcher = g.round!.picks[pitcher];
+    const g2 = judge(g, pitcher);
+    usedByPitcher.forEach((id) => expect(g2.players[pitcher].hand).not.toContain(id));
+  });
+  it('rejeita vencedor que não é pitcher (no-op)', () => {
+    const g = toJudging(pitching());
+    expect(judge(g, g.round!.customerIndex)).toBe(g);
+  });
+  it('judge é no-op fora de judging', () => {
+    const g = pitching();
+    expect(judge(g, 1)).toBe(g);
   });
 });

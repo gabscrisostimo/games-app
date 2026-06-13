@@ -102,6 +102,38 @@ export function startRound(state: GameState): GameState {
   return { ...state, phase: 'selecting' };
 }
 
+export function toJudging(state: GameState): GameState {
+  if (state.phase !== 'pitching') return state;
+  return { ...state, phase: 'judging' };
+}
+
+export function judge(state: GameState, winnerIndex: number): GameState {
+  if (state.phase !== 'judging' || !state.round) return state;
+  const r = state.round;
+  if (!r.order.includes(winnerIndex)) return state;
+
+  const used = Object.values(r.picks).flat();
+  const players = state.players.map((p, i) => {
+    const usedByP = r.picks[i];
+    const hand = usedByP ? p.hand.filter((id) => !usedByP.includes(id)) : p.hand;
+    const score = i === winnerIndex ? p.score + 1 : p.score;
+    return { ...p, hand, score };
+  });
+
+  const personaDiscard = r.personaId
+    ? [...state.personaDiscard, r.personaId]
+    : state.personaDiscard;
+
+  return {
+    ...state,
+    players,
+    wordDiscard: [...state.wordDiscard, ...used],
+    personaDiscard,
+    round: { ...r, winnerIndex },
+    phase: 'round-summary',
+  };
+}
+
 export function selectCards(state: GameState, picks: string[]): GameState {
   if (state.phase !== 'selecting' || !state.round) return state;
   const r = state.round;
