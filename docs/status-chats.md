@@ -34,6 +34,15 @@ Os chats compartilham o mesmo diretório de repositório, então cada um trabalh
 
 **Ponto de integração preparado (App.tsx):** o card de cada jogo futuro deve ser adicionado aqui quando Chat B/C sinalizarem que o módulo está pronto. Contrato: `<XyzApp onHome={() => void} />`.
 
+**Guia de estilo p/ as engines:** `docs/visual-tokens.md` — referência canônica de tokens (cor, fonte, container, botões, animações) que toda engine deve seguir em vez de cores cruas.
+
+### Plano de integração Insider (Chat B) ↔ visual polish
+1. **Tokens já estão no `main`** (`src/index.css`). Chat B precisa **mergear/rebasear o `main`** na branch `feat/impostor-engine` antes de reestilizar — senão as classes de token não existem no `index.css` da branch dele.
+2. **Reestilização das 7 telas do Insider = Chat B** (dono de `src/games/impostor/**`), usando `docs/visual-tokens.md`. Chat A **não** edita `impostor/**` (respeita a fronteira). Decisão registrada: telas internas ficam com o dono da engine; Chat A só faz o wiring.
+3. **Wiring na home = Chat A:** registro `View 'insider'` em `src/App.tsx` (mesmo padrão de `View 'taboo'`) apontando pra `<InsiderApp onHome={...} />`. Passo de integração **após** o Insider mergear no `main`.
+
+**Dívida conhecida (Scoreboard):** `src/shell/Scoreboard.tsx` importa `TeamState` de `games/taboo/types` → **não é game-agnostic**. `ActionButton` e `useCountdown` são. Engine que quiser placar precisa primeiro generalizar/mover o tipo pro shell. Não bloqueia o Insider (ele usa só ActionButton + useCountdown).
+
 **Arquivos que o Chat A é dono — NÃO TOCAR no outro chat:**
 `src/App.tsx`, `src/shell/**`, `src/index.css`, `index.html`, `vite.config.ts`, `public/**`, `src/games/taboo/**`
 
