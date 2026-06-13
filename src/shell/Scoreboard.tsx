@@ -1,4 +1,3 @@
-// src/shell/Scoreboard.tsx
 import type { TeamState } from '../games/taboo/types';
 
 export function Scoreboard({
@@ -13,12 +12,14 @@ export function Scoreboard({
       {teams.map((t, i) => (
         <div
           key={i}
-          className={`flex-1 rounded-xl p-3 text-center ${
-            currentTeam === i ? 'bg-slate-700 ring-2 ring-amber-400' : 'bg-slate-800'
+          className={`flex-1 rounded-xl border p-3 text-center transition ${
+            currentTeam === i
+              ? 'border-accent bg-surface ring-2 ring-accent'
+              : 'border-line bg-surface'
           }`}
         >
-          <div className="truncate text-sm text-slate-300">{t.name}</div>
-          <div className="text-3xl font-bold text-white">{t.score}</div>
+          <div className="truncate text-sm text-muted">{t.name}</div>
+          <div className="text-3xl font-bold text-ink">{t.score}</div>
         </div>
       ))}
     </div>
