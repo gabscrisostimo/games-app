@@ -35,18 +35,23 @@ Os chats compartilham o mesmo diretório de repositório, então cada um trabalh
 **Arquivos que o Chat A é dono — NÃO TOCAR no outro chat:**
 `src/App.tsx`, `src/shell/**`, `src/index.css`, `index.html`, `vite.config.ts`, `public/**`, `src/games/taboo/**`
 
-## Chat B — Engine Impostor/Assimetria (em andamento)
+## Chat B — Engine Impostor/Assimetria (CONCLUÍDO)
 
 - Roadmap de engines: `docs/ordem-de-construcao.md`
 - Engine: **Impostor/Assimetria** (Insider → Chameleon → Spyfall → Deception)
 - **Território reivindicado: `src/games/impostor/**`** (pasta aninhada por engine)
-- Primeiro jogo: **Insider** → `src/games/impostor/insider/`
+- Primeiro jogo: **Insider** → `src/games/impostor/insider/` — **implementação completa**
   - Spec aprovado: `docs/superpowers/specs/2026-06-13-insider-game-design.md`
-  - Plano TDD: pendente (próximo passo: writing-plans)
-  - Implementação: ainda não começou
+  - Plano TDD: executado (Tasks 1–18, todas concluídas)
+  - Branch: `feat/impostor-engine` (worktree `.claude/worktrees/feat+impostor-engine`)
+  - **Módulo pronto para integração:** expõe `<InsiderApp onHome={() => void} />`
+    - Arquivo: `src/games/impostor/insider/InsiderApp.tsx`
+    - Inclui banner de retomada de sessão (resume) via `localStorage`
+  - Camadas implementadas: `types.ts`, `logic.ts`, `reducer.ts`, `persistence.ts`, `playerStore.ts`, 6 screens, `InsiderSession.tsx`, `InsiderApp.tsx`
+  - Suite: 80 testes passando (15 arquivos), `tsc --noEmit` sem erros, build de produção OK
 - Reusa **read-only** do shell: `ActionButton`, `useCountdown` (importa, não edita)
-- Contrato de integração: expor `<InsiderApp onHome={() => void} />`
-- **NÃO TOCA** em `src/App.tsx` nem `src/shell/` até o Chat A fechar (integração na home depois)
+- **Próximo passo para Chat A:** após fechar o visual polish, integrar `<InsiderApp onHome={...} />` em `src/App.tsx`
+- **NÃO TOCA** em `src/App.tsx` nem `src/shell/` — integração na home fica com Chat A
 
 ## Chat C — Engine Julgamento/Cartas (em andamento)
 
