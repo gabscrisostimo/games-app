@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { nextMaster, createSession, selectMaster, roleOf, dealRoles } from './logic';
+import {
+  nextMaster, createSession, selectMaster, roleOf, dealRoles,
+  advanceReveal, startGuessing,
+} from './logic';
 import type { InsiderConfig, MasterMode, Player, WordDeck } from './types';
 
 const players: Player[] = [
@@ -121,5 +124,36 @@ describe('dealRoles', () => {
   it('é no-op fora da fase master-announce', () => {
     const s = createSession(baseConfig('choose'), rng0); // master-select
     expect(dealRoles(s, deck, rng0)).toBe(s);
+  });
+});
+
+describe('advanceReveal', () => {
+  it('avança jogador a jogador e entra em guessing após o último', () => {
+    const dealt = dealRoles(createSession(baseConfig('rotate'), rng0), deck, rng0);
+    // 5 jogadores → revealIndex 0..4; o 5º avanço entra em guessing
+    let s = dealt;
+    for (let i = 0; i < 4; i++) {
+      s = advanceReveal(s);
+      expect(s.round.phase).toBe('role-reveal');
+    }
+    s = advanceReveal(s);
+    expect(s.round.phase).toBe('guessing');
+    expect(s.round.endsAt).toBeNull();
+    expect(s.round.revealIndex).toBe(5);
+  });
+});
+
+describe('startGuessing', () => {
+  it('define endsAt = now + guessSeconds*1000', () => {
+    const dealt = dealRoles(createSession(baseConfig('rotate'), rng0), deck, rng0);
+    let s = dealt;
+    for (let i = 0; i < 5; i++) s = advanceReveal(s); // → guessing
+    const started = startGuessing(s, 1000);
+    expect(started.round.endsAt).toBe(1000 + 300 * 1000);
+  });
+
+  it('é no-op fora de guessing', () => {
+    const dealt = dealRoles(createSession(baseConfig('rotate'), rng0), deck, rng0); // role-reveal
+    expect(startGuessing(dealt, 1000)).toBe(dealt);
   });
 });

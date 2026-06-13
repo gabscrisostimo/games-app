@@ -73,3 +73,23 @@ export function dealRoles(
     round: { ...state.round, word, insiderId, revealIndex: 0, phase: 'role-reveal' },
   };
 }
+
+export function advanceReveal(state: SessionState): SessionState {
+  if (state.round.phase !== 'role-reveal') return state;
+  const next = state.round.revealIndex + 1;
+  if (next >= state.config.players.length) {
+    return {
+      ...state,
+      round: { ...state.round, revealIndex: next, phase: 'guessing', endsAt: null },
+    };
+  }
+  return { ...state, round: { ...state.round, revealIndex: next } };
+}
+
+export function startGuessing(state: SessionState, now: number): SessionState {
+  if (state.round.phase !== 'guessing') return state;
+  return {
+    ...state,
+    round: { ...state.round, endsAt: now + state.config.guessSeconds * 1000 },
+  };
+}
