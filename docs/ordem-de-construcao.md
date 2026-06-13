@@ -52,7 +52,9 @@
 **Por que terceiro:**
 - Maior catálogo de uma vez: ~8 jogos de uma engine
 - Herd Mentality é variante simples do mesmo fluxo (todos respondem um prompt → comparação → pontuação por maioria)
-- Núcleo: servidor envia prompt → cada celular responde texto → todos veem as respostas → votam → pontuam
+- Núcleo: prompt → cada jogador responde texto → todos veem as respostas → votam → pontuam
+
+> 📌 **Decisão de arquitetura (2026-06-13): construir pass-and-play primeiro, single-device.** A versão clássica (Jackbox) é multi-device — cada celular responde, servidor coordena. Mas para manter o app no modelo atual (sem backend), a 1ª versão dessa engine é **pass-and-play**: passa o celular de mão em mão para responder e para votar, com tela de handoff que esconde a resposta/voto anterior (mesmo padrão de privacidade do Insider). O modo **multi-device (backend/realtime)** fica como upgrade futuro — exige decisão de infra própria, não é pré-requisito pra começar.
 
 **Ordem dentro da engine:**
 1. **Quiplash** — a mais simples: prompt criativo → 2 respostas → voto do grupo
