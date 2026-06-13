@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildRound, promptsForPlayer, createSession, playAgain } from './logic';
+import { buildRound, promptsForPlayer, createSession, playAgain, submitAnswers } from './logic';
 import type { PromptDeck, QuiplashConfig, Player } from './types';
 
 const players: Player[] = [
@@ -99,5 +99,61 @@ describe('playAgain', () => {
     expect(again.round.index).toBe(0);
     expect(Object.values(again.scores)).toEqual([0, 0, 0, 0]);
     expect(again.config).toEqual(s.config);
+  });
+});
+
+// responde todos os jogadores em ordem; texts = "resp-<player>-<pos>"
+function answerAll(s0: ReturnType<typeof createSession>) {
+  let s = s0;
+  for (const p of s.config.players) {
+    const idxs = promptsForPlayer(s.round, p.id);
+    const texts = idxs.map((_, pos) => `r-${p.id}-${pos}`);
+    s = submitAnswers(s, p.id, texts, rng0);
+  }
+  return s;
+}
+
+describe('submitAnswers', () => {
+  it('grava as respostas do jogador e avança answerIndex', () => {
+    const s = createSession(cfg(), deck, rng0);
+    const idxs = promptsForPlayer(s.round, 'a');
+    const s2 = submitAnswers(s, 'a', idxs.map((_, i) => `t${i}`), rng0);
+    expect(s2.round.answerIndex).toBe(1);
+    for (const i of idxs) {
+      const ans = s2.round.matchups[i].answers.find((x) => x.authorId === 'a');
+      expect(ans?.text).toMatch(/^t\d$/);
+    }
+  });
+
+  it('quando todos responderam, monta cédulas e vai pra voting', () => {
+    const s = answerAll(createSession(cfg(), deck, rng0));
+    expect(s.round.phase).toBe('voting');
+    expect(s.round.voteCursor).toBe(0);
+    // duelo: cada confronto tem N-2 votantes → total de cédulas = N*(N-2)
+    const expected = players.length * (players.length - 2);
+    expect(s.round.ballots).toHaveLength(expected);
+    // nenhuma cédula deixa o votante escolher a própria resposta
+    for (const b of s.round.ballots) {
+      const m = s.round.matchups[b.matchupIndex];
+      for (const ai of b.order) expect(m.answers[ai].authorId).not.toBe(b.voterId);
+      expect(m.voterIds).toContain(b.voterId);
+    }
+    // cédulas agrupadas por votante (ordem dos jogadores)
+    const voterSeq = s.round.ballots.map((b) => b.voterId);
+    const firstIdxOf = (id: string) => voterSeq.indexOf(id);
+    const lastIdxOf = (id: string) => voterSeq.lastIndexOf(id);
+    for (const p of players) {
+      if (firstIdxOf(p.id) === -1) continue;
+      expect(lastIdxOf(p.id) - firstIdxOf(p.id) + 1).toBe(voterSeq.filter((v) => v === p.id).length);
+    }
+  });
+
+  it('grupo: cada votante 1 cédula no único confronto, order exclui a própria', () => {
+    const s = answerAll(createSession(cfg({ mode: 'group' }), deck, rng0));
+    expect(s.round.ballots).toHaveLength(players.length);
+    for (const b of s.round.ballots) {
+      expect(b.matchupIndex).toBe(0);
+      expect(b.order).toHaveLength(players.length - 1); // exclui a própria
+    }
   });
 });

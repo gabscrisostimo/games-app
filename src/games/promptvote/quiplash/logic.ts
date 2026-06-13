@@ -1,9 +1,19 @@
 import type {
-  Matchup, PromptCard, PromptDeck, QuiplashConfig, RoundState, SessionState,
+  Ballot, Matchup, Player, PromptCard, PromptDeck, QuiplashConfig, RoundState, SessionState,
 } from './types';
 
 export const MAX_PER_MATCHUP = 1000;
 export const QUIPLASH_BONUS_FRAC = 0.5;
+
+/** Fisher-Yates sobre uma cópia de `arr`, com rng injetável. */
+function shuffle<T>(arr: T[], rng: () => number): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 /** Sorteia `count` prompts evitando os já usados; reseta a memória se esgotar (borda). */
 function pickPrompts(
@@ -93,4 +103,41 @@ export function playAgain(
   state: SessionState, deck: PromptDeck, rng: () => number = Math.random,
 ): SessionState {
   return createSession(state.config, deck, rng);
+}
+
+function buildBallots(round: RoundState, players: Player[], rng: () => number): Ballot[] {
+  const ballots: Ballot[] = [];
+  for (const v of players) {
+    round.matchups.forEach((m, mi) => {
+      if (!m.voterIds.includes(v.id)) return;
+      const allowed = m.answers
+        .map((_, ai) => ai)
+        .filter((ai) => m.answers[ai].authorId !== v.id);
+      ballots.push({ voterId: v.id, matchupIndex: mi, order: shuffle(allowed, rng) });
+    });
+  }
+  return ballots;
+}
+
+export function submitAnswers(
+  state: SessionState, playerId: string, texts: string[], rng: () => number = Math.random,
+): SessionState {
+  if (state.round.phase !== 'answering') return state;
+  const idxs = promptsForPlayer(state.round, playerId);
+  const matchups = state.round.matchups.map((m, i) => {
+    const pos = idxs.indexOf(i);
+    if (pos === -1) return m;
+    return {
+      ...m,
+      answers: m.answers.map((a) =>
+        a.authorId === playerId ? { ...a, text: texts[pos] ?? '' } : a),
+    };
+  });
+  const answerIndex = state.round.answerIndex + 1;
+  let round: RoundState = { ...state.round, matchups, answerIndex };
+  if (answerIndex >= state.config.players.length) {
+    const ballots = buildBallots(round, state.config.players, rng);
+    round = { ...round, ballots, voteCursor: 0, phase: 'voting' };
+  }
+  return { ...state, round };
 }
