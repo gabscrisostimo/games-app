@@ -1,0 +1,20 @@
+{
+  "id": "snakeoil-personas",
+  "name": "Clientes (padrão)",
+  "cards": [
+    { "id": "per1", "persona": "pirata aposentado" },
+    { "id": "per2", "persona": "influencer fitness" },
+    { "id": "per3", "persona": "vampiro vegano" },
+    { "id": "per4", "persona": "vovó hacker" },
+    { "id": "per5", "persona": "astronauta com saudade de casa" },
+    { "id": "per6", "persona": "chef estrelado e mal-humorado" },
+    { "id": "per7", "persona": "detetive paranoico" },
+    { "id": "per8", "persona": "adolescente entediado" },
+    { "id": "per9", "persona": "bilionário excêntrico" },
+    { "id": "per10", "persona": "professor distraído" },
+    { "id": "per11", "persona": "atleta supersticioso" },
+    { "id": "per12", "persona": "fantasma nostálgico" },
+    { "id": "per13", "persona": "robô tentando ser humano" },
+    { "id": "per14", "persona": "fada madrinha sindicalizada" }
+  ]
+}
