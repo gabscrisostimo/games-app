@@ -19,7 +19,7 @@ Os chats compartilham o mesmo diretório de repositório, então cada um trabalh
 
 ## Chat A — Visual polish ✅ MERGEADO NO MAIN (branch: feat/visual-polish)
 
-**Implementação 100% completa. 37 testes passando. Pronto para merge.**
+**Implementação 100% completa. 37 testes passando. Mergeado no `main` e publicado em produção (commit de merge `88bf223`).**
 
 **O que foi feito (commitado em `feat/visual-polish`):**
 - Spec: `docs/superpowers/specs/2026-06-13-visual-polish-design.md`
@@ -69,3 +69,8 @@ Os chats compartilham o mesmo diretório de repositório, então cada um trabalh
 2. `src/App.tsx` e `src/shell/` têm dono único = Chat A enquanto o visual polish não fechar (outros chats só **importam** do shell, nunca editam).
 3. Antes de editar qualquer arquivo fora da sua pasta, checar este doc.
 4. `src/games/taboo/logic.ts|types.ts|reducer.ts|persistence.ts` e `src/data/` são estáveis — ninguém toca sem motivo forte.
+
+## Pendências pós-merge (não esquecer)
+
+- **Untrackar `.claude/settings.local.json`** (mover pra `.gitignore`). É arquivo de permissões **por-máquina**; nasceu versionado por acidente e gera conflito de merge recorrente em todos os chats. **Fazer só DEPOIS que B e C mergearem** suas engines no `main` — assim não há branch divergindo no arquivo e o untrack sai limpo (`git rm --cached .claude/settings.local.json` + commit; o arquivo permanece no disco de cada worktree). Se feito antes, cada chat pega um conflito "modify/delete" trivial no merge. (Anotado por Chat A, 2026-06-13.)
+- **Integração na home (`App.tsx`)**: adicionar o card de cada engine nova quando B/C sinalizarem "pronto". É território do Chat A; coordenar na hora.
