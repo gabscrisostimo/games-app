@@ -73,8 +73,18 @@ Os chats compartilham o mesmo diretório de repositório, então cada um trabalh
 - Contrato de integração: expor `<SnakeOilApp onHome={() => void} />`
 - **NÃO TOCA** em `src/games/impostor/**` (Chat B), nos arquivos do Chat A, nem em `src/games/taboo/**`
 
+## Chat Backend — Multiplayer / Netcode (`src/net/`)
+
+- Objetivo: permitir jogar **multi-device** (cada um no seu celular), além do pass-and-play. Camada **genérica** (lobby/transporte/presença + sincronização de estado que embrulha os reducers existentes + projeção de estado por-jogador), **não** um backend do zero por jogo.
+- **Território reivindicado: `src/net/**`** (pasta nova, compartilhada) — e o que mais a infra de rede exigir fora das pastas de jogo (a definir no spec; coordenar aqui antes).
+- Branch/worktree próprios: `feat/multiplayer` em `.claude/worktrees/feat+multiplayer` (criar a partir do `main` atual — já tem o visual polish).
+- **Consome** os reducers/`logic.ts` dos jogos via contrato (autoridade roda o mesmo reducer → broadcast → cada cliente vê sua projeção). **NÃO edita** as pastas das engines, nem `src/shell/`, nem `src/App.tsx`.
+- Fase atual = **exploratória**: brainstorm (decidir **transporte**: PartyKit / Supabase Realtime / Ably / socket próprio / host-peer) → spec → prova-de-conceito fina (lobby + 1 jogo de teste). **Não** front-runar todos os jogos.
+- **Âncora de validação:** integrar contra UM jogo concreto — **Quiplash** (engine `promptvote`). Generalizar só depois de um 2º jogo (ex.: Spyfall, que exige papel privado) provar a abstração.
+- Pass-and-play e multi-device **compartilham o core lógico** (mesmos reducers); a diferença é "um device vê todo o estado" vs "cada device vê sua projeção".
+
 ## Regras de ouro (evitar conflito)
-1. Cada chat fica na sua pasta. Fronteiras: `src/games/taboo/**` + shell/home = Chat A; `src/games/impostor/**` = Chat B; `src/games/judging/**` (+ `src/data/judging/**`) = Chat C.
+1. Cada chat fica na sua pasta. Fronteiras: `src/games/taboo/**` + shell/home = Chat A; `src/games/impostor/**` = Chat B; `src/games/judging/**` (+ `src/data/judging/**`) = Chat C; `src/net/**` = Chat Backend; demais `src/games/<engine>/**` = chats de engine.
 2. `src/App.tsx` e `src/shell/` têm dono único = Chat A enquanto o visual polish não fechar (outros chats só **importam** do shell, nunca editam).
 3. Antes de editar qualquer arquivo fora da sua pasta, checar este doc.
 4. `src/games/taboo/logic.ts|types.ts|reducer.ts|persistence.ts` e `src/data/` são estáveis — ninguém toca sem motivo forte.
