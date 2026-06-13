@@ -1,6 +1,6 @@
 // src/games/judging/snakeoil/logic.test.ts
 import { describe, it, expect } from 'vitest';
-import { shuffle, drawWords, drawPersona, createGame, startRound, selectCards, toJudging, judge } from './logic';
+import { shuffle, drawWords, drawPersona, createGame, startRound, selectCards, toJudging, judge, nextRound, getRanking } from './logic';
 import type { MatchConfig, WordDeck, PersonaDeck } from './types';
 
 // rng determinístico: sempre 0 → Math.floor(0 * (i+1)) = 0
@@ -180,5 +180,55 @@ describe('toJudging / judge', () => {
   it('judge é no-op fora de judging', () => {
     const g = pitching();
     expect(judge(g, 1)).toBe(g);
+  });
+});
+
+describe('nextRound / isGameOver / getRanking', () => {
+  function summary() {
+    let g = startRound(createGame(config, wordDeck, personaDeck, () => 0));
+    g = selectCards(g, g.players[g.round!.order[0]].hand.slice(0, 2));
+    g = selectCards(g, g.players[g.round!.order[1]].hand.slice(0, 2));
+    g = toJudging(g);
+    g = judge(g, g.round!.order[0]);
+    return g; // round-summary, roundsPlayed ainda 0
+  }
+  it('nextRound recompra as mãos até handSize', () => {
+    const g2 = nextRound(summary(), () => 0);
+    expect(g2.players.every((p) => p.hand.length === config.handSize)).toBe(true);
+  });
+  it('nextRound rotaciona o cliente', () => {
+    const g2 = nextRound(summary(), () => 0);
+    expect(g2.round!.customerIndex).toBe(1);
+    expect(g2.phase).toBe('pre-round');
+  });
+  it('incrementa roundsPlayed', () => {
+    expect(nextRound(summary(), () => 0).roundsPlayed).toBe(1);
+  });
+  it('isGameOver por rotações: endValue=1, 3 jogadores → over quando roundsPlayed atinge 3', () => {
+    // no limiar: roundsPlayed 2 → nextRound incrementa pra 3 >= 1*3 → game-over
+    const atThreshold = { ...summary(), roundsPlayed: 2 };
+    expect(nextRound(atThreshold, () => 0).phase).toBe('game-over');
+    // antes do limiar: roundsPlayed 1 → vira 2 < 3 → continua (pre-round)
+    const before = { ...summary(), roundsPlayed: 1 };
+    expect(nextRound(before, () => 0).phase).toBe('pre-round');
+  });
+  it('isGameOver por pontos', () => {
+    const pts: typeof config = { ...config, endMode: 'points', endValue: 1 };
+    let g = startRound(createGame(pts, wordDeck, personaDeck, () => 0));
+    g = selectCards(g, g.players[g.round!.order[0]].hand.slice(0, 2));
+    g = selectCards(g, g.players[g.round!.order[1]].hand.slice(0, 2));
+    g = toJudging(g);
+    g = judge(g, g.round!.order[0]); // vencedor agora tem 1 ponto
+    const g2 = nextRound(g, () => 0);
+    expect(g2.phase).toBe('game-over');
+  });
+  it('getRanking ordena por score desc', () => {
+    const g = summary();
+    const ranking = getRanking(g);
+    expect(ranking[0].score).toBeGreaterThanOrEqual(ranking[ranking.length - 1].score);
+  });
+  it('nextRound é no-op fora de round-summary', () => {
+    const g = createGame(config, wordDeck, personaDeck, () => 0);
+    expect(nextRound(g, () => 0)).toBe(g);
   });
 });
