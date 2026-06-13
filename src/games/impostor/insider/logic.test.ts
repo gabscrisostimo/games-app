@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   nextMaster, createSession, selectMaster, roleOf, dealRoles,
-  advanceReveal, startGuessing, markGuessed, timeUp, accuse,
+  advanceReveal, startGuessing, markGuessed, timeUp, accuse, playAgain,
 } from './logic';
 import type { Accusation, InsiderConfig, MasterMode, Player, WordDeck } from './types';
 
@@ -201,3 +201,38 @@ describe('accuse', () => {
     expect(accuse(hunt, { kind: 'nobody' }).round.outcome).toBe('insider-escaped');
   });
 });
+
+describe('playAgain', () => {
+  it('rotate: carrega a rotação e escolhe o próximo Mestre sem repetir', () => {
+    const finished = accuse(markGuessed(guessingState()), { kind: 'player', id: 'b' });
+    // rotação atual: ['a'] (Mestre da rodada anterior)
+    const again = playAgain(finished, rng0);
+    expect(again.round.phase).toBe('master-announce');
+    expect(again.round.masterId).toBe('b'); // próximo elegível com rng0
+    expect(again.masterRotation).toEqual(['a', 'b']);
+    expect(again.round.word).toBe('');
+    expect(again.round.insiderId).toBe('');
+    expect(again.round.outcome).toBeNull();
+    expect(again.round.accusation).toBeNull();
+    expect(again.round.endsAt).toBeNull();
+  });
+
+  it('choose: volta para master-select preservando a rotação', () => {
+    const start = createSession(baseConfig('choose'), rng0);
+    const finished = accuse(
+      markGuessed(startGuessing(advanceFully(dealRoles(selectMaster(start, 'a'), deck, rng0)), 1000)),
+      { kind: 'nobody' },
+    );
+    const again = playAgain(finished, rng0);
+    expect(again.round.phase).toBe('master-select');
+    expect(again.round.masterId).toBe('');
+    expect(again.masterRotation).toEqual(finished.masterRotation);
+  });
+});
+
+// helper local ao teste: aplica advanceReveal até entrar em guessing
+function advanceFully(s: ReturnType<typeof dealRoles>) {
+  let cur = s;
+  while (cur.round.phase === 'role-reveal') cur = advanceReveal(cur);
+  return cur;
+}

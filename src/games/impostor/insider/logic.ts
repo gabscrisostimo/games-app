@@ -110,3 +110,22 @@ export function accuse(state: SessionState, accusation: Accusation): SessionStat
   const outcome: Outcome = caught ? 'insider-caught' : 'insider-escaped';
   return { ...state, round: { ...state.round, accusation, outcome, phase: 'result' } };
 }
+
+export function playAgain(
+  state: SessionState,
+  rng: () => number = Math.random,
+): SessionState {
+  if (state.config.masterMode === 'rotate') {
+    const { masterId, rotation } = nextMaster(state.masterRotation, state.config.players, rng);
+    return {
+      config: state.config,
+      masterRotation: rotation,
+      round: { ...freshRound(), masterId, phase: 'master-announce' },
+    };
+  }
+  return {
+    config: state.config,
+    masterRotation: state.masterRotation,
+    round: { ...freshRound(), masterId: '', phase: 'master-select' },
+  };
+}
