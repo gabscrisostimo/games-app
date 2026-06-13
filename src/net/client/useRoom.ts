@@ -30,7 +30,11 @@ export function reduceClientState(state: ClientState, msg: ServerMsg): ClientSta
   }
 }
 
-const PARTYKIT_HOST = import.meta.env.VITE_PARTYKIT_HOST ?? 'localhost:1999';
+// Vite injeta `import.meta.env` em runtime. Tipado localmente (sem referência
+// global a `vite/client`) pra não alterar o ambiente de tipos do projeto inteiro
+// — este é o único arquivo do `src/net/` que lê env var.
+const env = (import.meta as unknown as { env?: Record<string, string | undefined> }).env ?? {};
+const PARTYKIT_HOST = env.VITE_PARTYKIT_HOST ?? 'localhost:1999';
 
 export function useRoom(code: string, playerId: string, nickname: string) {
   const [state, dispatch] = useReducer(
