@@ -17,20 +17,22 @@ Os chats compartilham o mesmo diretório de repositório, então cada um trabalh
 
 **Nota de coordenação:** `docs/status-chats.md` é editado pelos 3 chats. Para evitar divergência, cada chat mexe **só na sua seção**; na hora de integrar os branches, este arquivo pode precisar de um merge manual trivial. Sugestão: o Gabs mantém a versão canônica no `main`.
 
-## Chat A — Visual polish (em andamento)
+## Chat A — Visual polish ✅ MERGEADO NO MAIN (branch: feat/visual-polish)
 
-**O que já está feito (commitado no `main`):**
+**Implementação 100% completa. 37 testes passando. Pronto para merge.**
+
+**O que foi feito (commitado em `feat/visual-polish`):**
 - Spec: `docs/superpowers/specs/2026-06-13-visual-polish-design.md`
 - Plano: `docs/superpowers/plans/2026-06-13-visual-polish.md`
-- Direção visual definida: **Fusão** (fundo azul-meia-noite `#0c1220`, fonte Inter, acentos pastel)
-- Mockups do brainstorming: `.superpowers/brainstorm/` (gitignored, local)
-
-**O que vai implementar (ainda não mexido no código):**
-- Tokens de design `@theme` em `src/index.css` (cores + fonte + animações)
-- Restyle de: `src/App.tsx`, `src/shell/ActionButton.tsx`, `src/shell/Scoreboard.tsx`, todas as 5 telas do Taboo, `src/games/taboo/TabooApp.tsx`, `src/games/taboo/TabooSession.tsx`
-- `index.html` (fonte Inter), `vite.config.ts` (cores do manifest)
+- Tokens de design `@theme` em `src/index.css` (12 cores + animações + Inter)
+- Restyle completo: `src/App.tsx`, `src/shell/ActionButton.tsx`, `src/shell/Scoreboard.tsx`
+- Restyle Taboo: todas as 5 telas + `TabooApp.tsx` + `TabooSession.tsx` (transição de fase)
+- `index.html` (fonte Inter), `vite.config.ts` (cores `#0c1220` + exclude worktrees do Vitest)
 - Ícones PWA reais: `scripts/generate-icons.mjs` + `public/pwa-192.png` / `public/pwa-512.png`
-- Novos testes em `src/games/taboo/screens/InTurnScreen.test.tsx`
+- TDD: `src/games/taboo/screens/InTurnScreen.test.tsx` (4 novos testes: flash, urgência)
+- Fix: worktrees excluídos do Vitest para evitar contaminação entre chats
+
+**Ponto de integração preparado (App.tsx):** o card de cada jogo futuro deve ser adicionado aqui quando Chat B/C sinalizarem que o módulo está pronto. Contrato: `<XyzApp onHome={() => void} />`.
 
 **Arquivos que o Chat A é dono — NÃO TOCAR no outro chat:**
 `src/App.tsx`, `src/shell/**`, `src/index.css`, `index.html`, `vite.config.ts`, `public/**`, `src/games/taboo/**`

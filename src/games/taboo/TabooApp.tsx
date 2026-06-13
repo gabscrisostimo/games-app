@@ -21,17 +21,17 @@ export function TabooApp({ onHome }: { onHome: () => void }) {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="min-h-dvh bg-bg text-ink">
       {resumable && resumable.phase !== 'game-over' && (
         <div className="mx-auto mt-4 flex max-w-md flex-col gap-2 px-4">
           <button
-            className="rounded-2xl bg-amber-500 py-4 text-lg font-bold text-slate-900"
+            className="rounded-2xl bg-accent py-4 text-lg font-bold text-bg transition active:brightness-90"
             onClick={() => setGame(resumable)}
           >
             Continuar partida
           </button>
           <button
-            className="text-sm text-slate-400 underline"
+            className="text-sm text-muted underline"
             onClick={() => {
               clearGame();
               setResumable(null);

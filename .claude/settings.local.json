@@ -28,7 +28,12 @@
       "Bash(mkdir -p /home/gabs/personal/games-app/.claude/worktrees/feat+wordplay-engine/src/games/wordplay/stop/screens /home/gabs/personal/games-app/.claude/worktrees/feat+wordplay-engine/src/data/wordplay)",
       "Bash(touch /home/gabs/personal/games-app/.claude/worktrees/feat+wordplay-engine/src/games/wordplay/stop/screens/.gitkeep /home/gabs/personal/games-app/.claude/worktrees/feat+wordplay-engine/src/data/wordplay/.gitkeep)",
       "Bash(mkdir -p /home/gabs/personal/games-app/.claude/worktrees/feat+drawing-engine/src/games/drawing/fakeartist/screens)",
-      "Bash(touch /home/gabs/personal/games-app/.claude/worktrees/feat+drawing-engine/src/games/drawing/fakeartist/screens/.gitkeep)"
+      "Bash(touch /home/gabs/personal/games-app/.claude/worktrees/feat+drawing-engine/src/games/drawing/fakeartist/screens/.gitkeep)",
+      "Bash(bash scripts/start-server.sh --project-dir /home/gabs/personal/games-app)",
+      "Bash(bash *)",
+      "Bash(xargs cat)",
+      "Bash(npm test *)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }
