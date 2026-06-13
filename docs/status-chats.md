@@ -79,17 +79,25 @@ Os chats compartilham o mesmo diretório de repositório, então cada um trabalh
 - Contrato de integração: expor `<SnakeOilApp onHome={() => void} />`
 - **NÃO TOCA** em `src/games/impostor/**` (Chat B), nos arquivos do Chat A, nem em `src/games/taboo/**`
 
-## Chat D — Engine Prompt→Voto (EM ANDAMENTO — implementação Quiplash)
+## Chat D — Engine Prompt→Voto (CONCLUÍDO)
 
 - Roadmap de engines: `docs/ordem-de-construcao.md` (Engine 3)
 - Engine: **Prompt → Resposta → Voto** (Quiplash → Fibbage → Herd Mentality → ...)
 - Worktree: `.claude/worktrees/feat+promptvote-engine` / branch `feat/promptvote-engine` (base: `main`)
 - **Território reivindicado: `src/games/promptvote/**`** + decks em `src/data/promptvote/**`
-- Primeiro jogo: **Quiplash** → `src/games/promptvote/quiplash/`
-  - Modelo: **pass-and-play, single-device** (passa o celular pra responder e votar; tela de handoff esconde a resposta/voto anterior). Multi-device fica pro Chat Backend.
-  - Contrato de integração: `<QuiplashApp onHome={() => void} />`
-  - Spec + plano TDD: em construção (brainstorming → writing-plans → subagent-driven-development)
-- **Nota p/ Chat Backend:** Quiplash é a âncora de validação do netcode — manter `logic.ts`/`reducer.ts` puros e consumíveis por contrato.
+- Primeiro jogo: **Quiplash** → `src/games/promptvote/quiplash/` — **implementação completa**
+  - Spec aprovado: `docs/superpowers/specs/2026-06-13-quiplash-game-design.md`
+  - Plano TDD: `docs/superpowers/plans/2026-06-13-quiplash.md` — executado (Tasks 1–13, todas concluídas)
+  - Modelo: **pass-and-play, single-device** (passa o celular pra responder e votar; telas de handoff escondem a resposta/voto anterior). Multi-device fica pro Chat Backend.
+  - Dois modos (configuráveis na tela inicial): **Duelo** (anel — 2 autores por prompt) e **Grupo** (todos no mesmo prompt). Última rodada vira **Last Lash** (grupo) nos dois modos. Pontuação **fiel ao Quiplash** (% dos votos × multiplicador da rodada + bônus "Quiplash!" no sweep). Rodadas configuráveis (2–5). Votação em **lote** (1 passa-celular por votante).
+  - **Módulo pronto para integração:** expõe `<QuiplashApp onHome={() => void} />`
+    - Arquivo: `src/games/promptvote/quiplash/QuiplashApp.tsx`
+    - Inclui banner de retomada de sessão (resume) via `localStorage`
+  - Camadas implementadas: `types.ts`, `logic.ts` (pura, `rng` injetável), `reducer.ts`, `persistence.ts`, `playerStore.ts`, `ui.ts`, 5 screens (Config/Answering/Voting/RoundResult/FinalResult), `QuiplashSession.tsx`, `QuiplashApp.tsx`; deck PT-BR `src/data/promptvote/quiplash-padrao.json` (56 prompts) + loader `src/data/promptvote/index.ts`
+  - Suite: **115 testes passando (24 arquivos)** — 31 novos do Quiplash (8 arquivos). `tsc --noEmit` sem erros, build de produção OK.
+- Reusa **read-only** do shell: `ActionButton` (importa, não edita)
+- **Próximo passo para Chat A:** integrar `<QuiplashApp onHome={...} />` em `src/App.tsx` (registrar `View 'quiplash'`, mesmo padrão de `taboo`/`insider`). Estilos centralizados em `src/games/promptvote/quiplash/ui.ts` (design tokens do Chat A).
+- **Nota p/ Chat Backend:** Quiplash é a âncora de validação do netcode — `logic.ts`/`reducer.ts` são puros e consumíveis por contrato (todas as funções de `logic.ts` recebem `rng` injetável; o reducer injeta o deck).
 - **NÃO TOCA** em: Chat A (shell/home/taboo), Chat B (`impostor/**`), Chat C (`judging/**`)
 
 ## Chat ? — Engine Papéis Ocultos + Noite (andaime pronto, implementação pendente)
