@@ -176,6 +176,10 @@ export function getRanking(state: GameState): Player[] {
   return [...state.players].sort((a, b) => b.score - a.score);
 }
 
+export function maxPlayers(wordDeckSize: number, handSize: number): number {
+  return Math.floor(wordDeckSize / handSize);
+}
+
 export function selectCards(state: GameState, picks: string[]): GameState {
   if (state.phase !== 'selecting' || !state.round) return state;
   const r = state.round;

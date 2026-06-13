@@ -1,7 +1,7 @@
 // src/games/judging/snakeoil/screens/ConfigScreen.tsx
 import { useState } from 'react';
 import { WORD_DECKS, PERSONA_DECKS, getWordDeck, getPersonaDeck } from '../../../../data/judging';
-import { createGame } from '../logic';
+import { createGame, maxPlayers } from '../logic';
 import type { EndMode, GameState, MatchConfig } from '../types';
 
 const field = 'rounded-lg bg-slate-800 px-3 py-2 text-white';
@@ -15,6 +15,10 @@ export function ConfigScreen({ onStart }: { onStart: (game: GameState) => void }
   const [endMode, setEndMode] = useState<EndMode>('rotations');
   const [endValue, setEndValue] = useState(1);
 
+  const wordDeckSize = getWordDeck(WORD_DECKS[0].id)!.cards.length;
+  const cap = maxPlayers(wordDeckSize, handSize);
+  const overCapacity = names.length > cap;
+
   function setName(i: number, value: string) {
     setNames((prev) => prev.map((n, idx) => (idx === i ? value : n)));
   }
@@ -26,6 +30,7 @@ export function ConfigScreen({ onStart }: { onStart: (game: GameState) => void }
   }
 
   function start() {
+    if (overCapacity) return;
     const playerNames = names.map((n, i) => n.trim() || `Jogador ${i + 1}`);
     const config: MatchConfig = {
       playerNames,
@@ -58,7 +63,11 @@ export function ConfigScreen({ onStart }: { onStart: (game: GameState) => void }
             </button>
           </div>
         ))}
-        <button className="rounded-lg bg-slate-700 py-2 text-white" onClick={addPlayer}>
+        <button
+          className="rounded-lg bg-slate-700 py-2 text-white disabled:opacity-40"
+          onClick={addPlayer}
+          disabled={names.length >= cap}
+        >
           + jogador
         </button>
       </div>
@@ -123,9 +132,16 @@ export function ConfigScreen({ onStart }: { onStart: (game: GameState) => void }
         />
       </label>
 
+      {overCapacity && (
+        <p className="text-sm text-rose-400">
+          Cartas insuficientes: com mão de {handSize}, no máximo {cap} jogadores neste deck.
+        </p>
+      )}
+
       <button
-        className="mt-2 rounded-2xl bg-amber-500 py-4 text-xl font-bold text-slate-900 active:bg-amber-600"
+        className="mt-2 rounded-2xl bg-amber-500 py-4 text-xl font-bold text-slate-900 active:bg-amber-600 disabled:opacity-40"
         onClick={start}
+        disabled={overCapacity}
       >
         Começar
       </button>

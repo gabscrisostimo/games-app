@@ -1,6 +1,6 @@
 // src/games/judging/snakeoil/logic.test.ts
 import { describe, it, expect } from 'vitest';
-import { shuffle, drawWords, drawPersona, createGame, startRound, selectCards, toJudging, judge, nextRound, getRanking } from './logic';
+import { shuffle, drawWords, drawPersona, createGame, startRound, selectCards, toJudging, judge, nextRound, getRanking, maxPlayers } from './logic';
 import type { MatchConfig, WordDeck, PersonaDeck } from './types';
 
 // rng determinístico: sempre 0 → Math.floor(0 * (i+1)) = 0
@@ -194,6 +194,14 @@ describe('toJudging / judge', () => {
   it('judge é no-op fora de judging', () => {
     const g = pitching();
     expect(judge(g, 1)).toBe(g);
+  });
+});
+
+describe('maxPlayers', () => {
+  it('é floor(deckSize / handSize)', () => {
+    expect(maxPlayers(90, 6)).toBe(15);
+    expect(maxPlayers(36, 7)).toBe(5);
+    expect(maxPlayers(20, 6)).toBe(3);
   });
 });
 
