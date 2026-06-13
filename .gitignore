@@ -28,6 +28,9 @@ pnpm-debug.log*
 # test / coverage
 coverage/
 
+# visual companion brainstorm sessions
+.superpowers/
+
 # tsc composite emit artifacts
 *.tsbuildinfo
 vite.config.js
