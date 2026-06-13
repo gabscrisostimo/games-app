@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildRound, promptsForPlayer } from './logic';
+import { buildRound, promptsForPlayer, createSession, playAgain } from './logic';
 import type { PromptDeck, QuiplashConfig, Player } from './types';
 
 const players: Player[] = [
@@ -78,5 +78,26 @@ describe('promptsForPlayer', () => {
     expect(promptsForPlayer(duel, 'a')).toHaveLength(2);
     const group = buildRound(cfg({ mode: 'group' }), 0, deck, [], rng0).round;
     expect(promptsForPlayer(group, 'a')).toEqual([0]);
+  });
+});
+
+describe('createSession', () => {
+  it('monta rodada 1 em answering, scores zerados por jogador, usedPromptIds preenchido', () => {
+    const s = createSession(cfg(), deck, rng0);
+    expect(s.round.index).toBe(0);
+    expect(s.round.phase).toBe('answering');
+    expect(Object.values(s.scores)).toEqual([0, 0, 0, 0]);
+    expect(s.usedPromptIds.length).toBe(players.length); // duelo: N prompts
+  });
+});
+
+describe('playAgain', () => {
+  it('zera placar e usedPromptIds, volta pra rodada 1, mesma config', () => {
+    const s = createSession(cfg(), deck, rng0);
+    const dirty = { ...s, scores: { a: 50, b: 0, c: 0, d: 0 }, round: { ...s.round, index: 2 } };
+    const again = playAgain(dirty, deck, rng0);
+    expect(again.round.index).toBe(0);
+    expect(Object.values(again.scores)).toEqual([0, 0, 0, 0]);
+    expect(again.config).toEqual(s.config);
   });
 });

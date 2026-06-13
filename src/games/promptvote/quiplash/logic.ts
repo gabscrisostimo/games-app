@@ -1,5 +1,5 @@
 import type {
-  Matchup, PromptCard, PromptDeck, QuiplashConfig, RoundState,
+  Matchup, PromptCard, PromptDeck, QuiplashConfig, RoundState, SessionState,
 } from './types';
 
 export const MAX_PER_MATCHUP = 1000;
@@ -78,4 +78,19 @@ export function promptsForPlayer(round: RoundState, playerId: string): number[] 
   return round.matchups
     .map((m, i) => (m.answers.some((a) => a.authorId === playerId) ? i : -1))
     .filter((i) => i !== -1);
+}
+
+export function createSession(
+  config: QuiplashConfig, deck: PromptDeck, rng: () => number = Math.random,
+): SessionState {
+  const { round, used } = buildRound(config, 0, deck, [], rng);
+  const scores: Record<string, number> = {};
+  for (const p of config.players) scores[p.id] = 0;
+  return { config, scores, usedPromptIds: used, round };
+}
+
+export function playAgain(
+  state: SessionState, deck: PromptDeck, rng: () => number = Math.random,
+): SessionState {
+  return createSession(state.config, deck, rng);
 }
