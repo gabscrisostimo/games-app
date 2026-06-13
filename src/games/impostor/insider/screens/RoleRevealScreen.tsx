@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ActionButton } from '../../../../shell/ActionButton';
 import { roleOf } from '../logic';
 import type { SessionState } from '../types';
+import { ui } from '../ui';
 
 export function RoleRevealScreen({
   state,
@@ -16,9 +17,9 @@ export function RoleRevealScreen({
 
   if (!revealed) {
     return (
-      <div className="mx-auto flex max-w-md flex-col gap-6 p-4 text-center">
-        <p className="text-xl text-slate-300">Passe o celular para</p>
-        <p className="text-4xl font-extrabold text-white">{player.name}</p>
+      <div className={ui.screenCenteredGap6}>
+        <p className={ui.lead300}>Passe o celular para</p>
+        <p className={ui.hero}>{player.name}</p>
         <ActionButton variant="neutral" onClick={() => setRevealed(true)}>
           Toque para ver seu papel
         </ActionButton>
@@ -34,8 +35,8 @@ export function RoleRevealScreen({
         : 'Você é INGÊNUO.';
 
   return (
-    <div className="mx-auto flex max-w-md flex-col gap-6 p-4 text-center">
-      <p className="text-2xl font-bold text-white">{text}</p>
+    <div className={ui.screenCenteredGap6}>
+      <p className={ui.title}>{text}</p>
       <ActionButton
         variant="positive"
         onClick={() => {

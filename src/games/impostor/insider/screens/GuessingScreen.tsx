@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { ActionButton } from '../../../../shell/ActionButton';
 import { useCountdown } from '../../../../shell/useCountdown';
 import type { SessionState } from '../types';
+import { ui } from '../ui';
 
 export function GuessingScreen({
   state,
@@ -21,8 +22,8 @@ export function GuessingScreen({
 
   if (state.round.endsAt === null) {
     return (
-      <div className="mx-auto flex max-w-md flex-col gap-6 p-4 text-center">
-        <p className="text-xl text-slate-200">
+      <div className={ui.screenCenteredGap6}>
+        <p className={ui.lead200}>
           {master?.name ?? 'O Mestre'} responde sim/não às perguntas do grupo.
         </p>
         <ActionButton variant="positive" onClick={onStart}>
@@ -33,15 +34,15 @@ export function GuessingScreen({
   }
 
   return (
-    <div className="mx-auto flex h-dvh max-w-md flex-col items-center justify-between p-4">
-      <span className="mt-8 text-7xl font-extrabold tabular-nums text-white">{remaining}s</span>
+    <div className={ui.screenFull}>
+      <span className={ui.timer}>{remaining}s</span>
 
-      <div className="flex w-full flex-col gap-3">
+      <div className={ui.buttonCol}>
         <ActionButton variant="positive" onClick={onGuessed}>
           Adivinharam!
         </ActionButton>
         <button
-          className="w-full rounded-2xl bg-slate-700 py-4 text-lg font-semibold text-white select-none"
+          className={ui.peekBtn}
           onPointerDown={() => setPeek(true)}
           onPointerUp={() => setPeek(false)}
           onPointerLeave={() => setPeek(false)}
