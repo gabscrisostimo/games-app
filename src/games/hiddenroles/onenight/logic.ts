@@ -1,0 +1,273 @@
+// src/games/hiddenroles/onenight/logic.ts
+import { nightOrderOf, teamOf } from './roles';
+import type {
+  Config,
+  NightAction,
+  NightView,
+  Player,
+  RoleId,
+  RoundState,
+  SessionState,
+  WinResult,
+} from './types';
+
+export function dealRoles(bag: RoleId[], rng: () => number = Math.random): RoleId[] {
+  const deal = [...bag];
+  for (let i = deal.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [deal[i], deal[j]] = [deal[j], deal[i]];
+  }
+  return deal;
+}
+
+function swap(arr: RoleId[], i: number, j: number): void {
+  [arr[i], arr[j]] = [arr[j], arr[i]];
+}
+
+export function resolveNight(
+  deal: RoleId[],
+  actions: NightAction[],
+  playerCount: number,
+): RoleId[] {
+  const working = [...deal];
+  // Order by the canonical nightOrder of the actor's ORIGINAL role.
+  const ordered = [...actions].sort(
+    (x, y) => (nightOrderOf(deal[x.actor]) ?? 0) - (nightOrderOf(deal[y.actor]) ?? 0),
+  );
+  for (const a of ordered) {
+    if (a.kind === 'robber') swap(working, a.actor, a.target);
+    else if (a.kind === 'troublemaker') swap(working, a.a, a.b);
+    else if (a.kind === 'drunk') swap(working, a.actor, a.center);
+    // 'seer' and 'lone-wolf' gather info only — no swap.
+  }
+  return working.slice(0, playerCount);
+}
+
+export function computeNightView(
+  deal: RoleId[],
+  playerIndex: number,
+  playerCount: number,
+  action: NightAction | null,
+): NightView {
+  const role = deal[playerIndex];
+  const playerIdxs = (pred: (r: RoleId, i: number) => boolean): number[] => {
+    const out: number[] = [];
+    for (let i = 0; i < playerCount; i++) if (pred(deal[i], i)) out.push(i);
+    return out;
+  };
+
+  switch (role) {
+    case 'werewolf': {
+      if (action && action.kind === 'lone-wolf') {
+        return { kind: 'lone-wolf', center: action.center, role: deal[action.center] };
+      }
+      const partners = playerIdxs((r, i) => r === 'werewolf' && i !== playerIndex);
+      return { kind: 'wolves', partners };
+    }
+    case 'minion':
+      return { kind: 'minion', wolves: playerIdxs((r) => r === 'werewolf') };
+    case 'mason':
+      return { kind: 'masons', partners: playerIdxs((r, i) => r === 'mason' && i !== playerIndex) };
+    case 'seer':
+      if (!action || action.kind !== 'seer') return null;
+      return action.peek.kind === 'player'
+        ? { kind: 'seer-player', target: action.peek.target, role: deal[action.peek.target] }
+        : {
+            kind: 'seer-center',
+            cards: action.peek.cards,
+            roles: [deal[action.peek.cards[0]], deal[action.peek.cards[1]]],
+          };
+    case 'robber':
+      if (!action || action.kind !== 'robber') return null;
+      return { kind: 'robber', target: action.target, role: deal[action.target] };
+    case 'troublemaker':
+      return action && action.kind === 'troublemaker' ? { kind: 'troublemaker' } : null;
+    case 'drunk':
+      return action && action.kind === 'drunk' ? { kind: 'drunk' } : null;
+    default:
+      return null; // insomniac (dawn), villager, hunter, tanner
+  }
+}
+
+export function resolveDeaths(votes: number[], finalRoles: RoleId[]): number[] {
+  const n = votes.length;
+  const count = new Array<number>(n).fill(0);
+  for (const v of votes) if (v >= 0 && v < n) count[v]++;
+  const maxVotes = Math.max(0, ...count);
+
+  const dead = new Set<number>();
+  if (maxVotes >= 2) {
+    for (let i = 0; i < n; i++) if (count[i] === maxVotes) dead.add(i);
+  }
+
+  // Hunter fixpoint: a dead hunter kills whoever they voted for.
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const d of [...dead]) {
+      if (finalRoles[d] === 'hunter') {
+        const t = votes[d];
+        if (t >= 0 && t < n && !dead.has(t)) {
+          dead.add(t);
+          changed = true;
+        }
+      }
+    }
+  }
+
+  return [...dead].sort((a, b) => a - b);
+}
+
+export function resolveWinners(finalRoles: RoleId[], deaths: number[]): WinResult {
+  const deadRoles = deaths.map((i) => finalRoles[i]);
+  const tannerDied = deadRoles.includes('tanner');
+  const werewolfDied = deadRoles.includes('werewolf');
+  const wolvesInPlay = finalRoles.includes('werewolf');
+
+  let village = false;
+  let werewolf = false;
+
+  if (werewolfDied) {
+    village = true; // a werewolf died -> Village wins
+  } else if (wolvesInPlay) {
+    if (!tannerDied) werewolf = true; // wolves win unless a Tanner death blocks them
+    // tannerDied here => only Tanner wins (village & werewolf stay false)
+  } else {
+    // no wolves in play
+    if (deaths.length === 0) {
+      village = true;
+    } else {
+      werewolf = deadRoles.some((r) => r !== 'minion'); // Minion wins iff a non-minion died
+    }
+  }
+
+  return { village, werewolf, tanner: tannerDied };
+}
+
+export function awardScores(
+  scores: Record<string, number>,
+  players: Player[],
+  finalRoles: RoleId[],
+  deaths: number[],
+  winners: WinResult,
+): Record<string, number> {
+  const next = { ...scores };
+  players.forEach((p, i) => {
+    const team = teamOf(finalRoles[i]);
+    const won =
+      (winners.village && team === 'village') ||
+      (winners.werewolf && team === 'werewolf') ||
+      (winners.tanner && team === 'tanner' && deaths.includes(i));
+    if (won) next[p.id] = (next[p.id] ?? 0) + 1;
+  });
+  return next;
+}
+
+function freshRound(deal: RoleId[], playerCount: number): RoundState {
+  return {
+    deal,
+    actions: [],
+    views: new Array<NightView>(playerCount).fill(null),
+    passIndex: 0,
+    finalRoles: [],
+    endsAt: null,
+    votes: new Array<number>(playerCount).fill(-1),
+    deaths: [],
+    winners: null,
+    phase: 'night',
+  };
+}
+
+export function createSession(config: Config, rng: () => number = Math.random): SessionState {
+  const deal = dealRoles(config.bag, rng);
+  return { config, scores: {}, round: freshRound(deal, config.players.length) };
+}
+
+export function submitPass(state: SessionState, action: NightAction | null): SessionState {
+  const { round, config } = state;
+  if (round.phase !== 'night') return state;
+  const n = config.players.length;
+  const idx = round.passIndex;
+
+  const views = [...round.views];
+  views[idx] = computeNightView(round.deal, idx, n, action);
+  const actions = action ? [...round.actions, action] : round.actions;
+
+  const next = idx + 1;
+  if (next < n) {
+    return { ...state, round: { ...round, views, actions, passIndex: next } };
+  }
+
+  const finalRoles = resolveNight(round.deal, actions, n);
+  const hasInsomniac = config.bag.includes('insomniac');
+  return {
+    ...state,
+    round: {
+      ...round,
+      views,
+      actions,
+      finalRoles,
+      passIndex: 0,
+      phase: hasInsomniac ? 'dawn' : 'discussion',
+      endsAt: null,
+    },
+  };
+}
+
+export function submitDawn(state: SessionState): SessionState {
+  const { round, config } = state;
+  if (round.phase !== 'dawn') return state;
+  const n = config.players.length;
+  const idx = round.passIndex;
+
+  const views = [...round.views];
+  if (round.deal[idx] === 'insomniac') {
+    views[idx] = { kind: 'insomniac', role: round.finalRoles[idx] };
+  }
+
+  const next = idx + 1;
+  if (next < n) {
+    return { ...state, round: { ...round, views, passIndex: next } };
+  }
+  return { ...state, round: { ...round, views, phase: 'discussion', endsAt: null } };
+}
+
+export function startDiscussion(state: SessionState, now: number): SessionState {
+  const { round, config } = state;
+  if (round.phase !== 'discussion') return state;
+  return { ...state, round: { ...round, endsAt: now + config.discussSeconds * 1000 } };
+}
+
+export function beginVote(state: SessionState): SessionState {
+  const { round, config } = state;
+  if (round.phase !== 'discussion') return state;
+  return {
+    ...state,
+    round: { ...round, phase: 'vote', passIndex: 0, votes: new Array<number>(config.players.length).fill(-1) },
+  };
+}
+
+export function submitVote(state: SessionState, target: number): SessionState {
+  const { round, config } = state;
+  if (round.phase !== 'vote') return state;
+  const n = config.players.length;
+  const idx = round.passIndex;
+
+  const votes = [...round.votes];
+  votes[idx] = target;
+
+  const next = idx + 1;
+  if (next < n) {
+    return { ...state, round: { ...round, votes, passIndex: next } };
+  }
+
+  const deaths = resolveDeaths(votes, round.finalRoles);
+  const winners = resolveWinners(round.finalRoles, deaths);
+  const scores = awardScores(state.scores, config.players, round.finalRoles, deaths, winners);
+  return { ...state, scores, round: { ...round, votes, deaths, winners, phase: 'result' } };
+}
+
+export function playAgain(state: SessionState, rng: () => number = Math.random): SessionState {
+  const deal = dealRoles(state.config.bag, rng);
+  return { config: state.config, scores: state.scores, round: freshRound(deal, state.config.players.length) };
+}

@@ -103,17 +103,23 @@ Os chats compartilham o mesmo diretório de repositório, então cada um trabalh
 - **Nota p/ Chat Backend:** Quiplash é a âncora de validação do netcode — `logic.ts`/`reducer.ts` são puros e consumíveis por contrato (todas as funções de `logic.ts` recebem `rng` injetável; o reducer injeta o deck).
 - **NÃO TOCA** em: Chat A (shell/home/taboo), Chat B (`impostor/**`), Chat C (`judging/**`)
 
-## Chat ? — Engine Papéis Ocultos + Noite (andaime pronto, implementação pendente)
+## Engine 4 — Papéis Ocultos + Noite (One Night implementado + wired na home)
 
 - Roadmap de engines: `docs/ordem-de-construcao.md` (Engine 4)
 - Engine: **Papéis Ocultos + Noite** (One Night Werewolf → Secret Hitler → Mascarade → BotC)
 - Worktree: `.claude/worktrees/feat+hidden-roles-engine` / branch `feat/hidden-roles-engine` (base: `main`)
-- **Território reivindicado: `src/games/hiddenroles/**`**
+- **Território reivindicado: `src/games/hiddenroles/**`** (+ dados em `src/data/hiddenroles/**`)
 - Primeiro jogo: **One Night Werewolf** → `src/games/hiddenroles/onenight/`
-  - Andaime criado: pastas com `.gitkeep`, sem lógica ainda
-  - Contrato de integração: `<OneNightApp onHome={() => void} />`
-  - Implementação: **pendente** (próximo passo: spec + writing-plans)
-- **NÃO TOCA** em: Chat A (shell/home/taboo), Chat B (`impostor/**`), Chat C (`judging/**`)
+  - Implementação: **concluída** (brainstorm → spec → writing-plans → TDD)
+    - Spec: `docs/superpowers/specs/2026-06-13-onenight-game-design.md`
+    - Plano: `docs/superpowers/plans/2026-06-13-onenight-implementation.md`
+  - **Contrato de integração: `<OneNightApp onHome={() => void} />`** — exportado de `src/games/hiddenroles/onenight/OneNightApp.tsx`; **já wired na home** (`View 'onenight'` + card em `src/App.tsx`)
+  - localStorage: `games-app:onenight:current` (sessão) e `games-app:onenight:players` (jogadores reusáveis)
+  - Engine pura + reducer (sem React): `logic.ts` (`resolveNight`/`computeNightView`/win matrix) + `reducer.ts` — reusáveis pelo Chat Backend
+  - Suíte: todos os testes da engine verdes; `npm run build` limpo
+  - Pendências de polish (não-bloqueantes): texto "não agir" do papel sem ação noturna; deck/bag avançado e Doppelgänger ficam pra v2
+  - **Exceção de fronteira (autorizada pelo Gabs):** este worktree fez o wiring de `<OneNightApp>` em `src/App.tsx` ele mesmo (normalmente é do Chat A). Padrão idêntico aos outros jogos; nada mais do shell foi tocado.
+- **NÃO TOCA** em: Chat B (`impostor/**`), Chat C (`judging/**`), Chat Backend (`net/**`)
 
 ## Chat Backend — Multiplayer / Netcode (`src/net/`)
 

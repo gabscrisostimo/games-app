@@ -3,8 +3,9 @@ import { TabooApp } from './games/taboo/TabooApp';
 import { InsiderApp } from './games/impostor/insider/InsiderApp';
 import { SnakeOilApp } from './games/judging/snakeoil/SnakeOilApp';
 import { QuiplashApp } from './games/promptvote/quiplash/QuiplashApp';
+import { OneNightApp } from './games/hiddenroles/onenight/OneNightApp';
 
-type View = 'home' | 'taboo' | 'insider' | 'snakeoil' | 'quiplash';
+type View = 'home' | 'taboo' | 'insider' | 'snakeoil' | 'quiplash' | 'onenight';
 
 export function App() {
   const [view, setView] = useState<View>('home');
@@ -13,6 +14,7 @@ export function App() {
   if (view === 'insider') return <InsiderApp onHome={() => setView('home')} />;
   if (view === 'snakeoil') return <SnakeOilApp onHome={() => setView('home')} />;
   if (view === 'quiplash') return <QuiplashApp onHome={() => setView('home')} />;
+  if (view === 'onenight') return <OneNightApp onHome={() => setView('home')} />;
 
   return (
     <main className="min-h-dvh bg-bg text-ink">
@@ -52,6 +54,14 @@ export function App() {
         >
           <div className="text-2xl font-bold text-ink">Quiplash</div>
           <div className="mt-1 text-sm text-muted">3+ jogadores · responda prompts e vote nas respostas mais engraçadas</div>
+        </button>
+
+        <button
+          className="rounded-2xl border border-line bg-surface p-5 text-left transition active:brightness-95"
+          onClick={() => setView('onenight')}
+        >
+          <div className="text-2xl font-bold text-ink">One Night</div>
+          <div className="mt-1 text-sm text-muted">3+ jogadores · papéis ocultos, uma noite de trocas e um voto pra achar o lobo</div>
         </button>
       </div>
     </main>
