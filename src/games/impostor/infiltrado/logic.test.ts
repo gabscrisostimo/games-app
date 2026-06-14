@@ -42,3 +42,44 @@ describe('createInitial', () => {
     s.impostorSchedule.forEach((r) => expect(r).toHaveLength(1));
   });
 });
+
+describe('answering — projeção secreta + envio', () => {
+  it('impostor vê a pergunta impostora; os outros, a normal; ninguém sabe o papel', () => {
+    const s = init();
+    const imp = s.currentImpostors[0];
+    const other = players.find((p) => p.id !== imp)!.id;
+    const pi = G.project(s, imp);
+    const po = G.project(s, other);
+    expect(pi.phase === 'answering' && pi.yourQuestion).toBe(s.pair.impostor);
+    expect(po.phase === 'answering' && po.yourQuestion).toBe(s.pair.normal);
+    // nenhuma projeção revela o papel
+    expect(JSON.stringify(pi)).not.toMatch(/impostor.*true|isImpostor|role/i);
+    expect(JSON.stringify(po)).not.toContain(s.pair.impostor);
+  });
+
+  it('SUBMIT_ANSWER grava resposta; projeção não vaza resposta alheia', () => {
+    let s = init();
+    s = G.reducer(s, { type: 'SUBMIT_ANSWER', text: 'segredo da Ana' }, ctx('a'));
+    expect(s.answers.a).toBe('segredo da Ana');
+    const pb = G.project(s, 'b');
+    expect(JSON.stringify(pb)).not.toContain('segredo da Ana');
+    expect(pb).toMatchObject({ phase: 'answering', yourAnswer: null, submitted: 1, total: 4 });
+  });
+
+  it('quando todos respondem, vai pra reveal com revealOrder cobrindo todos', () => {
+    let s = init();
+    for (const p of players) s = G.reducer(s, { type: 'SUBMIT_ANSWER', text: `r-${p.id}` }, ctx(p.id));
+    expect(s.phase).toBe('reveal');
+    expect([...s.revealOrder].sort()).toEqual(['a', 'b', 'c', 'd']);
+    expect(s.endsAt).toBeNull();
+  });
+
+  it('ignora resposta vazia e duplicada', () => {
+    let s = init();
+    s = G.reducer(s, { type: 'SUBMIT_ANSWER', text: '   ' }, ctx('a'));
+    expect(s.answers.a).toBeUndefined();
+    s = G.reducer(s, { type: 'SUBMIT_ANSWER', text: 'primeira' }, ctx('a'));
+    s = G.reducer(s, { type: 'SUBMIT_ANSWER', text: 'segunda' }, ctx('a'));
+    expect(s.answers.a).toBe('primeira');
+  });
+});

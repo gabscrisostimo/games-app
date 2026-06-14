@@ -37,6 +37,18 @@ function startRound(base: InfiltradoState, roundIndex: number, now: number, rng:
   };
 }
 
+function allAnswered(s: InfiltradoState): boolean {
+  return s.players.every((p) => s.answers[p.id] !== undefined);
+}
+
+function toReveal(s: InfiltradoState, rng: () => number): InfiltradoState {
+  return { ...s, phase: 'reveal', endsAt: null, revealOrder: shuffle(s.players.map((p) => p.id), rng) };
+}
+
+function nick(s: InfiltradoState, id: PlayerId): string {
+  return s.players.find((p) => p.id === id)?.nickname ?? '???';
+}
+
 export const infiltrado: NetGame<InfiltradoState, InfiltradoAction, InfiltradoProjection, InfiltradoConfig> = {
   createInitial({ config, players, now, rng }: InitCtx<InfiltradoConfig>): InfiltradoState {
     const ids = players.map((p) => p.id);
@@ -53,11 +65,36 @@ export const infiltrado: NetGame<InfiltradoState, InfiltradoAction, InfiltradoPr
     return startRound(base, 0, now, rng);
   },
 
-  reducer(state: InfiltradoState, _action: InfiltradoAction, _ctx: ActionCtx): InfiltradoState {
-    return state;
+  reducer(state: InfiltradoState, action: InfiltradoAction, ctx: ActionCtx): InfiltradoState {
+    switch (action.type) {
+      case 'SUBMIT_ANSWER': {
+        if (state.phase !== 'answering') return state;
+        if (state.answers[ctx.actorId] !== undefined) return state;
+        const text = action.text.trim();
+        if (!text) return state;
+        const next = { ...state, answers: { ...state.answers, [ctx.actorId]: text } };
+        return allAnswered(next) ? toReveal(next, ctx.rng) : next;
+      }
+      default:
+        return state;
+    }
   },
 
-  project(state: InfiltradoState, _playerId: PlayerId): InfiltradoProjection {
+  project(state: InfiltradoState, playerId: PlayerId): InfiltradoProjection {
+    if (state.phase === 'answering') {
+      const isImp = state.currentImpostors.includes(playerId);
+      return {
+        phase: 'answering',
+        tema: state.pair.tema,
+        yourQuestion: isImp ? state.pair.impostor : state.pair.normal,
+        yourAnswer: state.answers[playerId] ?? null,
+        submitted: Object.keys(state.answers).length,
+        total: state.players.length,
+        endsAt: state.endsAt ?? 0,
+        round: state.roundIndex + 1,
+        totalRounds: state.totalRounds,
+      };
+    }
     return { phase: 'matchEnd', finalScores: [] } as InfiltradoProjection;
   },
 
