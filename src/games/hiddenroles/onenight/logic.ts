@@ -117,3 +117,48 @@ export function resolveDeaths(votes: number[], finalRoles: RoleId[]): number[] {
 
   return [...dead].sort((a, b) => a - b);
 }
+
+export function resolveWinners(finalRoles: RoleId[], deaths: number[]): WinResult {
+  const deadRoles = deaths.map((i) => finalRoles[i]);
+  const tannerDied = deadRoles.includes('tanner');
+  const werewolfDied = deadRoles.includes('werewolf');
+  const wolvesInPlay = finalRoles.includes('werewolf');
+
+  let village = false;
+  let werewolf = false;
+
+  if (werewolfDied) {
+    village = true; // a werewolf died -> Village wins
+  } else if (wolvesInPlay) {
+    if (!tannerDied) werewolf = true; // wolves win unless a Tanner death blocks them
+    // tannerDied here => only Tanner wins (village & werewolf stay false)
+  } else {
+    // no wolves in play
+    if (deaths.length === 0) {
+      village = true;
+    } else {
+      werewolf = deadRoles.some((r) => r !== 'minion'); // Minion wins iff a non-minion died
+    }
+  }
+
+  return { village, werewolf, tanner: tannerDied };
+}
+
+export function awardScores(
+  scores: Record<string, number>,
+  players: Player[],
+  finalRoles: RoleId[],
+  deaths: number[],
+  winners: WinResult,
+): Record<string, number> {
+  const next = { ...scores };
+  players.forEach((p, i) => {
+    const team = teamOf(finalRoles[i]);
+    const won =
+      (winners.village && team === 'village') ||
+      (winners.werewolf && team === 'werewolf') ||
+      (winners.tanner && team === 'tanner' && deaths.includes(i));
+    if (won) next[p.id] = (next[p.id] ?? 0) + 1;
+  });
+  return next;
+}

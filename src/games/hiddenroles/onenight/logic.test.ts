@@ -35,7 +35,8 @@ function makeRng(seq: number[]): () => number {
   return () => (i < seq.length ? seq[i++] : 0);
 }
 
-import { resolveNight, computeNightView, resolveDeaths } from './logic';
+import { resolveNight, computeNightView, resolveDeaths, resolveWinners, awardScores } from './logic';
+import type { Player } from './types';
 
 describe('resolveNight', () => {
   // deal indices: 0..N-1 players, N..N+2 center.
@@ -227,5 +228,74 @@ describe('resolveDeaths', () => {
     const finalRoles: RoleId[] = ['hunter', 'hunter', 'villager', 'seer'];
     // votes: p2->0, p3->0 (p0 gets 2, dies). p0 voted p1, p1 voted p2.
     expect(resolveDeaths([1, 2, 0, 0], finalRoles)).toEqual([0, 1, 2]);
+  });
+});
+
+describe('resolveWinners (locked win matrix)', () => {
+  it('a werewolf dies -> Village wins', () => {
+    const final: RoleId[] = ['werewolf', 'villager', 'seer'];
+    expect(resolveWinners(final, [0])).toEqual({ village: true, werewolf: false, tanner: false });
+  });
+
+  it('no wolf dies, a wolf is in play, no tanner died -> Werewolf team wins', () => {
+    const final: RoleId[] = ['werewolf', 'villager', 'seer'];
+    expect(resolveWinners(final, [1])).toEqual({ village: false, werewolf: true, tanner: false });
+  });
+
+  it('Tanner dies and no wolf dies -> only Tanner wins (blocks the wolves)', () => {
+    const final: RoleId[] = ['werewolf', 'tanner', 'seer'];
+    expect(resolveWinners(final, [1])).toEqual({ village: false, werewolf: false, tanner: true });
+  });
+
+  it('Tanner dies AND a wolf dies -> Village wins AND Tanner wins', () => {
+    const final: RoleId[] = ['werewolf', 'tanner', 'seer'];
+    expect(resolveWinners(final, [0, 1])).toEqual({ village: true, werewolf: false, tanner: true });
+  });
+
+  it('no wolves in play and nobody dies -> Village wins', () => {
+    const final: RoleId[] = ['villager', 'seer', 'robber'];
+    expect(resolveWinners(final, [])).toEqual({ village: true, werewolf: false, tanner: false });
+  });
+
+  it('no wolves in play, a non-minion dies -> Minion (werewolf team) wins, Village loses', () => {
+    const final: RoleId[] = ['minion', 'villager', 'seer'];
+    expect(resolveWinners(final, [1])).toEqual({ village: false, werewolf: true, tanner: false });
+  });
+
+  it('no wolves in play, only the Minion dies -> Minion loses, Village loses', () => {
+    const final: RoleId[] = ['minion', 'villager', 'seer'];
+    expect(resolveWinners(final, [0])).toEqual({ village: false, werewolf: false, tanner: false });
+  });
+});
+
+describe('awardScores', () => {
+  const players: Player[] = [
+    { id: 'a', name: 'Ana' },
+    { id: 'b', name: 'Beto' },
+    { id: 'c', name: 'Caio' },
+  ];
+
+  it('Village win gives +1 to every village-team player', () => {
+    const final: RoleId[] = ['werewolf', 'villager', 'seer']; // village = b, c
+    const scores = awardScores({}, players, final, [0], { village: true, werewolf: false, tanner: false });
+    expect(scores).toEqual({ b: 1, c: 1 });
+  });
+
+  it('Werewolf win gives +1 to wolves and minion', () => {
+    const final: RoleId[] = ['werewolf', 'minion', 'seer'];
+    const scores = awardScores({}, players, final, [2], { village: false, werewolf: true, tanner: false });
+    expect(scores).toEqual({ a: 1, b: 1 });
+  });
+
+  it('Tanner win gives +1 only to the dead tanner', () => {
+    const final: RoleId[] = ['werewolf', 'tanner', 'seer'];
+    const scores = awardScores({}, players, final, [1], { village: false, werewolf: false, tanner: true });
+    expect(scores).toEqual({ b: 1 });
+  });
+
+  it('accumulates on top of existing scores', () => {
+    const final: RoleId[] = ['villager', 'seer', 'robber'];
+    const scores = awardScores({ a: 2, b: 1, c: 5 }, players, final, [], { village: true, werewolf: false, tanner: false });
+    expect(scores).toEqual({ a: 3, b: 2, c: 6 });
   });
 });
