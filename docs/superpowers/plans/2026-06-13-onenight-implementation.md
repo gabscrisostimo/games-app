@@ -2953,7 +2953,7 @@ Root component exposed to the home shell. Mirrors `InsiderApp`: a resume banner 
 
 ```tsx
 // src/games/hiddenroles/onenight/OneNightApp.test.tsx
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { OneNightApp } from './OneNightApp';
@@ -3103,10 +3103,12 @@ describe('OneNightSession (end to end)', () => {
     await user.click(screen.getByRole('button', { name: /começar discussão/i }));
     await user.click(screen.getByRole('button', { name: /votar agora/i }));
 
-    // vote pass: everyone votes Beto (index 1)
+    // vote pass: each voter picks the first available ballot option (self is excluded,
+    // so a fixed name like "Beto" can't be used — Beto can't vote for himself).
     for (let i = 0; i < 3; i++) {
       await user.click(screen.getByRole('button', { name: /abrir voto/i }));
-      await user.click(screen.getByRole('button', { name: 'Beto' }));
+      // after opening the ballot only the candidate buttons remain on screen
+      await user.click(screen.getAllByRole('button')[0]);
     }
 
     // result screen
