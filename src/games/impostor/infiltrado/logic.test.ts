@@ -159,3 +159,58 @@ describe('votação -> apuração', () => {
     expect(s.votes.a).toBe('b');
   });
 });
+
+describe('escape', () => {
+  function reachEscape() {
+    let s = init();
+    for (const p of players) s = G.reducer(s, { type: 'SUBMIT_ANSWER', text: `r-${p.id}` }, ctx(p.id));
+    s = G.reducer(s, { type: 'ADVANCE' }, ctx('a', 5000));
+    const imp = s.currentImpostors[0];
+    for (const p of players) {
+      const target = p.id === imp ? players.find((x) => x.id !== imp)!.id : imp;
+      s = G.reducer(s, { type: 'SUBMIT_VOTE', suspectId: target }, ctx(p.id));
+    }
+    return s; // phase 'escape', accusedId = imp
+  }
+
+  it('só o acusado registra o palpite; projeção judging mostra a pergunta original', () => {
+    let s = reachEscape();
+    const imp = s.accusedId!;
+    const other = players.find((p) => p.id !== imp)!.id;
+    // judging vê a pergunta normal pra avaliar
+    const pj = G.project(s, other);
+    expect(pj.phase === 'escape' && pj.role).toBe('judging');
+    if (pj.phase === 'escape' && pj.role === 'judging') expect(pj.originalQuestion).toBe(s.pair.normal);
+    // o acusado é guessing
+    const pg = G.project(s, imp);
+    expect(pg.phase === 'escape' && pg.role).toBe('guessing');
+    // palpite só do acusado
+    s = G.reducer(s, { type: 'SUBMIT_ESCAPE_GUESS', text: 'chute do outro' }, ctx(other));
+    expect(s.escapeGuess).toBeNull();
+    s = G.reducer(s, { type: 'SUBMIT_ESCAPE_GUESS', text: 'minha pergunta era X' }, ctx(imp));
+    expect(s.escapeGuess).toBe('minha pergunta era X');
+  });
+
+  it('maioria SIM => impostor escapa (vitória do impostor) e pontua +2', () => {
+    let s = reachEscape();
+    const imp = s.accusedId!;
+    const others = players.filter((p) => p.id !== imp).map((p) => p.id);
+    s = G.reducer(s, { type: 'SUBMIT_ESCAPE_GUESS', text: 'palpite' }, ctx(imp));
+    for (const id of others) s = G.reducer(s, { type: 'SUBMIT_ESCAPE_VOTE', ok: true }, ctx(id));
+    expect(s.phase).toBe('roundEnd');
+    expect(s.roundOutcome).toBe('impostor');
+    expect(s.scores[imp]).toBe(2);
+  });
+
+  it('maioria NÃO (e empate) => grupo vence e pontua inocentes +1', () => {
+    let s = reachEscape();
+    const imp = s.accusedId!;
+    const others = players.filter((p) => p.id !== imp).map((p) => p.id);
+    s = G.reducer(s, { type: 'SUBMIT_ESCAPE_GUESS', text: 'palpite' }, ctx(imp));
+    for (const id of others) s = G.reducer(s, { type: 'SUBMIT_ESCAPE_VOTE', ok: false }, ctx(id));
+    expect(s.phase).toBe('roundEnd');
+    expect(s.roundOutcome).toBe('group');
+    for (const id of others) expect(s.scores[id]).toBe(1);
+    expect(s.scores[imp]).toBe(0);
+  });
+});

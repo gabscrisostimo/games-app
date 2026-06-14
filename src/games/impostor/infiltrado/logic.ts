@@ -90,6 +90,22 @@ function resolveVotes(s: InfiltradoState): InfiltradoState {
   return toRoundEnd({ ...s, accusedId: accused }, 'impostor');
 }
 
+function escapeVoters(s: InfiltradoState): PlayerId[] {
+  return s.players.filter((p) => p.id !== s.accusedId).map((p) => p.id);
+}
+
+function allEscapeVoted(s: InfiltradoState): boolean {
+  return escapeVoters(s).every((id) => (s.escapeVotes as Record<PlayerId, boolean | undefined>)[id] !== undefined);
+}
+
+function resolveEscape(s: InfiltradoState): InfiltradoState {
+  const vals = Object.values(s.escapeVotes);
+  const yes = vals.filter((v) => v).length;
+  const no = vals.length - yes;
+  const escaped = yes > no; // empate = falhou (grupo vence)
+  return toRoundEnd(s, escaped ? 'impostor' : 'group');
+}
+
 export const infiltrado: NetGame<InfiltradoState, InfiltradoAction, InfiltradoProjection, InfiltradoConfig> = {
   createInitial({ config, players, now, rng }: InitCtx<InfiltradoConfig>): InfiltradoState {
     const ids = players.map((p) => p.id);
@@ -128,6 +144,20 @@ export const infiltrado: NetGame<InfiltradoState, InfiltradoAction, InfiltradoPr
         const next = { ...state, votes: { ...state.votes, [ctx.actorId]: action.suspectId } };
         return allVoted(next) ? resolveVotes(next) : next;
       }
+      case 'SUBMIT_ESCAPE_GUESS': {
+        if (state.phase !== 'escape' || ctx.actorId !== state.accusedId) return state;
+        if (state.escapeGuess !== null) return state;
+        const text = action.text.trim();
+        if (!text) return state;
+        return { ...state, escapeGuess: text };
+      }
+      case 'SUBMIT_ESCAPE_VOTE': {
+        if (state.phase !== 'escape' || state.escapeGuess === null) return state;
+        if (ctx.actorId === state.accusedId) return state;
+        if ((state.escapeVotes as Record<PlayerId, boolean | undefined>)[ctx.actorId] !== undefined) return state;
+        const next = { ...state, escapeVotes: { ...state.escapeVotes, [ctx.actorId]: action.ok } };
+        return allEscapeVoted(next) ? resolveEscape(next) : next;
+      }
       default:
         return state;
     }
@@ -162,6 +192,18 @@ export const infiltrado: NetGame<InfiltradoState, InfiltradoAction, InfiltradoPr
         voted: Object.keys(state.votes).length,
         total: state.players.length,
         endsAt: state.endsAt ?? 0,
+      };
+    }
+    if (state.phase === 'escape') {
+      const accusedNickname = nick(state, state.accusedId!);
+      if (playerId === state.accusedId) return { phase: 'escape', role: 'guessing', accusedNickname };
+      return {
+        phase: 'escape', role: 'judging', accusedNickname,
+        originalQuestion: state.pair.normal,
+        guess: state.escapeGuess,
+        youVoted: (state.escapeVotes as Record<PlayerId, boolean | undefined>)[playerId] !== undefined,
+        votes: Object.keys(state.escapeVotes).length,
+        total: escapeVoters(state).length,
       };
     }
     return { phase: 'matchEnd', finalScores: [] } as InfiltradoProjection;
