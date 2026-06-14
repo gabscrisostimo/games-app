@@ -19,7 +19,7 @@ function buildSchedule(ids: PlayerId[], rounds: number, impostorCount: number, r
   return schedule;
 }
 
-function startRound(base: InfiltradoState, roundIndex: number, now: number, rng: () => number): InfiltradoState {
+function startRound(base: InfiltradoState, roundIndex: number, now: number, _rng: () => number): InfiltradoState {
   return {
     ...base,
     phase: 'answering',
@@ -111,4 +111,4 @@ export const infiltrado: NetGame<InfiltradoState, InfiltradoAction, InfiltradoPr
   },
 };
 
-export { startRound };
+export { startRound, nick };
