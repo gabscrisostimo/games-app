@@ -88,3 +88,32 @@ export function computeNightView(
       return null; // insomniac (dawn), villager, hunter, tanner
   }
 }
+
+export function resolveDeaths(votes: number[], finalRoles: RoleId[]): number[] {
+  const n = votes.length;
+  const count = new Array<number>(n).fill(0);
+  for (const v of votes) if (v >= 0 && v < n) count[v]++;
+  const maxVotes = Math.max(0, ...count);
+
+  const dead = new Set<number>();
+  if (maxVotes >= 2) {
+    for (let i = 0; i < n; i++) if (count[i] === maxVotes) dead.add(i);
+  }
+
+  // Hunter fixpoint: a dead hunter kills whoever they voted for.
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const d of [...dead]) {
+      if (finalRoles[d] === 'hunter') {
+        const t = votes[d];
+        if (t >= 0 && t < n && !dead.has(t)) {
+          dead.add(t);
+          changed = true;
+        }
+      }
+    }
+  }
+
+  return [...dead].sort((a, b) => a - b);
+}

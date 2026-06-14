@@ -35,7 +35,7 @@ function makeRng(seq: number[]): () => number {
   return () => (i < seq.length ? seq[i++] : 0);
 }
 
-import { resolveNight, computeNightView } from './logic';
+import { resolveNight, computeNightView, resolveDeaths } from './logic';
 
 describe('resolveNight', () => {
   // deal indices: 0..N-1 players, N..N+2 center.
@@ -194,5 +194,38 @@ describe('computeNightView', () => {
     expect(computeNightView(deal, 1, 4, null)).toBeNull();
     expect(computeNightView(deal, 2, 4, null)).toBeNull();
     expect(computeNightView(deal, 3, 4, null)).toBeNull();
+  });
+});
+
+describe('resolveDeaths', () => {
+  it('nobody dies when the top vote-getter has fewer than 2 votes', () => {
+    // 3 players each pointing at a different person -> all have 1 vote
+    const finalRoles: RoleId[] = ['villager', 'werewolf', 'seer'];
+    expect(resolveDeaths([1, 2, 0], finalRoles)).toEqual([]);
+  });
+
+  it('kills the single player with the most votes (>=2)', () => {
+    // players 0,1,2,3 ; votes all point at player 1
+    const finalRoles: RoleId[] = ['villager', 'werewolf', 'seer', 'robber'];
+    expect(resolveDeaths([1, 2, 1, 1], finalRoles)).toEqual([1]);
+  });
+
+  it('a tie at the top kills everyone tied', () => {
+    // player0 gets 2, player1 gets 2
+    const finalRoles: RoleId[] = ['werewolf', 'villager', 'seer', 'robber'];
+    expect(resolveDeaths([1, 0, 1, 0], finalRoles)).toEqual([0, 1]);
+  });
+
+  it('a dead Hunter also kills whoever they voted for', () => {
+    // player0 is hunter, voted player3; player0 gets 2 votes and dies -> player3 dies too
+    const finalRoles: RoleId[] = ['hunter', 'villager', 'seer', 'werewolf'];
+    expect(resolveDeaths([3, 0, 0, 1], finalRoles)).toEqual([0, 3]);
+  });
+
+  it('hunter chain resolves to a fixpoint without infinite loop', () => {
+    // p0 hunter -> voted p1 ; p1 hunter -> voted p2 ; p0 dies by votes
+    const finalRoles: RoleId[] = ['hunter', 'hunter', 'villager', 'seer'];
+    // votes: p2->0, p3->0 (p0 gets 2, dies). p0 voted p1, p1 voted p2.
+    expect(resolveDeaths([1, 2, 0, 0], finalRoles)).toEqual([0, 1, 2]);
   });
 });
