@@ -53,6 +53,43 @@ function toVoting(s: InfiltradoState, now: number): InfiltradoState {
   return { ...s, phase: 'voting', endsAt: now + s.config.voteSeconds * 1000, votes: {} };
 }
 
+function allVoted(s: InfiltradoState): boolean {
+  return s.players.every((p) => s.votes[p.id] !== undefined);
+}
+
+function topVoted(s: InfiltradoState): PlayerId | null {
+  const counts: Record<PlayerId, number> = {};
+  for (const target of Object.values(s.votes)) counts[target] = (counts[target] ?? 0) + 1;
+  let best: PlayerId | null = null, bestN = 0, tie = false;
+  for (const [id, n] of Object.entries(counts)) {
+    if (n > bestN) { best = id; bestN = n; tie = false; }
+    else if (n === bestN) tie = true;
+  }
+  return tie ? null : best;
+}
+
+function applyScores(s: InfiltradoState, outcome: 'group' | 'impostor'): Record<PlayerId, number> {
+  const scores = { ...s.scores };
+  if (outcome === 'impostor') {
+    for (const id of s.currentImpostors) scores[id] = (scores[id] ?? 0) + 2;
+  } else {
+    for (const p of s.players) if (!s.currentImpostors.includes(p.id)) scores[p.id] = (scores[p.id] ?? 0) + 1;
+  }
+  return scores;
+}
+
+function toRoundEnd(s: InfiltradoState, outcome: 'group' | 'impostor'): InfiltradoState {
+  return { ...s, phase: 'roundEnd', roundOutcome: outcome, scores: applyScores(s, outcome), endsAt: null };
+}
+
+function resolveVotes(s: InfiltradoState): InfiltradoState {
+  const accused = topVoted(s);
+  if (accused !== null && s.currentImpostors.includes(accused)) {
+    return { ...s, phase: 'escape', accusedId: accused, escapeGuess: null, escapeVotes: {}, endsAt: null };
+  }
+  return toRoundEnd({ ...s, accusedId: accused }, 'impostor');
+}
+
 export const infiltrado: NetGame<InfiltradoState, InfiltradoAction, InfiltradoProjection, InfiltradoConfig> = {
   createInitial({ config, players, now, rng }: InitCtx<InfiltradoConfig>): InfiltradoState {
     const ids = players.map((p) => p.id);
@@ -82,6 +119,14 @@ export const infiltrado: NetGame<InfiltradoState, InfiltradoAction, InfiltradoPr
       case 'ADVANCE': {
         if (state.phase === 'reveal') return toVoting(state, ctx.now);
         return state;
+      }
+      case 'SUBMIT_VOTE': {
+        if (state.phase !== 'voting') return state;
+        if ((state.votes as Record<PlayerId, PlayerId | undefined>)[ctx.actorId] !== undefined) return state;
+        if (action.suspectId === ctx.actorId) return state;
+        if (!state.players.some((p) => p.id === action.suspectId)) return state;
+        const next = { ...state, votes: { ...state.votes, [ctx.actorId]: action.suspectId } };
+        return allVoted(next) ? resolveVotes(next) : next;
       }
       default:
         return state;

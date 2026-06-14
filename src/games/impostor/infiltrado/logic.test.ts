@@ -119,3 +119,43 @@ describe('reveal -> voting', () => {
     expect(p.total).toBe(4);
   });
 });
+
+describe('votação -> apuração', () => {
+  function reachVoting() {
+    let s = init();
+    for (const p of players) s = G.reducer(s, { type: 'SUBMIT_ANSWER', text: `r-${p.id}` }, ctx(p.id));
+    return G.reducer(s, { type: 'ADVANCE' }, ctx('a', 5000));
+  }
+
+  it('pegar o impostor (maioria) leva à fase escape', () => {
+    let s = reachVoting();
+    const imp = s.currentImpostors[0];
+    for (const p of players) {
+      const target = p.id === imp ? players.find((x) => x.id !== imp)!.id : imp;
+      s = G.reducer(s, { type: 'SUBMIT_VOTE', suspectId: target }, ctx(p.id));
+    }
+    expect(s.phase).toBe('escape');
+    expect(s.accusedId).toBe(imp);
+  });
+
+  it('votar num inocente leva a roundEnd com vitória do impostor', () => {
+    let s = reachVoting();
+    const imp = s.currentImpostors[0];
+    const innocent = players.find((p) => p.id !== imp)!.id;
+    for (const p of players) {
+      const target = p.id === innocent ? imp : innocent;
+      s = G.reducer(s, { type: 'SUBMIT_VOTE', suspectId: target }, ctx(p.id));
+    }
+    expect(s.phase).toBe('roundEnd');
+    expect(s.roundOutcome).toBe('impostor');
+  });
+
+  it('não dá pra votar em si mesmo; voto duplicado é ignorado', () => {
+    let s = reachVoting();
+    s = G.reducer(s, { type: 'SUBMIT_VOTE', suspectId: 'a' }, ctx('a'));
+    expect(s.votes.a).toBeUndefined();
+    s = G.reducer(s, { type: 'SUBMIT_VOTE', suspectId: 'b' }, ctx('a'));
+    s = G.reducer(s, { type: 'SUBMIT_VOTE', suspectId: 'c' }, ctx('a'));
+    expect(s.votes.a).toBe('b');
+  });
+});
