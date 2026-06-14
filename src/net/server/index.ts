@@ -1,19 +1,25 @@
 // src/net/server/index.ts
 import type * as Party from 'partykit/server';
 import { mulberry32 } from '../rng';
-import { promptvoteDemo } from '../__demo__/promptvoteDemo';
-import type { DemoState } from '../__demo__/promptvoteDemo';
+import { quiplashNet } from '../adapters/quiplash';
+import type { QuiplashNetState } from '../adapters/quiplash';
 import type { ClientMsg } from '../protocol';
 import { createRoom, reduceRoom } from './roomEngine';
 import type { EngineDeps, RoomState } from './roomEngine';
 
 type ConnState = { playerId: string; nickname: string };
 
-const CONFIG = { promptSeconds: 75, voteSeconds: 60 };
+const CONFIG = {
+  mode: 'duel' as const,
+  rounds: 2,
+  deckId: 'quiplash-padrao',
+  answerSeconds: 90,
+  voteSeconds: 45,
+};
 const MIN_PLAYERS = 3;
 
 export default class NetRoom implements Party.Server {
-  state: RoomState<DemoState>;
+  state: RoomState<QuiplashNetState>;
   rng: () => number;
 
   constructor(readonly room: Party.Room) {
@@ -21,13 +27,13 @@ export default class NetRoom implements Party.Server {
     this.rng = mulberry32((Date.now() ^ (Math.random() * 0xffffffff)) >>> 0);
   }
 
-  private deps(now: number): EngineDeps<DemoState, any, any, any> {
-    return { game: promptvoteDemo, config: CONFIG, minPlayers: MIN_PLAYERS, now, rng: this.rng };
+  private deps(now: number): EngineDeps<QuiplashNetState, any, any, any> {
+    return { game: quiplashNet, config: CONFIG, minPlayers: MIN_PLAYERS, now, rng: this.rng };
   }
 
   private async apply(event: Parameters<typeof reduceRoom>[1], now = Date.now()) {
     const result = reduceRoom(this.state, event as any, this.deps(now));
-    this.state = result.state as RoomState<DemoState>;
+    this.state = result.state as RoomState<QuiplashNetState>;
     for (const o of result.outbound) {
       const data = JSON.stringify(o.msg);
       if (o.to === 'all') {
