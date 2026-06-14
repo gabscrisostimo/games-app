@@ -44,6 +44,9 @@ export function CreateOrJoin({ onEnter }: { onEnter: (code: string, nickname: st
       >
         Entrar
       </button>
+      {!trimmed && code.trim().length > 0 && (
+        <p className="text-center text-sm text-muted">Preencha o apelido (campo no topo) para entrar.</p>
+      )}
     </div>
   );
 }

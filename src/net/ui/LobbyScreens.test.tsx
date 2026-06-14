@@ -24,6 +24,21 @@ describe('CreateOrJoin', () => {
     await userEvent.click(screen.getByRole('button', { name: /entrar/i }));
     expect(onEnter).toHaveBeenCalledWith('WXYZ', 'Bia');
   });
+
+  it('com código preenchido mas apelido vazio, explica por que o Entrar está bloqueado', async () => {
+    render(<CreateOrJoin onEnter={vi.fn()} />);
+    await userEvent.type(screen.getByLabelText(/código/i), 'WXYZ');
+    expect(screen.getByRole('button', { name: /entrar/i })).toBeDisabled();
+    expect(screen.getByText(/preencha o apelido/i)).toBeInTheDocument();
+  });
+
+  it('ao preencher o apelido, a dica some e o Entrar habilita', async () => {
+    render(<CreateOrJoin onEnter={vi.fn()} />);
+    await userEvent.type(screen.getByLabelText(/código/i), 'WXYZ');
+    await userEvent.type(screen.getByLabelText(/apelido/i), 'Bia');
+    expect(screen.getByRole('button', { name: /entrar/i })).toBeEnabled();
+    expect(screen.queryByText(/preencha o apelido/i)).not.toBeInTheDocument();
+  });
 });
 
 describe('Lobby', () => {
