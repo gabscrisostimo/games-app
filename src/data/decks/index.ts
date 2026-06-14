@@ -1,4 +1,5 @@
 import padrao from './padrao.json';
+import lolChampions from './lol-champions.json';
 import type { Deck } from '../../games/taboo/types';
 
 export function validateDeck(data: unknown): Deck {
@@ -16,7 +17,7 @@ export function validateDeck(data: unknown): Deck {
   return data as Deck;
 }
 
-export const DECKS: Deck[] = [validateDeck(padrao)];
+export const DECKS: Deck[] = [validateDeck(padrao), validateDeck(lolChampions)];
 
 export function getDeck(id: string): Deck | undefined {
   return DECKS.find((d) => d.id === id);

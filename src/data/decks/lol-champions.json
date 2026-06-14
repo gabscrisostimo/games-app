@@ -1,0 +1,1898 @@
+{
+  "id": "lol-champions",
+  "name": "Champions (LoL)",
+  "cards": [
+    {
+      "id": "lol-aatrox",
+      "target": "AATROX",
+      "taboo": [
+        "DARKIN",
+        "ESPADA",
+        "SANGUE",
+        "DEMÔNIO",
+        "TOPO"
+      ]
+    },
+    {
+      "id": "lol-ahri",
+      "target": "AHRI",
+      "taboo": [
+        "RAPOSA",
+        "CAUDA",
+        "ENCANTO",
+        "CHARME",
+        "ESFERA"
+      ]
+    },
+    {
+      "id": "lol-akali",
+      "target": "AKALI",
+      "taboo": [
+        "NINJA",
+        "ASSASSINA",
+        "KINKOU",
+        "FUMAÇA",
+        "IONIA"
+      ]
+    },
+    {
+      "id": "lol-akshan",
+      "target": "AKSHAN",
+      "taboo": [
+        "SENTINELA",
+        "REVIVER",
+        "BALANÇO",
+        "RENEGADO",
+        "ARMA"
+      ]
+    },
+    {
+      "id": "lol-alistar",
+      "target": "ALISTAR",
+      "taboo": [
+        "MINOTAURO",
+        "TOURO",
+        "EMPURRÃO",
+        "SUPORTE",
+        "VACA"
+      ]
+    },
+    {
+      "id": "lol-ambessa",
+      "target": "AMBESSA",
+      "taboo": [
+        "NOXUS",
+        "GENERAL",
+        "MEDARDA",
+        "GUERRA",
+        "ARCANE"
+      ]
+    },
+    {
+      "id": "lol-amumu",
+      "target": "AMUMU",
+      "taboo": [
+        "MÚMIA",
+        "TRISTE",
+        "ABRAÇO",
+        "CHORAR",
+        "ATADURA"
+      ]
+    },
+    {
+      "id": "lol-anivia",
+      "target": "ANIVIA",
+      "taboo": [
+        "FÊNIX",
+        "GELO",
+        "PÁSSARO",
+        "OVO",
+        "PAREDE"
+      ]
+    },
+    {
+      "id": "lol-annie",
+      "target": "ANNIE",
+      "taboo": [
+        "CRIANÇA",
+        "URSO",
+        "TIBBERS",
+        "FOGO",
+        "MENINA"
+      ]
+    },
+    {
+      "id": "lol-aphelios",
+      "target": "APHELIOS",
+      "taboo": [
+        "ARMAS",
+        "LUA",
+        "IRMÃ",
+        "ATIRADOR",
+        "DEVOTO"
+      ]
+    },
+    {
+      "id": "lol-ashe",
+      "target": "ASHE",
+      "taboo": [
+        "ARQUEIRA",
+        "GELO",
+        "FLECHA",
+        "RAINHA",
+        "FRELJORD"
+      ]
+    },
+    {
+      "id": "lol-aurelionsol",
+      "target": "AURELION SOL",
+      "taboo": [
+        "DRAGÃO",
+        "ESTRELAS",
+        "ASTRO",
+        "GALÁXIA",
+        "ASOL"
+      ]
+    },
+    {
+      "id": "lol-aurora",
+      "target": "AURORA",
+      "taboo": [
+        "COELHA",
+        "ESPÍRITO",
+        "BRUXA",
+        "FRELJORD",
+        "MUNDOS"
+      ]
+    },
+    {
+      "id": "lol-azir",
+      "target": "AZIR",
+      "taboo": [
+        "IMPERADOR",
+        "AREIA",
+        "SOLDADOS",
+        "SHURIMA",
+        "PÁSSARO"
+      ]
+    },
+    {
+      "id": "lol-bard",
+      "target": "BARD",
+      "taboo": [
+        "SINO",
+        "ANDARILHO",
+        "PORTAL",
+        "SUPORTE",
+        "CÁPSULA"
+      ]
+    },
+    {
+      "id": "lol-belveth",
+      "target": "BEL'VETH",
+      "taboo": [
+        "VAZIO",
+        "IMPERATRIZ",
+        "ARRAIA",
+        "FORMA",
+        "ABISMO"
+      ]
+    },
+    {
+      "id": "lol-blitzcrank",
+      "target": "BLITZCRANK",
+      "taboo": [
+        "ROBÔ",
+        "GANCHO",
+        "PUXÃO",
+        "GOLEM",
+        "VAPOR"
+      ]
+    },
+    {
+      "id": "lol-brand",
+      "target": "BRAND",
+      "taboo": [
+        "FOGO",
+        "CHAMA",
+        "QUEIMAR",
+        "VINGANÇA",
+        "MAGO"
+      ]
+    },
+    {
+      "id": "lol-braum",
+      "target": "BRAUM",
+      "taboo": [
+        "ESCUDO",
+        "BIGODE",
+        "FRELJORD",
+        "FORTE",
+        "CORAÇÃO"
+      ]
+    },
+    {
+      "id": "lol-briar",
+      "target": "BRIAR",
+      "taboo": [
+        "FOME",
+        "SANGUE",
+        "FÚRIA",
+        "MÁSCARA",
+        "MORDER"
+      ]
+    },
+    {
+      "id": "lol-caitlyn",
+      "target": "CAITLYN",
+      "taboo": [
+        "XERIFE",
+        "PILTOVER",
+        "RIFLE",
+        "ARMADILHA",
+        "MIRA"
+      ]
+    },
+    {
+      "id": "lol-camille",
+      "target": "CAMILLE",
+      "taboo": [
+        "AÇO",
+        "PERNAS",
+        "LÂMINAS",
+        "PILTOVER",
+        "ELITE"
+      ]
+    },
+    {
+      "id": "lol-cassiopeia",
+      "target": "CASSIOPEIA",
+      "taboo": [
+        "SERPENTE",
+        "COBRA",
+        "VENENO",
+        "PETRIFICAR",
+        "CAUDA"
+      ]
+    },
+    {
+      "id": "lol-chogath",
+      "target": "CHO'GATH",
+      "taboo": [
+        "VAZIO",
+        "COMER",
+        "CRESCER",
+        "TENTÁCULO",
+        "MONSTRO"
+      ]
+    },
+    {
+      "id": "lol-corki",
+      "target": "CORKI",
+      "taboo": [
+        "AVIÃO",
+        "YORDLE",
+        "FOGUETE",
+        "METRALHADORA",
+        "BOMBA"
+      ]
+    },
+    {
+      "id": "lol-darius",
+      "target": "DARIUS",
+      "taboo": [
+        "NOXUS",
+        "MACHADO",
+        "SANGRAR",
+        "DECAPITAR",
+        "TOPO"
+      ]
+    },
+    {
+      "id": "lol-diana",
+      "target": "DIANA",
+      "taboo": [
+        "LUA",
+        "LUNAR",
+        "ESPADA",
+        "ESCUDO",
+        "CRESCENTE"
+      ]
+    },
+    {
+      "id": "lol-drmundo",
+      "target": "DR. MUNDO",
+      "taboo": [
+        "ZAUN",
+        "MACHADO",
+        "VIDA",
+        "LOUCO",
+        "REGENERAR"
+      ]
+    },
+    {
+      "id": "lol-draven",
+      "target": "DRAVEN",
+      "taboo": [
+        "MACHADOS",
+        "NOXUS",
+        "GIRAR",
+        "ARROGANTE",
+        "PEGAR"
+      ]
+    },
+    {
+      "id": "lol-ekko",
+      "target": "EKKO",
+      "taboo": [
+        "TEMPO",
+        "VOLTAR",
+        "ZAUN",
+        "RELÓGIO",
+        "GAROTO"
+      ]
+    },
+    {
+      "id": "lol-elise",
+      "target": "ELISE",
+      "taboo": [
+        "ARANHA",
+        "TEIA",
+        "RAINHA",
+        "ARACNÍDEO",
+        "FORMA"
+      ]
+    },
+    {
+      "id": "lol-evelynn",
+      "target": "EVELYNN",
+      "taboo": [
+        "INVISÍVEL",
+        "AGONIA",
+        "DEMÔNIO",
+        "CHICOTE",
+        "SEDUÇÃO"
+      ]
+    },
+    {
+      "id": "lol-ezreal",
+      "target": "EZREAL",
+      "taboo": [
+        "EXPLORADOR",
+        "LUVA",
+        "FEIXE",
+        "ATIRADOR",
+        "ARCANO"
+      ]
+    },
+    {
+      "id": "lol-fiddlesticks",
+      "target": "FIDDLESTICKS",
+      "taboo": [
+        "ESPANTALHO",
+        "MEDO",
+        "CORVO",
+        "TERROR",
+        "CEIFAR"
+      ]
+    },
+    {
+      "id": "lol-fiora",
+      "target": "FIORA",
+      "taboo": [
+        "DUELISTA",
+        "FLORETE",
+        "DEMACIA",
+        "ESTOCADA",
+        "PONTOS"
+      ]
+    },
+    {
+      "id": "lol-fizz",
+      "target": "FIZZ",
+      "taboo": [
+        "PEIXE",
+        "TRIDENTE",
+        "TUBARÃO",
+        "MARÉ",
+        "ESCORREGAR"
+      ]
+    },
+    {
+      "id": "lol-galio",
+      "target": "GALIO",
+      "taboo": [
+        "COLOSSO",
+        "PEDRA",
+        "ESTÁTUA",
+        "DEMACIA",
+        "GÁRGULA"
+      ]
+    },
+    {
+      "id": "lol-gangplank",
+      "target": "GANGPLANK",
+      "taboo": [
+        "PIRATA",
+        "BARRIL",
+        "LARANJA",
+        "CANHÃO",
+        "CAPITÃO"
+      ]
+    },
+    {
+      "id": "lol-garen",
+      "target": "GAREN",
+      "taboo": [
+        "DEMACIA",
+        "GIRAR",
+        "ESPADA",
+        "JUSTIÇA",
+        "SILÊNCIO"
+      ]
+    },
+    {
+      "id": "lol-gnar",
+      "target": "GNAR",
+      "taboo": [
+        "YORDLE",
+        "PRÉ-HISTÓRICO",
+        "TRANSFORMAR",
+        "BUMERANGUE",
+        "FOFO"
+      ]
+    },
+    {
+      "id": "lol-gragas",
+      "target": "GRAGAS",
+      "taboo": [
+        "BARRIL",
+        "BÊBADO",
+        "CERVEJA",
+        "GORDO",
+        "ROLAR"
+      ]
+    },
+    {
+      "id": "lol-graves",
+      "target": "GRAVES",
+      "taboo": [
+        "ESPINGARDA",
+        "FORAGIDO",
+        "CHARUTO",
+        "FUMAÇA",
+        "ATIRADOR"
+      ]
+    },
+    {
+      "id": "lol-gwen",
+      "target": "GWEN",
+      "taboo": [
+        "TESOURA",
+        "COSTUREIRA",
+        "AGULHA",
+        "BONECA",
+        "NÉVOA"
+      ]
+    },
+    {
+      "id": "lol-hecarim",
+      "target": "HECARIM",
+      "taboo": [
+        "CAVALO",
+        "FANTASMA",
+        "GUERRA",
+        "LANÇA",
+        "CAVALEIRO"
+      ]
+    },
+    {
+      "id": "lol-heimerdinger",
+      "target": "HEIMERDINGER",
+      "taboo": [
+        "INVENTOR",
+        "TORRETA",
+        "YORDLE",
+        "CIENTISTA",
+        "GRANADA"
+      ]
+    },
+    {
+      "id": "lol-hwei",
+      "target": "HWEI",
+      "taboo": [
+        "PINTOR",
+        "TINTA",
+        "VISIONÁRIO",
+        "PINCEL",
+        "ARTISTA"
+      ]
+    },
+    {
+      "id": "lol-illaoi",
+      "target": "ILLAOI",
+      "taboo": [
+        "TENTÁCULO",
+        "KRAKEN",
+        "SACERDOTISA",
+        "NAGAKABOUROS",
+        "ESPÍRITO"
+      ]
+    },
+    {
+      "id": "lol-irelia",
+      "target": "IRELIA",
+      "taboo": [
+        "LÂMINAS",
+        "IONIA",
+        "DANÇA",
+        "ESPADAS",
+        "FLUTUAR"
+      ]
+    },
+    {
+      "id": "lol-ivern",
+      "target": "IVERN",
+      "taboo": [
+        "ÁRVORE",
+        "FLORESTA",
+        "AMIGO",
+        "SELVA",
+        "VERDE"
+      ]
+    },
+    {
+      "id": "lol-janna",
+      "target": "JANNA",
+      "taboo": [
+        "VENTO",
+        "TORMENTA",
+        "ESCUDO",
+        "SUPORTE",
+        "ESPÍRITO"
+      ]
+    },
+    {
+      "id": "lol-jarvaniv",
+      "target": "JARVAN IV",
+      "taboo": [
+        "DEMACIA",
+        "REI",
+        "LANÇA",
+        "BANDEIRA",
+        "PRÍNCIPE"
+      ]
+    },
+    {
+      "id": "lol-jax",
+      "target": "JAX",
+      "taboo": [
+        "LAMPIÃO",
+        "MESTRE",
+        "ARMA",
+        "SALTAR",
+        "ESQUIVA"
+      ]
+    },
+    {
+      "id": "lol-jayce",
+      "target": "JAYCE",
+      "taboo": [
+        "MARTELO",
+        "CANHÃO",
+        "PILTOVER",
+        "HEXTECH",
+        "TRANSFORMAR"
+      ]
+    },
+    {
+      "id": "lol-jhin",
+      "target": "JHIN",
+      "taboo": [
+        "QUATRO",
+        "VIRTUOSO",
+        "ARMA",
+        "TIROS",
+        "ARTISTA"
+      ]
+    },
+    {
+      "id": "lol-jinx",
+      "target": "JINX",
+      "taboo": [
+        "METRALHADORA",
+        "CAOS",
+        "FOGUETE",
+        "LOUCA",
+        "ZAUN"
+      ]
+    },
+    {
+      "id": "lol-ksante",
+      "target": "K'SANTE",
+      "taboo": [
+        "NAZUMAH",
+        "TANQUE",
+        "LÂMINAS",
+        "OÁSIS",
+        "EMPURRÃO"
+      ]
+    },
+    {
+      "id": "lol-kaisa",
+      "target": "KAI'SA",
+      "taboo": [
+        "VAZIO",
+        "ATIRADORA",
+        "TRAJE",
+        "FILHA",
+        "PLASMA"
+      ]
+    },
+    {
+      "id": "lol-kalista",
+      "target": "KALISTA",
+      "taboo": [
+        "LANÇA",
+        "VINGANÇA",
+        "ESPECTRO",
+        "JURAMENTO",
+        "ALMA"
+      ]
+    },
+    {
+      "id": "lol-karma",
+      "target": "KARMA",
+      "taboo": [
+        "ILUMINADA",
+        "IONIA",
+        "MANTRA",
+        "ELO",
+        "ESCUDO"
+      ]
+    },
+    {
+      "id": "lol-karthus",
+      "target": "KARTHUS",
+      "taboo": [
+        "MORTE",
+        "LICHE",
+        "REQUIEM",
+        "GLOBAL",
+        "MORTO"
+      ]
+    },
+    {
+      "id": "lol-kassadin",
+      "target": "KASSADIN",
+      "taboo": [
+        "VAZIO",
+        "ANDARILHO",
+        "TELEPORTE",
+        "SILÊNCIO",
+        "MAGO"
+      ]
+    },
+    {
+      "id": "lol-katarina",
+      "target": "KATARINA",
+      "taboo": [
+        "FACAS",
+        "NOXUS",
+        "GIRAR",
+        "ASSASSINA",
+        "REINICIAR"
+      ]
+    },
+    {
+      "id": "lol-kayle",
+      "target": "KAYLE",
+      "taboo": [
+        "ANJO",
+        "JUSTA",
+        "ESPADA",
+        "ASAS",
+        "IMUNE"
+      ]
+    },
+    {
+      "id": "lol-kayn",
+      "target": "KAYN",
+      "taboo": [
+        "FOICE",
+        "SOMBRA",
+        "DARKIN",
+        "RHAAST",
+        "NINJA"
+      ]
+    },
+    {
+      "id": "lol-kennen",
+      "target": "KENNEN",
+      "taboo": [
+        "YORDLE",
+        "RAIO",
+        "NINJA",
+        "ELÉTRICO",
+        "ESFERA"
+      ]
+    },
+    {
+      "id": "lol-khazix",
+      "target": "KHA'ZIX",
+      "taboo": [
+        "VAZIO",
+        "INSETO",
+        "EVOLUIR",
+        "ISOLADO",
+        "GAFANHOTO"
+      ]
+    },
+    {
+      "id": "lol-kindred",
+      "target": "KINDRED",
+      "taboo": [
+        "CORDEIRO",
+        "LOBO",
+        "MORTE",
+        "MÁSCARA",
+        "CAÇADORES"
+      ]
+    },
+    {
+      "id": "lol-kled",
+      "target": "KLED",
+      "taboo": [
+        "YORDLE",
+        "MONTARIA",
+        "SKAARL",
+        "COVARDE",
+        "CANHÃO"
+      ]
+    },
+    {
+      "id": "lol-kogmaw",
+      "target": "KOG'MAW",
+      "taboo": [
+        "VAZIO",
+        "CUSPIR",
+        "ÁCIDO",
+        "EXPLODIR",
+        "BOCA"
+      ]
+    },
+    {
+      "id": "lol-leblanc",
+      "target": "LEBLANC",
+      "taboo": [
+        "ILUSÃO",
+        "CLONE",
+        "NOXUS",
+        "FARSANTE",
+        "CORRENTE"
+      ]
+    },
+    {
+      "id": "lol-leesin",
+      "target": "LEE SIN",
+      "taboo": [
+        "CEGO",
+        "MONGE",
+        "CHUTE",
+        "IONIA",
+        "ENERGIA"
+      ]
+    },
+    {
+      "id": "lol-leona",
+      "target": "LEONA",
+      "taboo": [
+        "ESCUDO",
+        "SOL",
+        "ALVORADA",
+        "ATORDOAR",
+        "TANQUE"
+      ]
+    },
+    {
+      "id": "lol-lillia",
+      "target": "LILLIA",
+      "taboo": [
+        "CERVA",
+        "SONO",
+        "ÁRVORE",
+        "TÍMIDA",
+        "INCENSO"
+      ]
+    },
+    {
+      "id": "lol-lissandra",
+      "target": "LISSANDRA",
+      "taboo": [
+        "GELO",
+        "BRUXA",
+        "FRELJORD",
+        "GARRAS",
+        "CONGELAR"
+      ]
+    },
+    {
+      "id": "lol-lucian",
+      "target": "LUCIAN",
+      "taboo": [
+        "PURIFICADOR",
+        "ARMAS",
+        "LUZ",
+        "SENNA",
+        "DISPARO"
+      ]
+    },
+    {
+      "id": "lol-lulu",
+      "target": "LULU",
+      "taboo": [
+        "FADA",
+        "YORDLE",
+        "PIX",
+        "ENCOLHER",
+        "ESCUDO"
+      ]
+    },
+    {
+      "id": "lol-lux",
+      "target": "LUX",
+      "taboo": [
+        "LUZ",
+        "DEMACIA",
+        "LASER",
+        "MAGA",
+        "FEIXE"
+      ]
+    },
+    {
+      "id": "lol-malphite",
+      "target": "MALPHITE",
+      "taboo": [
+        "PEDRA",
+        "MONTANHA",
+        "ROCHA",
+        "INVESTIDA",
+        "ESCUDO"
+      ]
+    },
+    {
+      "id": "lol-malzahar",
+      "target": "MALZAHAR",
+      "taboo": [
+        "VAZIO",
+        "PROFETA",
+        "SUPRIMIR",
+        "INSETOS",
+        "PORTAL"
+      ]
+    },
+    {
+      "id": "lol-maokai",
+      "target": "MAOKAI",
+      "taboo": [
+        "ÁRVORE",
+        "ENTE",
+        "BROTO",
+        "FLORESTA",
+        "RAÍZES"
+      ]
+    },
+    {
+      "id": "lol-masteryi",
+      "target": "MASTER YI",
+      "taboo": [
+        "WUJU",
+        "ESPADA",
+        "MEDITAR",
+        "ALPHA",
+        "ESPADACHIM"
+      ]
+    },
+    {
+      "id": "lol-mel",
+      "target": "MEL",
+      "taboo": [
+        "MEDARDA",
+        "NOXUS",
+        "ARISTOCRATA",
+        "REFLETIR",
+        "ARCANE"
+      ]
+    },
+    {
+      "id": "lol-milio",
+      "target": "MILIO",
+      "taboo": [
+        "CHAMA",
+        "FOGO",
+        "SUPORTE",
+        "GENTIL",
+        "GAROTO"
+      ]
+    },
+    {
+      "id": "lol-missfortune",
+      "target": "MISS FORTUNE",
+      "taboo": [
+        "RECOMPENSA",
+        "PISTOLAS",
+        "BILGEWATER",
+        "BALAS",
+        "RUIVA"
+      ]
+    },
+    {
+      "id": "lol-mordekaiser",
+      "target": "MORDEKAISER",
+      "taboo": [
+        "FERRO",
+        "MORTE",
+        "REINO",
+        "METAL",
+        "ARMADURA"
+      ]
+    },
+    {
+      "id": "lol-morgana",
+      "target": "MORGANA",
+      "taboo": [
+        "CAÍDA",
+        "ASAS",
+        "CORRENTE",
+        "ESCUDO",
+        "RAIZ"
+      ]
+    },
+    {
+      "id": "lol-naafiri",
+      "target": "NAAFIRI",
+      "taboo": [
+        "DARKIN",
+        "CÃES",
+        "MATILHA",
+        "MORDIDA",
+        "DESERTO"
+      ]
+    },
+    {
+      "id": "lol-nami",
+      "target": "NAMI",
+      "taboo": [
+        "SEREIA",
+        "ONDA",
+        "MARÉ",
+        "CAJADO",
+        "SUPORTE"
+      ]
+    },
+    {
+      "id": "lol-nasus",
+      "target": "NASUS",
+      "taboo": [
+        "CHACAL",
+        "SHURIMA",
+        "AREIA",
+        "ENVELHECER",
+        "ACÚMULO"
+      ]
+    },
+    {
+      "id": "lol-nautilus",
+      "target": "NAUTILUS",
+      "taboo": [
+        "ÂNCORA",
+        "MAR",
+        "GANCHO",
+        "PROFUNDEZA",
+        "TITÃ"
+      ]
+    },
+    {
+      "id": "lol-neeko",
+      "target": "NEEKO",
+      "taboo": [
+        "CAMALEOA",
+        "DISFARCE",
+        "CÓPIA",
+        "FLOR",
+        "VASTAYA"
+      ]
+    },
+    {
+      "id": "lol-nidalee",
+      "target": "NIDALEE",
+      "taboo": [
+        "CAÇADORA",
+        "LANÇA",
+        "ONÇA",
+        "ARMADILHA",
+        "FELINA"
+      ]
+    },
+    {
+      "id": "lol-nilah",
+      "target": "NILAH",
+      "taboo": [
+        "ALEGRIA",
+        "ÁGUA",
+        "CHICOTE",
+        "LÂMINA",
+        "MÁSCARA"
+      ]
+    },
+    {
+      "id": "lol-nocturne",
+      "target": "NOCTURNE",
+      "taboo": [
+        "PESADELO",
+        "MEDO",
+        "SOMBRA",
+        "ESCURIDÃO",
+        "TERROR"
+      ]
+    },
+    {
+      "id": "lol-nunuwillump",
+      "target": "NUNU & WILLUMP",
+      "taboo": [
+        "YETI",
+        "GAROTO",
+        "NEVE",
+        "FRELJORD",
+        "GIGANTE"
+      ]
+    },
+    {
+      "id": "lol-olaf",
+      "target": "OLAF",
+      "taboo": [
+        "BERSERKER",
+        "MACHADOS",
+        "VIKING",
+        "FRELJORD",
+        "FÚRIA"
+      ]
+    },
+    {
+      "id": "lol-orianna",
+      "target": "ORIANNA",
+      "taboo": [
+        "BOLA",
+        "ENGRENAGEM",
+        "ROBÔ",
+        "MECÂNICA",
+        "DONZELA"
+      ]
+    },
+    {
+      "id": "lol-ornn",
+      "target": "ORNN",
+      "taboo": [
+        "FERREIRO",
+        "FOGO",
+        "FORJA",
+        "CARNEIRO",
+        "MONTANHA"
+      ]
+    },
+    {
+      "id": "lol-pantheon",
+      "target": "PANTHEON",
+      "taboo": [
+        "LANÇA",
+        "ESCUDO",
+        "ASCENSÃO",
+        "ESPARTANO",
+        "GUERREIRO"
+      ]
+    },
+    {
+      "id": "lol-poppy",
+      "target": "POPPY",
+      "taboo": [
+        "MARTELO",
+        "YORDLE",
+        "GUARDIÃ",
+        "ESCUDO",
+        "DEMACIA"
+      ]
+    },
+    {
+      "id": "lol-pyke",
+      "target": "PYKE",
+      "taboo": [
+        "ESTRIPADOR",
+        "FACA",
+        "BILGEWATER",
+        "EXECUTAR",
+        "FANTASMA"
+      ]
+    },
+    {
+      "id": "lol-qiyana",
+      "target": "QIYANA",
+      "taboo": [
+        "ELEMENTOS",
+        "IMPERATRIZ",
+        "LÂMINA",
+        "ÁGUA",
+        "MATO"
+      ]
+    },
+    {
+      "id": "lol-quinn",
+      "target": "QUINN",
+      "taboo": [
+        "DEMACIA",
+        "ÁGUIA",
+        "VALOR",
+        "BESTA",
+        "MARCAR"
+      ]
+    },
+    {
+      "id": "lol-rakan",
+      "target": "RAKAN",
+      "taboo": [
+        "PENAS",
+        "XAYAH",
+        "VASTAYA",
+        "DANÇA",
+        "CHARME"
+      ]
+    },
+    {
+      "id": "lol-rammus",
+      "target": "RAMMUS",
+      "taboo": [
+        "TATU",
+        "BOLA",
+        "ROLAR",
+        "ESPINHOS",
+        "BLINDADO"
+      ]
+    },
+    {
+      "id": "lol-reksai",
+      "target": "REK'SAI",
+      "taboo": [
+        "VAZIO",
+        "TÚNEL",
+        "CAVAR",
+        "TERREMOTO",
+        "ESCAVAR"
+      ]
+    },
+    {
+      "id": "lol-rell",
+      "target": "RELL",
+      "taboo": [
+        "FERRO",
+        "MONTARIA",
+        "METAL",
+        "ÍMÃ",
+        "DAMA"
+      ]
+    },
+    {
+      "id": "lol-renataglasc",
+      "target": "RENATA GLASC",
+      "taboo": [
+        "QUÍMICA",
+        "ZAUN",
+        "BARONESA",
+        "REFÉM",
+        "ENLOUQUECER"
+      ]
+    },
+    {
+      "id": "lol-renekton",
+      "target": "RENEKTON",
+      "taboo": [
+        "CROCODILO",
+        "SHURIMA",
+        "FÚRIA",
+        "LÂMINA",
+        "JACARÉ"
+      ]
+    },
+    {
+      "id": "lol-rengar",
+      "target": "RENGAR",
+      "taboo": [
+        "CAÇADOR",
+        "LEÃO",
+        "ARBUSTO",
+        "TROFÉU",
+        "PULAR"
+      ]
+    },
+    {
+      "id": "lol-riven",
+      "target": "RIVEN",
+      "taboo": [
+        "EXILADA",
+        "ESPADA",
+        "NOXUS",
+        "QUEBRADA",
+        "LÂMINA"
+      ]
+    },
+    {
+      "id": "lol-rumble",
+      "target": "RUMBLE",
+      "taboo": [
+        "YORDLE",
+        "ROBÔ",
+        "LANÇA-CHAMAS",
+        "MECÂNICO",
+        "CALOR"
+      ]
+    },
+    {
+      "id": "lol-ryze",
+      "target": "RYZE",
+      "taboo": [
+        "RÚNICO",
+        "MAGO",
+        "RUNA",
+        "FEITIÇO",
+        "PERGAMINHO"
+      ]
+    },
+    {
+      "id": "lol-samira",
+      "target": "SAMIRA",
+      "taboo": [
+        "ESTILO",
+        "ARMAS",
+        "NOXUS",
+        "COMBO",
+        "DESERTO"
+      ]
+    },
+    {
+      "id": "lol-sejuani",
+      "target": "SEJUANI",
+      "taboo": [
+        "JAVALI",
+        "FRELJORD",
+        "GELO",
+        "MONTARIA",
+        "FÚRIA"
+      ]
+    },
+    {
+      "id": "lol-senna",
+      "target": "SENNA",
+      "taboo": [
+        "LUZ",
+        "ARMA",
+        "LUCIAN",
+        "REDENTORA",
+        "ALMA"
+      ]
+    },
+    {
+      "id": "lol-seraphine",
+      "target": "SERAPHINE",
+      "taboo": [
+        "CANTORA",
+        "MÚSICA",
+        "NOTAS",
+        "ENCANTAR",
+        "PILTOVER"
+      ]
+    },
+    {
+      "id": "lol-sett",
+      "target": "SETT",
+      "taboo": [
+        "CHEFE",
+        "SOCO",
+        "LUTADOR",
+        "IONIA",
+        "MÚSCULO"
+      ]
+    },
+    {
+      "id": "lol-shaco",
+      "target": "SHACO",
+      "taboo": [
+        "PALHAÇO",
+        "CAIXA",
+        "CLONE",
+        "FACA",
+        "BUFÃO"
+      ]
+    },
+    {
+      "id": "lol-shen",
+      "target": "SHEN",
+      "taboo": [
+        "NINJA",
+        "ESPADA",
+        "CREPÚSCULO",
+        "ESCUDO",
+        "IONIA"
+      ]
+    },
+    {
+      "id": "lol-shyvana",
+      "target": "SHYVANA",
+      "taboo": [
+        "DRAGÃO",
+        "FÚRIA",
+        "MEIO-DRAGÃO",
+        "CHAMAS",
+        "VOAR"
+      ]
+    },
+    {
+      "id": "lol-singed",
+      "target": "SINGED",
+      "taboo": [
+        "VENENO",
+        "ZAUN",
+        "GÁS",
+        "QUÍMICO",
+        "ARREMESSAR"
+      ]
+    },
+    {
+      "id": "lol-sion",
+      "target": "SION",
+      "taboo": [
+        "MORTO-VIVO",
+        "MACHADO",
+        "NOXUS",
+        "INVESTIDA",
+        "COLOSSO"
+      ]
+    },
+    {
+      "id": "lol-sivir",
+      "target": "SIVIR",
+      "taboo": [
+        "BUMERANGUE",
+        "LÂMINA",
+        "RICOCHETE",
+        "ESCUDO",
+        "BATALHA"
+      ]
+    },
+    {
+      "id": "lol-skarner",
+      "target": "SKARNER",
+      "taboo": [
+        "ESCORPIÃO",
+        "CRISTAL",
+        "PINÇA",
+        "PRIMORDIAL",
+        "AGARRAR"
+      ]
+    },
+    {
+      "id": "lol-smolder",
+      "target": "SMOLDER",
+      "taboo": [
+        "DRAGÃO",
+        "FILHOTE",
+        "CHAMA",
+        "BEBÊ",
+        "VOAR"
+      ]
+    },
+    {
+      "id": "lol-sona",
+      "target": "SONA",
+      "taboo": [
+        "MÚSICA",
+        "CORDAS",
+        "SUPORTE",
+        "MELODIA",
+        "INSTRUMENTO"
+      ]
+    },
+    {
+      "id": "lol-soraka",
+      "target": "SORAKA",
+      "taboo": [
+        "ESTRELAS",
+        "CURA",
+        "BANANA",
+        "SUPORTE",
+        "CHIFRE"
+      ]
+    },
+    {
+      "id": "lol-swain",
+      "target": "SWAIN",
+      "taboo": [
+        "NOXUS",
+        "GENERAL",
+        "CORVO",
+        "DEMÔNIO",
+        "BRAÇO"
+      ]
+    },
+    {
+      "id": "lol-sylas",
+      "target": "SYLAS",
+      "taboo": [
+        "CORRENTES",
+        "ROUBAR",
+        "MAGO",
+        "ABJUGADO",
+        "REVOLUÇÃO"
+      ]
+    },
+    {
+      "id": "lol-syndra",
+      "target": "SYNDRA",
+      "taboo": [
+        "ESFERAS",
+        "SOBERANA",
+        "SOMBRIA",
+        "BOLAS",
+        "PODER"
+      ]
+    },
+    {
+      "id": "lol-tahmkench",
+      "target": "TAHM KENCH",
+      "taboo": [
+        "RIO",
+        "LÍNGUA",
+        "ENGOLIR",
+        "SAPO",
+        "GULA"
+      ]
+    },
+    {
+      "id": "lol-taliyah",
+      "target": "TALIYAH",
+      "taboo": [
+        "PEDRAS",
+        "TECELÃ",
+        "SHURIMA",
+        "ROCHA",
+        "SURFAR"
+      ]
+    },
+    {
+      "id": "lol-talon",
+      "target": "TALON",
+      "taboo": [
+        "FACAS",
+        "NOXUS",
+        "ASSASSINO",
+        "LÂMINAS",
+        "PULAR"
+      ]
+    },
+    {
+      "id": "lol-taric",
+      "target": "TARIC",
+      "taboo": [
+        "GEMAS",
+        "ESCUDO",
+        "SUPORTE",
+        "PEDRAS",
+        "INVULNERÁVEL"
+      ]
+    },
+    {
+      "id": "lol-teemo",
+      "target": "TEEMO",
+      "taboo": [
+        "YORDLE",
+        "COGUMELO",
+        "VENENO",
+        "INVISÍVEL",
+        "CAPACETE"
+      ]
+    },
+    {
+      "id": "lol-thresh",
+      "target": "THRESH",
+      "taboo": [
+        "LANTERNA",
+        "GANCHO",
+        "CORRENTE",
+        "SUPORTE",
+        "ALMAS"
+      ]
+    },
+    {
+      "id": "lol-tristana",
+      "target": "TRISTANA",
+      "taboo": [
+        "YORDLE",
+        "CANHÃO",
+        "ARTILHEIRA",
+        "SALTAR",
+        "BOMBA"
+      ]
+    },
+    {
+      "id": "lol-trundle",
+      "target": "TRUNDLE",
+      "taboo": [
+        "TROLL",
+        "GELO",
+        "PILAR",
+        "MORDER",
+        "REI"
+      ]
+    },
+    {
+      "id": "lol-tryndamere",
+      "target": "TRYNDAMERE",
+      "taboo": [
+        "BÁRBARO",
+        "FÚRIA",
+        "IMORTAL",
+        "ESPADA",
+        "GIRAR"
+      ]
+    },
+    {
+      "id": "lol-twistedfate",
+      "target": "TWISTED FATE",
+      "taboo": [
+        "CARTAS",
+        "BARALHO",
+        "DESTINO",
+        "TELEPORTE",
+        "OURO"
+      ]
+    },
+    {
+      "id": "lol-twitch",
+      "target": "TWITCH",
+      "taboo": [
+        "RATO",
+        "PESTE",
+        "VENENO",
+        "INVISÍVEL",
+        "ZAUN"
+      ]
+    },
+    {
+      "id": "lol-udyr",
+      "target": "UDYR",
+      "taboo": [
+        "ESPÍRITO",
+        "POSTURAS",
+        "ANIMAL",
+        "ANDARILHO",
+        "FRELJORD"
+      ]
+    },
+    {
+      "id": "lol-urgot",
+      "target": "URGOT",
+      "taboo": [
+        "ZAUN",
+        "PERNAS",
+        "METRALHADORA",
+        "ENCOURAÇADO",
+        "EXECUTAR"
+      ]
+    },
+    {
+      "id": "lol-varus",
+      "target": "VARUS",
+      "taboo": [
+        "FLECHA",
+        "ARCO",
+        "VINGANÇA",
+        "DARKIN",
+        "CORRUPÇÃO"
+      ]
+    },
+    {
+      "id": "lol-vayne",
+      "target": "VAYNE",
+      "taboo": [
+        "CAÇADORA",
+        "BESTA",
+        "PRATA",
+        "NOTURNA",
+        "ROLAR"
+      ]
+    },
+    {
+      "id": "lol-veigar",
+      "target": "VEIGAR",
+      "taboo": [
+        "YORDLE",
+        "MAL",
+        "GAIOLA",
+        "PODER",
+        "MAGO"
+      ]
+    },
+    {
+      "id": "lol-velkoz",
+      "target": "VEL'KOZ",
+      "taboo": [
+        "VAZIO",
+        "OLHO",
+        "LASER",
+        "TENTÁCULO",
+        "DESINTEGRAR"
+      ]
+    },
+    {
+      "id": "lol-vex",
+      "target": "VEX",
+      "taboo": [
+        "MELANCOLIA",
+        "SOMBRA",
+        "EMO",
+        "YORDLE",
+        "MEDO"
+      ]
+    },
+    {
+      "id": "lol-vi",
+      "target": "VI",
+      "taboo": [
+        "PILTOVER",
+        "SOCO",
+        "MANOPLAS",
+        "GUARDA",
+        "PUNHO"
+      ]
+    },
+    {
+      "id": "lol-viego",
+      "target": "VIEGO",
+      "taboo": [
+        "REI",
+        "DESTRUÍDO",
+        "RUÍNA",
+        "NÉVOA",
+        "POSSUIR"
+      ]
+    },
+    {
+      "id": "lol-viktor",
+      "target": "VIKTOR",
+      "taboo": [
+        "MÁQUINA",
+        "ARCANO",
+        "METAL",
+        "EVOLUÇÃO",
+        "LASER"
+      ]
+    },
+    {
+      "id": "lol-vladimir",
+      "target": "VLADIMIR",
+      "taboo": [
+        "SANGUE",
+        "VAMPIRO",
+        "ESCARLATE",
+        "POÇA",
+        "DRENAR"
+      ]
+    },
+    {
+      "id": "lol-volibear",
+      "target": "VOLIBEAR",
+      "taboo": [
+        "URSO",
+        "TEMPESTADE",
+        "RAIO",
+        "FRELJORD",
+        "TROVÃO"
+      ]
+    },
+    {
+      "id": "lol-warwick",
+      "target": "WARWICK",
+      "taboo": [
+        "LOBO",
+        "ZAUN",
+        "CAÇAR",
+        "SANGUE",
+        "FERA"
+      ]
+    },
+    {
+      "id": "lol-wukong",
+      "target": "WUKONG",
+      "taboo": [
+        "MACACO",
+        "BASTÃO",
+        "CLONE",
+        "REI",
+        "GIRAR"
+      ]
+    },
+    {
+      "id": "lol-xayah",
+      "target": "XAYAH",
+      "taboo": [
+        "PENAS",
+        "RAKAN",
+        "REBELDE",
+        "VASTAYA",
+        "LÂMINAS"
+      ]
+    },
+    {
+      "id": "lol-xerath",
+      "target": "XERATH",
+      "taboo": [
+        "MAGO",
+        "ASCENDENTE",
+        "RAIO",
+        "SHURIMA",
+        "ENERGIA"
+      ]
+    },
+    {
+      "id": "lol-xinzhao",
+      "target": "XIN ZHAO",
+      "taboo": [
+        "LANÇA",
+        "DEMACIA",
+        "SENESCAL",
+        "INVESTIDA",
+        "DESAFIO"
+      ]
+    },
+    {
+      "id": "lol-yasuo",
+      "target": "YASUO",
+      "taboo": [
+        "VENTO",
+        "ESPADA",
+        "SAMURAI",
+        "IONIA",
+        "PAREDE"
+      ]
+    },
+    {
+      "id": "lol-yone",
+      "target": "YONE",
+      "taboo": [
+        "ESPADAS",
+        "IRMÃO",
+        "YASUO",
+        "ESPÍRITO",
+        "IONIA"
+      ]
+    },
+    {
+      "id": "lol-yorick",
+      "target": "YORICK",
+      "taboo": [
+        "ALMAS",
+        "PÁ",
+        "MORTE",
+        "GHOULS",
+        "PASTOR"
+      ]
+    },
+    {
+      "id": "lol-yunara",
+      "target": "YUNARA",
+      "taboo": [
+        "IONIA",
+        "ATIRADORA",
+        "FÉ",
+        "ESPÍRITO",
+        "KINKOU"
+      ]
+    },
+    {
+      "id": "lol-yuumi",
+      "target": "YUUMI",
+      "taboo": [
+        "GATA",
+        "LIVRO",
+        "GRUDAR",
+        "SUPORTE",
+        "MÁGICA"
+      ]
+    },
+    {
+      "id": "lol-zaahen",
+      "target": "ZAAHEN",
+      "taboo": [
+        "DARKIN",
+        "GLAIVA",
+        "DEUS",
+        "ESPADA",
+        "CORRUPÇÃO"
+      ]
+    },
+    {
+      "id": "lol-zac",
+      "target": "ZAC",
+      "taboo": [
+        "GOSMA",
+        "ELÁSTICO",
+        "ZAUN",
+        "PEDAÇOS",
+        "VERDE"
+      ]
+    },
+    {
+      "id": "lol-zed",
+      "target": "ZED",
+      "taboo": [
+        "SOMBRAS",
+        "NINJA",
+        "SHURIKEN",
+        "ASSASSINO",
+        "ENERGIA"
+      ]
+    },
+    {
+      "id": "lol-zeri",
+      "target": "ZERI",
+      "taboo": [
+        "RAIO",
+        "ELÉTRICA",
+        "ZAUN",
+        "FAÍSCA",
+        "ATIRADORA"
+      ]
+    },
+    {
+      "id": "lol-ziggs",
+      "target": "ZIGGS",
+      "taboo": [
+        "YORDLE",
+        "BOMBA",
+        "EXPLOSÃO",
+        "HEXPLOSIVO",
+        "DINAMITE"
+      ]
+    },
+    {
+      "id": "lol-zilean",
+      "target": "ZILEAN",
+      "taboo": [
+        "TEMPO",
+        "RELÓGIO",
+        "BOMBA",
+        "RESSUSCITAR",
+        "IDADE"
+      ]
+    },
+    {
+      "id": "lol-zoe",
+      "target": "ZOE",
+      "taboo": [
+        "ESTRELA",
+        "CREPÚSCULO",
+        "SONO",
+        "FEITIÇOS",
+        "BRINCALHONA"
+      ]
+    },
+    {
+      "id": "lol-zyra",
+      "target": "ZYRA",
+      "taboo": [
+        "PLANTAS",
+        "ESPINHOS",
+        "FLORES",
+        "RAÍZES",
+        "SEMENTE"
+      ]
+    }
+  ]
+}

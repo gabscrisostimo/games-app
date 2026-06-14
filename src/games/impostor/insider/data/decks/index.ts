@@ -1,4 +1,5 @@
 import padrao from './insider-padrao.json';
+import lolChampions from './insider-lol-champions.json';
 import type { WordDeck } from '../../types';
 
 export function validateWordDeck(data: unknown): WordDeck {
@@ -16,7 +17,7 @@ export function validateWordDeck(data: unknown): WordDeck {
   return data as WordDeck;
 }
 
-export const INSIDER_DECKS: WordDeck[] = [validateWordDeck(padrao)];
+export const INSIDER_DECKS: WordDeck[] = [validateWordDeck(padrao), validateWordDeck(lolChampions)];
 
 export function getInsiderDeck(id: string): WordDeck | undefined {
   return INSIDER_DECKS.find((d) => d.id === id);

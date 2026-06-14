@@ -4,7 +4,8 @@ import type { GameState } from '../types';
 
 export function PreTurnScreen({ state, onStart }: { state: GameState; onStart: () => void }) {
   const team = state.teams[state.currentTeam];
-  const judge = state.teams[state.currentTeam === 0 ? 1 : 0];
+  const judgeIdx = (state.currentTeam + 1) % state.teams.length;
+  const judge = state.teams[judgeIdx];
   return (
     <div className="mx-auto flex max-w-md flex-col gap-6 p-6 animate-screen-in">
       <Scoreboard teams={state.teams} currentTeam={state.currentTeam} />

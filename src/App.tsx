@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { TabooApp } from './games/taboo/TabooApp';
 import { InsiderApp } from './games/impostor/insider/InsiderApp';
 import { SnakeOilApp } from './games/judging/snakeoil/SnakeOilApp';
+import { QuiplashApp } from './games/promptvote/quiplash/QuiplashApp';
 
-type View = 'home' | 'taboo' | 'insider' | 'snakeoil';
+type View = 'home' | 'taboo' | 'insider' | 'snakeoil' | 'quiplash';
 
 export function App() {
   const [view, setView] = useState<View>('home');
@@ -11,6 +12,7 @@ export function App() {
   if (view === 'taboo') return <TabooApp onHome={() => setView('home')} />;
   if (view === 'insider') return <InsiderApp onHome={() => setView('home')} />;
   if (view === 'snakeoil') return <SnakeOilApp onHome={() => setView('home')} />;
+  if (view === 'quiplash') return <QuiplashApp onHome={() => setView('home')} />;
 
   return (
     <main className="min-h-dvh bg-bg text-ink">
@@ -42,6 +44,14 @@ export function App() {
         >
           <div className="text-2xl font-bold text-ink">Snake Oil</div>
           <div className="mt-1 text-sm text-muted">3+ jogadores · venda produtos absurdos para um cliente improvável</div>
+        </button>
+
+        <button
+          className="rounded-2xl border border-line bg-surface p-5 text-left transition active:brightness-95"
+          onClick={() => setView('quiplash')}
+        >
+          <div className="text-2xl font-bold text-ink">Quiplash</div>
+          <div className="mt-1 text-sm text-muted">3+ jogadores · responda prompts e vote nas respostas mais engraçadas</div>
         </button>
       </div>
     </main>
