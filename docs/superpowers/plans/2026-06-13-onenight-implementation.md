@@ -2739,8 +2739,9 @@ describe('ResultScreen', () => {
   it('announces the winning team and the dead player', () => {
     render(<ResultScreen state={finished} onPlayAgain={() => {}} onHome={() => {}} />);
     expect(screen.getByText(/Aldeia/i)).toBeInTheDocument();
-    // Ana (index 0) is the dead werewolf
-    expect(screen.getByText(/Ana/)).toBeInTheDocument();
+    // Ana (index 0) is the dead werewolf — assert via the death line (her name also
+    // appears in the role trail and standings, so target the unique "Morreu:" text).
+    expect(screen.getByText(/Morreu: Ana/)).toBeInTheDocument();
   });
 
   it('"Jogar de novo" and "Home" fire their callbacks', async () => {
