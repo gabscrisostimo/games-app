@@ -162,3 +162,112 @@ export function awardScores(
   });
   return next;
 }
+
+function freshRound(deal: RoleId[], playerCount: number): RoundState {
+  return {
+    deal,
+    actions: [],
+    views: new Array<NightView>(playerCount).fill(null),
+    passIndex: 0,
+    finalRoles: [],
+    endsAt: null,
+    votes: new Array<number>(playerCount).fill(-1),
+    deaths: [],
+    winners: null,
+    phase: 'night',
+  };
+}
+
+export function createSession(config: Config, rng: () => number = Math.random): SessionState {
+  const deal = dealRoles(config.bag, rng);
+  return { config, scores: {}, round: freshRound(deal, config.players.length) };
+}
+
+export function submitPass(state: SessionState, action: NightAction | null): SessionState {
+  const { round, config } = state;
+  if (round.phase !== 'night') return state;
+  const n = config.players.length;
+  const idx = round.passIndex;
+
+  const views = [...round.views];
+  views[idx] = computeNightView(round.deal, idx, n, action);
+  const actions = action ? [...round.actions, action] : round.actions;
+
+  const next = idx + 1;
+  if (next < n) {
+    return { ...state, round: { ...round, views, actions, passIndex: next } };
+  }
+
+  const finalRoles = resolveNight(round.deal, actions, n);
+  const hasInsomniac = config.bag.includes('insomniac');
+  return {
+    ...state,
+    round: {
+      ...round,
+      views,
+      actions,
+      finalRoles,
+      passIndex: 0,
+      phase: hasInsomniac ? 'dawn' : 'discussion',
+      endsAt: null,
+    },
+  };
+}
+
+export function submitDawn(state: SessionState): SessionState {
+  const { round, config } = state;
+  if (round.phase !== 'dawn') return state;
+  const n = config.players.length;
+  const idx = round.passIndex;
+
+  const views = [...round.views];
+  if (round.deal[idx] === 'insomniac') {
+    views[idx] = { kind: 'insomniac', role: round.finalRoles[idx] };
+  }
+
+  const next = idx + 1;
+  if (next < n) {
+    return { ...state, round: { ...round, views, passIndex: next } };
+  }
+  return { ...state, round: { ...round, views, phase: 'discussion', endsAt: null } };
+}
+
+export function startDiscussion(state: SessionState, now: number): SessionState {
+  const { round, config } = state;
+  if (round.phase !== 'discussion') return state;
+  return { ...state, round: { ...round, endsAt: now + config.discussSeconds * 1000 } };
+}
+
+export function beginVote(state: SessionState): SessionState {
+  const { round, config } = state;
+  if (round.phase !== 'discussion') return state;
+  return {
+    ...state,
+    round: { ...round, phase: 'vote', passIndex: 0, votes: new Array<number>(config.players.length).fill(-1) },
+  };
+}
+
+export function submitVote(state: SessionState, target: number): SessionState {
+  const { round, config } = state;
+  if (round.phase !== 'vote') return state;
+  const n = config.players.length;
+  const idx = round.passIndex;
+
+  const votes = [...round.votes];
+  votes[idx] = target;
+
+  const next = idx + 1;
+  if (next < n) {
+    return { ...state, round: { ...round, votes, passIndex: next } };
+  }
+
+  const deaths = resolveDeaths(votes, round.finalRoles);
+  const winners = resolveWinners(round.finalRoles, deaths);
+  const scores = awardScores(state.scores, config.players, round.finalRoles, deaths, winners);
+  return { ...state, scores, round: { ...round, votes, deaths, winners, phase: 'result' } };
+}
+
+export function playAgain(state: SessionState, rng: () => number = Math.random): SessionState {
+  const deal = dealRoles(state.config.bag, rng);
+  return { config: state.config, scores: state.scores, round: freshRound(deal, state.config.players.length) };
+}
