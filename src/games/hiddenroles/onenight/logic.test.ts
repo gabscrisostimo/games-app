@@ -35,7 +35,7 @@ function makeRng(seq: number[]): () => number {
   return () => (i < seq.length ? seq[i++] : 0);
 }
 
-import { resolveNight } from './logic';
+import { resolveNight, computeNightView } from './logic';
 
 describe('resolveNight', () => {
   // deal indices: 0..N-1 players, N..N+2 center.
@@ -121,5 +121,78 @@ describe('resolveNight', () => {
     const copy = [...deal];
     resolveNight(deal, [{ kind: 'robber', actor: 0, target: 1 }], 1);
     expect(deal).toEqual(copy);
+  });
+});
+
+describe('computeNightView', () => {
+  it('werewolf sees the other werewolves (player indices only)', () => {
+    // N=4: players 0..3 (0 and 2 are wolves), center 4,5,6
+    const deal: RoleId[] = ['werewolf', 'seer', 'werewolf', 'villager', 'minion', 'tanner', 'villager'];
+    expect(computeNightView(deal, 0, 4, null)).toEqual({ kind: 'wolves', partners: [2] });
+  });
+
+  it('lone werewolf with no peek sees empty partners', () => {
+    const deal: RoleId[] = ['werewolf', 'seer', 'villager', 'villager', 'werewolf', 'tanner', 'villager'];
+    expect(computeNightView(deal, 0, 4, null)).toEqual({ kind: 'wolves', partners: [] });
+  });
+
+  it('lone werewolf who peeks a center card sees that card', () => {
+    const deal: RoleId[] = ['werewolf', 'seer', 'villager', 'villager', 'minion', 'tanner', 'villager'];
+    const view = computeNightView(deal, 0, 4, { kind: 'lone-wolf', actor: 0, center: 5 });
+    expect(view).toEqual({ kind: 'lone-wolf', center: 5, role: 'tanner' });
+  });
+
+  it('minion sees the wolves', () => {
+    const deal: RoleId[] = ['minion', 'werewolf', 'villager', 'werewolf', 'seer', 'tanner', 'villager'];
+    expect(computeNightView(deal, 0, 4, null)).toEqual({ kind: 'minion', wolves: [1, 3] });
+  });
+
+  it('mason sees the other mason', () => {
+    const deal: RoleId[] = ['mason', 'villager', 'mason', 'seer', 'werewolf', 'tanner', 'villager'];
+    expect(computeNightView(deal, 0, 4, null)).toEqual({ kind: 'masons', partners: [2] });
+  });
+
+  it('lone mason sees empty partners', () => {
+    const deal: RoleId[] = ['mason', 'villager', 'seer', 'robber', 'werewolf', 'tanner', 'villager'];
+    expect(computeNightView(deal, 0, 4, null)).toEqual({ kind: 'masons', partners: [] });
+  });
+
+  it('seer peeking a player sees that player original role', () => {
+    const deal: RoleId[] = ['seer', 'werewolf', 'villager', 'villager', 'minion', 'tanner', 'villager'];
+    const view = computeNightView(deal, 0, 4, { kind: 'seer', actor: 0, peek: { kind: 'player', target: 1 } });
+    expect(view).toEqual({ kind: 'seer-player', target: 1, role: 'werewolf' });
+  });
+
+  it('seer peeking the center sees two center cards', () => {
+    const deal: RoleId[] = ['seer', 'werewolf', 'villager', 'villager', 'minion', 'tanner', 'robber'];
+    const view = computeNightView(deal, 0, 4, { kind: 'seer', actor: 0, peek: { kind: 'center', cards: [4, 6] } });
+    expect(view).toEqual({ kind: 'seer-center', cards: [4, 6], roles: ['minion', 'robber'] });
+  });
+
+  it('robber sees the role it took (original target role)', () => {
+    const deal: RoleId[] = ['robber', 'werewolf', 'villager', 'villager', 'minion', 'tanner', 'villager'];
+    const view = computeNightView(deal, 0, 4, { kind: 'robber', actor: 0, target: 1 });
+    expect(view).toEqual({ kind: 'robber', target: 1, role: 'werewolf' });
+  });
+
+  it('troublemaker and drunk get no info', () => {
+    const deal: RoleId[] = ['troublemaker', 'drunk', 'villager', 'villager', 'minion', 'tanner', 'villager'];
+    expect(computeNightView(deal, 0, 4, { kind: 'troublemaker', actor: 0, a: 1, b: 2 })).toEqual({ kind: 'troublemaker' });
+    expect(computeNightView(deal, 1, 4, { kind: 'drunk', actor: 1, center: 5 })).toEqual({ kind: 'drunk' });
+  });
+
+  it('optional actors who declined (null action) get a null view', () => {
+    const deal: RoleId[] = ['seer', 'robber', 'troublemaker', 'villager', 'minion', 'tanner', 'villager'];
+    expect(computeNightView(deal, 0, 4, null)).toBeNull(); // seer declined
+    expect(computeNightView(deal, 1, 4, null)).toBeNull(); // robber declined
+    expect(computeNightView(deal, 2, 4, null)).toBeNull(); // troublemaker declined
+  });
+
+  it('insomniac, villager, hunter, tanner see nothing during the night', () => {
+    const deal: RoleId[] = ['insomniac', 'villager', 'hunter', 'tanner', 'minion', 'werewolf', 'villager'];
+    expect(computeNightView(deal, 0, 4, null)).toBeNull();
+    expect(computeNightView(deal, 1, 4, null)).toBeNull();
+    expect(computeNightView(deal, 2, 4, null)).toBeNull();
+    expect(computeNightView(deal, 3, 4, null)).toBeNull();
   });
 });

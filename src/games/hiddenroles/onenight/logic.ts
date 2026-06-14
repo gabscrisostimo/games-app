@@ -42,3 +42,49 @@ export function resolveNight(
   }
   return working.slice(0, playerCount);
 }
+
+export function computeNightView(
+  deal: RoleId[],
+  playerIndex: number,
+  playerCount: number,
+  action: NightAction | null,
+): NightView {
+  const role = deal[playerIndex];
+  const playerIdxs = (pred: (r: RoleId, i: number) => boolean): number[] => {
+    const out: number[] = [];
+    for (let i = 0; i < playerCount; i++) if (pred(deal[i], i)) out.push(i);
+    return out;
+  };
+
+  switch (role) {
+    case 'werewolf': {
+      if (action && action.kind === 'lone-wolf') {
+        return { kind: 'lone-wolf', center: action.center, role: deal[action.center] };
+      }
+      const partners = playerIdxs((r, i) => r === 'werewolf' && i !== playerIndex);
+      return { kind: 'wolves', partners };
+    }
+    case 'minion':
+      return { kind: 'minion', wolves: playerIdxs((r) => r === 'werewolf') };
+    case 'mason':
+      return { kind: 'masons', partners: playerIdxs((r, i) => r === 'mason' && i !== playerIndex) };
+    case 'seer':
+      if (!action || action.kind !== 'seer') return null;
+      return action.peek.kind === 'player'
+        ? { kind: 'seer-player', target: action.peek.target, role: deal[action.peek.target] }
+        : {
+            kind: 'seer-center',
+            cards: action.peek.cards,
+            roles: [deal[action.peek.cards[0]], deal[action.peek.cards[1]]],
+          };
+    case 'robber':
+      if (!action || action.kind !== 'robber') return null;
+      return { kind: 'robber', target: action.target, role: deal[action.target] };
+    case 'troublemaker':
+      return action && action.kind === 'troublemaker' ? { kind: 'troublemaker' } : null;
+    case 'drunk':
+      return action && action.kind === 'drunk' ? { kind: 'drunk' } : null;
+    default:
+      return null; // insomniac (dawn), villager, hunter, tanner
+  }
+}
