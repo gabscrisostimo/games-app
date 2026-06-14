@@ -83,3 +83,39 @@ describe('answering — projeção secreta + envio', () => {
     expect(s.answers.a).toBe('primeira');
   });
 });
+
+describe('reveal -> voting', () => {
+  function reachReveal() {
+    let s = init();
+    for (const p of players) s = G.reducer(s, { type: 'SUBMIT_ANSWER', text: `resp-${p.id}` }, ctx(p.id));
+    return s;
+  }
+
+  it('reveal mostra todas as respostas com nome, na revealOrder', () => {
+    const s = reachReveal();
+    const p = G.project(s, 'a');
+    expect(p.phase).toBe('reveal');
+    if (p.phase !== 'reveal') return;
+    expect(p.answers).toHaveLength(4);
+    expect(p.answers.map((a) => a.id)).toEqual(s.revealOrder);
+    expect(p.answers.find((a) => a.id === 'b')).toMatchObject({ nickname: 'Bia', answer: 'resp-b' });
+  });
+
+  it('ADVANCE (qualquer um) leva reveal -> voting e carimba endsAt', () => {
+    const s = reachReveal();
+    const v = G.reducer(s, { type: 'ADVANCE' }, ctx('c', 5000));
+    expect(v.phase).toBe('voting');
+    expect(v.endsAt).toBe(5000 + 60 * 1000);
+  });
+
+  it('voting projeta candidatos sem o próprio jogador', () => {
+    let s = reachReveal();
+    s = G.reducer(s, { type: 'ADVANCE' }, ctx('a', 5000));
+    const p = G.project(s, 'a');
+    expect(p.phase).toBe('voting');
+    if (p.phase !== 'voting') return;
+    expect(p.candidates.map((c) => c.id)).toEqual(['b', 'c', 'd']);
+    expect(p.yourVote).toBeNull();
+    expect(p.total).toBe(4);
+  });
+});

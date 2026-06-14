@@ -49,6 +49,10 @@ function nick(s: InfiltradoState, id: PlayerId): string {
   return s.players.find((p) => p.id === id)?.nickname ?? '???';
 }
 
+function toVoting(s: InfiltradoState, now: number): InfiltradoState {
+  return { ...s, phase: 'voting', endsAt: now + s.config.voteSeconds * 1000, votes: {} };
+}
+
 export const infiltrado: NetGame<InfiltradoState, InfiltradoAction, InfiltradoProjection, InfiltradoConfig> = {
   createInitial({ config, players, now, rng }: InitCtx<InfiltradoConfig>): InfiltradoState {
     const ids = players.map((p) => p.id);
@@ -75,6 +79,10 @@ export const infiltrado: NetGame<InfiltradoState, InfiltradoAction, InfiltradoPr
         const next = { ...state, answers: { ...state.answers, [ctx.actorId]: text } };
         return allAnswered(next) ? toReveal(next, ctx.rng) : next;
       }
+      case 'ADVANCE': {
+        if (state.phase === 'reveal') return toVoting(state, ctx.now);
+        return state;
+      }
       default:
         return state;
     }
@@ -93,6 +101,22 @@ export const infiltrado: NetGame<InfiltradoState, InfiltradoAction, InfiltradoPr
         endsAt: state.endsAt ?? 0,
         round: state.roundIndex + 1,
         totalRounds: state.totalRounds,
+      };
+    }
+    if (state.phase === 'reveal') {
+      return {
+        phase: 'reveal',
+        answers: state.revealOrder.map((id) => ({ id, nickname: nick(state, id), answer: state.answers[id] ?? '—' })),
+      };
+    }
+    if (state.phase === 'voting') {
+      return {
+        phase: 'voting',
+        candidates: state.players.filter((p) => p.id !== playerId),
+        yourVote: (state.votes[playerId] as PlayerId | undefined) ?? null,
+        voted: Object.keys(state.votes).length,
+        total: state.players.length,
+        endsAt: state.endsAt ?? 0,
       };
     }
     return { phase: 'matchEnd', finalScores: [] } as InfiltradoProjection;
