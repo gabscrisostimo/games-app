@@ -82,6 +82,39 @@ Os chats compartilham o mesmo diretório de repositório, então cada um trabalh
 - Contrato de integração: expor `<SnakeOilApp onHome={() => void} />`
 - **NÃO TOCA** em `src/games/impostor/**` (Chat B), nos arquivos do Chat A, nem em `src/games/taboo/**`
 
+## Chat D — Engine Prompt→Voto (CONCLUÍDO)
+
+- Roadmap de engines: `docs/ordem-de-construcao.md` (Engine 3)
+- Engine: **Prompt → Resposta → Voto** (Quiplash → Fibbage → Herd Mentality → ...)
+- Worktree: `.claude/worktrees/feat+promptvote-engine` / branch `feat/promptvote-engine` (base: `main`)
+- **Território reivindicado: `src/games/promptvote/**`** + decks em `src/data/promptvote/**`
+- Primeiro jogo: **Quiplash** → `src/games/promptvote/quiplash/` — **implementação completa**
+  - Spec aprovado: `docs/superpowers/specs/2026-06-13-quiplash-game-design.md`
+  - Plano TDD: `docs/superpowers/plans/2026-06-13-quiplash.md` — executado (Tasks 1–13, todas concluídas)
+  - Modelo: **pass-and-play, single-device** (passa o celular pra responder e votar; telas de handoff escondem a resposta/voto anterior). Multi-device fica pro Chat Backend.
+  - Dois modos (configuráveis na tela inicial): **Duelo** (anel — 2 autores por prompt) e **Grupo** (todos no mesmo prompt). Última rodada vira **Last Lash** (grupo) nos dois modos. Pontuação **fiel ao Quiplash** (% dos votos × multiplicador da rodada + bônus "Quiplash!" no sweep). Rodadas configuráveis (2–5). Votação em **lote** (1 passa-celular por votante).
+  - **Módulo pronto para integração:** expõe `<QuiplashApp onHome={() => void} />`
+    - Arquivo: `src/games/promptvote/quiplash/QuiplashApp.tsx`
+    - Inclui banner de retomada de sessão (resume) via `localStorage`
+  - Camadas implementadas: `types.ts`, `logic.ts` (pura, `rng` injetável), `reducer.ts`, `persistence.ts`, `playerStore.ts`, `ui.ts`, 5 screens (Config/Answering/Voting/RoundResult/FinalResult), `QuiplashSession.tsx`, `QuiplashApp.tsx`; deck PT-BR `src/data/promptvote/quiplash-padrao.json` (56 prompts) + loader `src/data/promptvote/index.ts`
+  - Suite: **116 testes passando (24 arquivos)** — 32 novos do Quiplash (8 arquivos). `tsc --noEmit` sem erros, build de produção OK.
+- Reusa **read-only** do shell: `ActionButton` (importa, não edita)
+- **Próximo passo para Chat A:** integrar `<QuiplashApp onHome={...} />` em `src/App.tsx` (registrar `View 'quiplash'`, mesmo padrão de `taboo`/`insider`). Estilos centralizados em `src/games/promptvote/quiplash/ui.ts` (design tokens do Chat A).
+- **Nota p/ Chat Backend:** Quiplash é a âncora de validação do netcode — `logic.ts`/`reducer.ts` são puros e consumíveis por contrato (todas as funções de `logic.ts` recebem `rng` injetável; o reducer injeta o deck).
+- **NÃO TOCA** em: Chat A (shell/home/taboo), Chat B (`impostor/**`), Chat C (`judging/**`)
+
+## Chat ? — Engine Papéis Ocultos + Noite (andaime pronto, implementação pendente)
+
+- Roadmap de engines: `docs/ordem-de-construcao.md` (Engine 4)
+- Engine: **Papéis Ocultos + Noite** (One Night Werewolf → Secret Hitler → Mascarade → BotC)
+- Worktree: `.claude/worktrees/feat+hidden-roles-engine` / branch `feat/hidden-roles-engine` (base: `main`)
+- **Território reivindicado: `src/games/hiddenroles/**`**
+- Primeiro jogo: **One Night Werewolf** → `src/games/hiddenroles/onenight/`
+  - Andaime criado: pastas com `.gitkeep`, sem lógica ainda
+  - Contrato de integração: `<OneNightApp onHome={() => void} />`
+  - Implementação: **pendente** (próximo passo: spec + writing-plans)
+- **NÃO TOCA** em: Chat A (shell/home/taboo), Chat B (`impostor/**`), Chat C (`judging/**`)
+
 ## Chat Backend — Multiplayer / Netcode (`src/net/`)
 
 - Objetivo: permitir jogar **multi-device** (cada um no seu celular), além do pass-and-play. Camada **genérica** (lobby/transporte/presença + sincronização de estado que embrulha os reducers existentes + projeção de estado por-jogador), **não** um backend do zero por jogo.
@@ -93,7 +126,7 @@ Os chats compartilham o mesmo diretório de repositório, então cada um trabalh
 - Pass-and-play e multi-device **compartilham o core lógico** (mesmos reducers); a diferença é "um device vê todo o estado" vs "cada device vê sua projeção".
 
 ## Regras de ouro (evitar conflito)
-1. Cada chat fica na sua pasta. Fronteiras: `src/games/taboo/**` + shell/home = Chat A; `src/games/impostor/**` = Chat B; `src/games/judging/**` (+ `src/data/judging/**`) = Chat C; `src/net/**` = Chat Backend; demais `src/games/<engine>/**` = chats de engine.
+1. Cada chat fica na sua pasta. Fronteiras: `src/games/taboo/**` + shell/home = Chat A; `src/games/impostor/**` = Chat B; `src/games/judging/**` (+ `src/data/judging/**`) = Chat C; `src/games/promptvote/**` (+ `src/data/promptvote/**`) = Chat D (Engine 3); `src/games/hiddenroles/**` = Engine 4; `src/net/**` = Chat Backend; demais `src/games/<engine>/**` = chats de engine.
 2. `src/App.tsx` e `src/shell/` têm dono único = Chat A enquanto o visual polish não fechar (outros chats só **importam** do shell, nunca editam).
 3. Antes de editar qualquer arquivo fora da sua pasta, checar este doc.
 4. `src/games/taboo/logic.ts|types.ts|reducer.ts|persistence.ts` e `src/data/` são estáveis — ninguém toca sem motivo forte.
