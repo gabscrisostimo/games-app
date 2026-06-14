@@ -1,0 +1,16 @@
+{
+  // Room server multiplayer em Cloudflare Workers + Durable Objects (partyserver).
+  // Substitui o partykit.json. Deploy: `wrangler deploy` → <name>.<sub>.workers.dev
+  // (free tier; DO com SQLite no plano grátis). Serve também o app estático
+  // (dist-net) na mesma origem via `assets`.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "games-app-net",
+  "main": "src/net/server/index.ts",
+  "compatibility_date": "2025-06-01",
+  "durable_objects": {
+    "bindings": [{ "name": "Main", "class_name": "Main" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Main"] }],
+  "assets": { "directory": "./dist-net" },
+  "observability": { "enabled": true }
+}

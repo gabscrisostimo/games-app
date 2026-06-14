@@ -34,7 +34,12 @@ export function reduceClientState(state: ClientState, msg: ServerMsg): ClientSta
 // global a `vite/client`) pra não alterar o ambiente de tipos do projeto inteiro
 // — este é o único arquivo do `src/net/` que lê env var.
 const env = (import.meta as unknown as { env?: Record<string, string | undefined> }).env ?? {};
-const PARTYKIT_HOST = env.VITE_PARTYKIT_HOST ?? 'localhost:1999';
+// 1) VITE_PARTYKIT_HOST explícito (dev/túnel) vence. 2) Em prod same-origin
+// (app + room server no mesmo deploy workers.dev), usa a origem da página. 3)
+// fallback local.
+const PARTYKIT_HOST =
+  env.VITE_PARTYKIT_HOST ||
+  (typeof window !== 'undefined' && window.location?.host ? window.location.host : 'localhost:1999');
 
 export function useRoom(code: string, playerId: string, nickname: string) {
   const [state, dispatch] = useReducer(

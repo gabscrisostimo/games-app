@@ -42,3 +42,7 @@ vite.config.d.ts
 
 # partykit local dev cache (multiplayer)
 .partykit/
+
+# wrangler (multiplayer room server)
+.wrangler/
+worker-configuration.d.ts
