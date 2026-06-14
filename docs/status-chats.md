@@ -94,16 +94,21 @@ Os chats compartilham o mesmo diretório de repositório, então cada um trabalh
   - Implementação: **pendente** (próximo passo: spec + writing-plans)
 - **NÃO TOCA** em: Chat A (shell/home/taboo), Chat B (`impostor/**`), Chat C (`judging/**`)
 
-## Engine 4 — Papéis Ocultos + Noite (em construção)
+## Engine 4 — Papéis Ocultos + Noite (One Night implementado)
 
 - Roadmap de engines: `docs/ordem-de-construcao.md` (Engine 4)
 - Engine: **Papéis Ocultos + Noite** (One Night Werewolf → Secret Hitler → Mascarade → BotC)
 - Worktree: `.claude/worktrees/feat+hidden-roles-engine` / branch `feat/hidden-roles-engine` (base: `main`)
-- **Território reivindicado: `src/games/hiddenroles/**`**
+- **Território reivindicado: `src/games/hiddenroles/**`** (+ dados em `src/data/hiddenroles/**`)
 - Primeiro jogo: **One Night Werewolf** → `src/games/hiddenroles/onenight/`
-  - Andaime criado: pastas com `.gitkeep`
-  - Contrato de integração: `<OneNightApp onHome={() => void} />`
-  - Implementação: **em andamento** (brainstorm → spec → writing-plans → TDD)
+  - Implementação: **concluída** (brainstorm → spec → writing-plans → TDD)
+    - Spec: `docs/superpowers/specs/2026-06-13-onenight-game-design.md`
+    - Plano: `docs/superpowers/plans/2026-06-13-onenight-implementation.md`
+  - **Contrato de integração (pronto para a home): `<OneNightApp onHome={() => void} />`** — exportado de `src/games/hiddenroles/onenight/OneNightApp.tsx`
+  - localStorage: `games-app:onenight:current` (sessão) e `games-app:onenight:players` (jogadores reusáveis)
+  - Engine pura + reducer (sem React): `logic.ts` (`resolveNight`/`computeNightView`/win matrix) + `reducer.ts` — reusáveis pelo Chat Backend
+  - Suíte: todos os testes da engine verdes; `npm run build` limpo
+  - Pendências de polish (não-bloqueantes): wiring na home é do Chat A; texto "não agir" do papel sem ação noturna; deck/bag avançado e Doppelgänger ficam pra v2
 - **NÃO TOCA** em: Chat A (shell/home/taboo), Chat B (`impostor/**`), Chat C (`judging/**`), Chat Backend (`net/**`)
 
 ## Chat Backend — Multiplayer / Netcode (`src/net/`)
