@@ -1,0 +1,16 @@
+{
+  "id": "infiltrado-padrao",
+  "name": "Padrão",
+  "pairs": [
+    { "id": "p1", "tema": "Comida", "normal": "Qual comida você comeria todo dia?", "impostor": "Qual comida você acha mais cara?" },
+    { "id": "p2", "tema": "Viagem", "normal": "Um lugar que você quer muito visitar?", "impostor": "Um lugar que você nunca visitaria?" },
+    { "id": "p3", "tema": "Manhã", "normal": "Algo que você faz toda manhã?", "impostor": "Algo que você quase nunca faz de manhã?" },
+    { "id": "p4", "tema": "Bicho", "normal": "Um animal que daria um bom animal de estimação?", "impostor": "Um animal que você tem medo?" },
+    { "id": "p5", "tema": "Filme", "normal": "Um filme que você assistiria de novo?", "impostor": "Um filme que você dormiu no meio?" },
+    { "id": "p6", "tema": "Festa", "normal": "O que não pode faltar numa festa boa?", "impostor": "O que estraga uma festa pra você?" },
+    { "id": "p7", "tema": "Trabalho", "normal": "Um emprego dos sonhos?", "impostor": "Um emprego que você jamais faria?" },
+    { "id": "p8", "tema": "Compras", "normal": "Algo que vale a pena gastar dinheiro?", "impostor": "Algo que você acha desperdício de dinheiro?" },
+    { "id": "p9", "tema": "Música", "normal": "Uma música pra animar o dia?", "impostor": "Uma música que te dá vergonha alheia?" },
+    { "id": "p10", "tema": "Final de semana", "normal": "Um programa perfeito de domingo?", "impostor": "Um programa de domingo que você odeia?" }
+  ]
+}
