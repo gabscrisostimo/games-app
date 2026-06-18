@@ -123,13 +123,31 @@ Os chats compartilham o mesmo diretório de repositório, então cada um trabalh
 
 ## Chat Backend — Multiplayer / Netcode (`src/net/`)
 
-- Objetivo: permitir jogar **multi-device** (cada um no seu celular), além do pass-and-play. Camada **genérica** (lobby/transporte/presença + sincronização de estado que embrulha os reducers existentes + projeção de estado por-jogador), **não** um backend do zero por jogo.
-- **Território reivindicado: `src/net/**`** (pasta nova, compartilhada) — e o que mais a infra de rede exigir fora das pastas de jogo (a definir no spec; coordenar aqui antes).
-- Branch/worktree próprios: `feat/multiplayer` em `.claude/worktrees/feat+multiplayer` (criar a partir do `main` atual — já tem o visual polish).
-- **Consome** os reducers/`logic.ts` dos jogos via contrato (autoridade roda o mesmo reducer → broadcast → cada cliente vê sua projeção). **NÃO edita** as pastas das engines, nem `src/shell/`, nem `src/App.tsx`.
-- Fase atual = **exploratória**: brainstorm (decidir **transporte**: PartyKit / Supabase Realtime / Ably / socket próprio / host-peer) → spec → prova-de-conceito fina (lobby + 1 jogo de teste). **Não** front-runar todos os jogos.
-- **Âncora de validação:** integrar contra UM jogo concreto — **Quiplash** (engine `promptvote`). Generalizar só depois de um 2º jogo (ex.: Spyfall, que exige papel privado) provar a abstração.
-- Pass-and-play e multi-device **compartilham o core lógico** (mesmos reducers); a diferença é "um device vê todo o estado" vs "cada device vê sua projeção".
+**Status: camada genérica + adaptador + VIEW CLIENTE do Quiplash real — JOGÁVEL e VALIDADO EM CELULAR REAL.** O **Quiplash real** (`quiplash-net.html` → `QuiplashNetApp`/`QuiplashNetView`, servidor `src/net/server/index.ts` rodando `quiplashNet`) foi jogado completo em **Android + iOS + 3º device** (2026-06-14): duelo com prompts diferentes por jogador (2 cada), projeção secreta, voto concorrente anônimo, Last Lash na última rodada, placar e final + jogar-de-novo — tudo OK. Antes disso o demo (`net-demo.html`) já tinha validado lobby/presença/**reconexão iOS**. Branch `feat/multiplayer` em `.claude/worktrees/feat+multiplayer`, **rebaseado em `origin/main`**. Spec: `docs/superpowers/specs/2026-06-13-multiplayer-netcode-design.md`. Plano: `docs/superpowers/plans/2026-06-13-multiplayer-netcode.md`.
+
+- **Transporte decidido: PartyKit** (sala = Durable Object no Cloudflare roda o mesmo reducer e faz broadcast de projeção por-jogador). App segue no Vercel; room server num deploy Cloudflare à parte. Descartados Supabase Realtime/Ably (relay, vazam segredo), host-peer (frágil), socket próprio (mais ops).
+- **O que a PoC cobre:** lobby genérico (criar→código 4 letras→entrar c/ apelido) + presença + reconexão (por `playerId` em localStorage) + sincronização com **projeção secreta por-jogador** + timer autoritativo. Validada por um **demo promptvote descartável** (`src/net/__demo__/`). Verificação: **243 testes** verdes no repo (`tsc -b` limpo), servidor PartyKit boota, e um **smoke end-to-end com 3 clientes `PartySocket` reais** (join→start→answer→vote→reveal) passou incluindo secrecy no fio e voto anônimo.
+- **Território (dono): `src/net/**`** + `partykit.json` + `net-demo.html`. **NÃO edita** engines, `src/shell/`, `src/App.tsx`, `src/index.css` (só importa os tokens).
+- **Deps adicionadas ao `package.json`** (heads-up de merge): `partysocket` (dep), `partykit` (devDep). `.gitignore` ganhou `.partykit/` (cache local). Nenhum arquivo de outro chat tocado.
+
+### Contrato de integração `NetGame` (para as engines rodarem em rede)
+Cada jogo que quiser multi-device implementa esta interface (de `src/net/contract.ts`). A autoridade roda `createInitial`/`reducer`/`onTimeout` (dona de `now`/`rng`); o cliente só renderiza `project(state, playerId)`. **A Engine 3 (promptvote/Quiplash) NÃO precisou saber de rede:** o adaptador `src/net/adapters/quiplash.ts` (proof #1 ✅) embrulha o `logic.ts` da engine **sem editar `src/games/promptvote/**`** (reusa `createSession`/`submitAnswers`/`scoreRound`/`nextRound`/`matchupResults`/`ranking`). **31 testes** (28 unit + 3 integração via `roomEngine` com 3 clientes): projeção secreta, voto anônimo por índice, placar correto pela rede.
+
+```ts
+interface NetGame<State, Action extends { type: string }, Projection, Config> {
+  createInitial(ctx: { config: Config; players: {id; nickname}[]; now: number; rng: () => number }): State;
+  reducer(state: State, action: Action, ctx: { now: number; rng: () => number; actorId: string }): State;
+  project(state: State, playerId: string): Projection;   // o que ESTE jogador vê (segredo nunca sai)
+  legalActions(state: State, playerId: string): Action['type'][];
+  deadline?(state: State): number | null;                // timer autoritativo
+  onTimeout?(state: State, ctx: { now: number; rng: () => number }): State;
+}
+```
+
+- **Ponto de integração na home (Chat A):** hoje a PoC roda em entry próprio (`net-demo.html` → `src/net/demo-entry.tsx`), **sem tocar `App.tsx`**. Wiring na home é trabalho futuro do Chat A (quando virar produto).
+- **Generalização (regra do três):** demo (1º uso) → **Quiplash real via adaptador + view, jogado ao vivo em 3 celulares (2º uso — proof #1 ✅, o seam segurou)** → **Spyfall** (papel secreto estático vs projeção por-fase) é o gatilho do próximo ciclo, fora deste escopo. **Achado do proof #1:** o contrato segurou estado/projeção/rng, mas o reducer pass-and-play do Quiplash embute um **modelo de turno sequencial** (`voteCursor`) que o adaptador teve que **traduzir pra votação concorrente por ator**. Sinal pra avaliar (depois do Spyfall) se a forma certa é "engines expõem reducer endereçável por ator".
+- **Limitações conhecidas de PoC (não-bloqueantes):** host não transfere ao cair (reconexão por playerId estável traz de volta); estado da sala em memória (sem persistência durável).
+- **Teste de celular: FEITO via cloudflared (2026-06-13).** `npx partykit deploy` está inviável (zona `*.partykit.dev` no teto de 10k domínios da Cloudflare) e o app roda em **WSL2** (atrás de NAT, LAN não alcança). Solução que funcionou: **2 quick tunnels do cloudflared** — um pro app (`vite dev` :5174, com `--http-host-header localhost:5174` pra furar o `allowedHosts` do Vite sem editar `vite.config.ts`) e um pro room server (`partykit dev` :1999). `.env.local` (gitignored) aponta `VITE_PARTYKIT_HOST` pro túnel do room server. Túneis são **efêmeros** (trycloudflare, URL aleatória por run) — pra um teste pontual. Persistente exigiria domínio próprio (`partykit deploy --domain`) ou named tunnel.
 
 ## Regras de ouro (evitar conflito)
 1. Cada chat fica na sua pasta. Fronteiras: `src/games/taboo/**` + shell/home = Chat A; `src/games/impostor/**` = Chat B; `src/games/judging/**` (+ `src/data/judging/**`) = Chat C; `src/games/promptvote/**` (+ `src/data/promptvote/**`) = Chat D (Engine 3); `src/games/hiddenroles/**` = Engine 4; `src/net/**` = Chat Backend; demais `src/games/<engine>/**` = chats de engine.

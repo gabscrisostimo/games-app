@@ -3,6 +3,7 @@ node_modules/
 
 # build output
 dist/
+dist-net/
 dist-ssr/
 *.local
 
@@ -38,3 +39,10 @@ vite.config.d.ts
 
 # git worktrees dos chats
 .claude/worktrees/
+
+# partykit local dev cache (multiplayer)
+.partykit/
+
+# wrangler (multiplayer room server)
+.wrangler/
+worker-configuration.d.ts

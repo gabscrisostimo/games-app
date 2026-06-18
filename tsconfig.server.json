@@ -1,0 +1,18 @@
+{
+  // Typecheck do room server (Worker runtime), separado do app (que usa lib DOM).
+  // O app (tsconfig.json) EXCLUI src/net/server pra evitar conflito de globals
+  // DOM × Worker. Rodar: `npx tsc -p tsconfig.server.json --noEmit`.
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": [],
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true
+  },
+  "include": ["worker-configuration.d.ts", "src/net/server/**/*.ts"]
+}
